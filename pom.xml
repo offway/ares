@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cn.offway</groupId>
-	<artifactId>athena</artifactId>
+	<artifactId>ares</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>athena</name>
+	<name>ares</name>
 	<description>运营系统</description>
 
 	<parent>
@@ -150,7 +150,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<finalName>athena-${profiles.active}</finalName>
+		<finalName>ares-${profiles.active}</finalName>
 	</build>
 
 
