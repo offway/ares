@@ -29,5 +29,7 @@ public interface PhGoodsKindService {
 
     void delByPid(Long pid);
 
+    void delByPPid(Long ppid);
+
     void resort(Long sort, Long theId);
 }

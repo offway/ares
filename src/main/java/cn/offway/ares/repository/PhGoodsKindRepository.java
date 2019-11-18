@@ -21,6 +21,11 @@ public interface PhGoodsKindRepository extends JpaRepository<PhGoodsKind, Long>,
 
     @Transactional
     @Modifying
+    @Query(nativeQuery = true, value = "DELETE FROM `ph_goods_kind` WHERE (`goods_type` = ?1)")
+    void deleteByPPid(Long pid);
+
+    @Transactional
+    @Modifying
     @Query(nativeQuery = true, value = "update `ph_goods_kind` set `sort` = `sort` + 1 where `sort` >= ?1 and `goods_category` = ?2")
     void resort(Long sort, Long theId);
 }

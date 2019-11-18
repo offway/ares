@@ -86,6 +86,11 @@ public class PhGoodsKindServiceImpl implements PhGoodsKindService {
     }
 
     @Override
+    public void delByPPid(Long ppid) {
+        phGoodsKindRepository.deleteByPPid(ppid);
+    }
+
+    @Override
     public void resort(Long sort, Long theId) {
         phGoodsKindRepository.resort(sort, theId);
     }

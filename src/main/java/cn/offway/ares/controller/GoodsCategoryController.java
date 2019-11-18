@@ -4,6 +4,7 @@ import cn.offway.ares.domain.PhGoodsCategory;
 import cn.offway.ares.domain.PhGoodsType;
 import cn.offway.ares.properties.QiniuProperties;
 import cn.offway.ares.service.PhGoodsCategoryService;
+import cn.offway.ares.service.PhGoodsKindService;
 import cn.offway.ares.service.PhGoodsTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,14 @@ public class GoodsCategoryController {
     private PhGoodsCategoryService goodsCategoryService;
     @Autowired
     private PhGoodsTypeService goodsTypeService;
+    @Autowired
+    private PhGoodsKindService goodsKindService;
 
     @RequestMapping("/goodsCategory.html")
     public String index(ModelMap map, Long id) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("theId", id);
-        PhGoodsType goodsType = goodsTypeService.findOne(Long.valueOf(id));
+        PhGoodsType goodsType = goodsTypeService.findOne(id);
         if (goodsType != null) {
             map.addAttribute("theName", goodsType.getName());
         }
@@ -67,6 +70,7 @@ public class GoodsCategoryController {
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
             goodsCategoryService.del(id);
+            goodsKindService.delByPid(id);
         }
         return true;
     }
@@ -91,10 +95,10 @@ public class GoodsCategoryController {
 
     @ResponseBody
     @RequestMapping("/goodsCategory_top")
-    public boolean top(Long id, Long sort,Long theId) {
+    public boolean top(Long id, Long sort, Long theId) {
         PhGoodsCategory phGoodsCategory = goodsCategoryService.findOne(id);
-        if (phGoodsCategory != null){
-            goodsCategoryService.resort(sort,theId);
+        if (phGoodsCategory != null) {
+            goodsCategoryService.resort(sort, theId);
             phGoodsCategory.setSort(sort);
             goodsCategoryService.save(phGoodsCategory);
         }
