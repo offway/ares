@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>子分类管理</title>
+	<title>二级分类管理</title>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -14,7 +14,6 @@
 <body class="page-body">
 
 	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
 		<div th:replace="sidebar-menu"></div>
 		<div class="main-content">
 			<!-- User Info, Notifications and activity Bar -->
@@ -22,7 +21,7 @@
 			<div class="page-title">
 
 				<div class="title-env">
-					<h1 class="title" th:inline="text">子分类管理-[[${theName}]]</h1>
+					<h1 class="title" th:inline="text">二级分类管理-[[${theName}]]</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -31,7 +30,7 @@
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>系统管理</a></li>
-						<li class="active"><strong>子分类管理</strong></li>
+						<li class="active"><strong>二级分类管理</strong></li>
 					</ol>
 
 				</div>
@@ -43,7 +42,7 @@
 					<form role="form" class="form-inline">
 						<div class="form-group" style="margin-bottom: 15px;">
 							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="活动名"/>
+								<input type="text" name="name" class="form-control" style="height:35px" placeholder="分类名称"/>
 							</div>
 						</div>
 						<div class="form-group" style="margin-bottom: 15px;">
@@ -127,25 +126,28 @@
 		</div>
 	</div>
 
-    <div id="preview" style="display: none;
-    position: fixed;
-    top: 190px;
-    left: 650px;
-    background: white;
-    overflow: scroll;
-    border: solid; width: 700px; height: 600px;
-    z-index: 9999;" onclick="closeIt(this)">
-    </div>
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">查看详情</h4>
+				</div>
+
+				<div class="modal-body" id="preview_body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<script src="https://admin.offway.cn/js/common.js"></script>
 	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
-
-    function closeIt(self) {
-        var that = $(self);
-        that.hide();
-    }
 
     function formatTime(time) {
         return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
@@ -153,30 +155,6 @@
 
     function buildImg(url) {
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
-    }
-
-    function checkIt(id) {
-		$.post("/goodsCategory_get", {"id": id}, function (data) {
-			if (data) {
-				var preview = $("#preview");
-				var contentStr = "";
-				var category = data;
-				contentStr += "商品类别ID:" + category["goodsType"] + "<br/>";
-				contentStr += "商品类别名称:" + category["goodsTypeName"] + "<br/>";
-				contentStr += "创建时间:" + formatTime(category["createTime"]) + "<br/>";
-				contentStr += "图片:" + buildImg(category["image"]) + "<br/>";
-				contentStr += "名称:" + category["name"] + "<br/>";
-				contentStr += "编号:" + category["id"] + "<br/>";
-				contentStr += "备注:" + category["remark"] + "<br/>";
-				contentStr += "排序:" + category["sort"] + "<br/>";
-				contentStr += "*************<br/>";
-				preview.html(contentStr);
-				preview.show();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
     }
 
 	function topIt(id) {
@@ -211,6 +189,53 @@
 			}
 		}
 		return returnList;
+	}
+
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
+
+	function checkIt(id) {
+		$.post("/goodsCategory_find", {"id": id}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				var mainObj = data["main"];
+				contentStr += appendToPreview("编号:", mainObj["id"]);
+				contentStr += appendToPreview("名称:", mainObj["name"]);
+				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
+				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+				contentStr += appendToPreview("备注:", mainObj["remark"]);
+
+				for (var category in data["kindList"]) {
+					category = data["kindList"][category];
+					contentStr += appendToPreview("商品类别ID:", category["goodsType"]);
+					contentStr += appendToPreview("商品类别名称:", category["goodsTypeName"]);
+					contentStr += appendToPreview("创建时间:", formatTime(category["createTime"]));
+					contentStr += appendToPreview("图片:", buildImg(category["image"]));
+					contentStr += appendToPreview("名称:", category["name"]);
+					contentStr += appendToPreview("编号:", category["id"]);
+					contentStr += appendToPreview("备注:", category["remark"]);
+					contentStr += appendToPreview("排序:", category["sort"]);
+				}
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function checkItsList(id) {
+		window.location.href = '/goodsKind.html?id=' + id;
 	}
 
 	var table_global;
@@ -289,22 +314,31 @@
 					data: "sort",
 					title: "排序"
 				},
-                {
-                    targets: 8,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-                    }
-                },
+				{
+					targets: 8,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
+					}
+				},
 				{
 					targets: 9,
 					data: "id",
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
+						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+					}
+				},
+				{
+					targets: 10,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="checkItsList(' + data + ')" value="查看子分类"/>';
 					}
 				}
                ]

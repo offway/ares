@@ -100,6 +100,17 @@ public class GoodsKindController {
     }
 
     @ResponseBody
+    @RequestMapping("/goodsKind_find")
+    public Map<String, Object> find(Long id) {
+        Map<String, Object> map = new HashMap<>();
+        PhGoodsKind goodsKind = goodsKindService.findOne(id);
+        if (goodsKind != null) {
+            map.put("main", goodsKind);
+        }
+        return map;
+    }
+
+    @ResponseBody
     @RequestMapping("/goodsKind_top")
     public boolean top(Long id, Long sort, Long theId) {
         PhGoodsKind goodsKind = goodsKindService.findOne(id);

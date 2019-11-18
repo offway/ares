@@ -94,6 +94,18 @@ public class GoodsCategoryController {
     }
 
     @ResponseBody
+    @RequestMapping("/goodsCategory_find")
+    public Map<String, Object> find(Long id) {
+        Map<String, Object> map = new HashMap<>();
+        PhGoodsCategory goodsCategory = goodsCategoryService.findOne(id);
+        if (goodsCategory != null) {
+            map.put("main", goodsCategory);
+            map.put("kindList", goodsKindService.findByPid(goodsCategory.getId()));
+        }
+        return map;
+    }
+
+    @ResponseBody
     @RequestMapping("/goodsCategory_top")
     public boolean top(Long id, Long sort, Long theId) {
         PhGoodsCategory phGoodsCategory = goodsCategoryService.findOne(id);
