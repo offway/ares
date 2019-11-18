@@ -181,7 +181,6 @@
 				contentStr += appendToPreview("备注:", mainObj["remark"]);
 				preview.html(contentStr);
 				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
 			} else {
 				toastr.error("操作失败", "温馨提示");
 			}
