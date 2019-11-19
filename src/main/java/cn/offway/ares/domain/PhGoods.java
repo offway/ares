@@ -53,6 +53,9 @@ public class PhGoods implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 类目二 **/
+    private String categoryDetails;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -172,6 +175,15 @@ public class PhGoods implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "category_details", length = 20)
+    public String getCategoryDetails() {
+        return categoryDetails;
+    }
+
+    public void setCategoryDetails(String categoryDetails) {
+        this.categoryDetails = categoryDetails;
     }
 
 }

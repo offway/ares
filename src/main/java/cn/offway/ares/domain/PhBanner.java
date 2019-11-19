@@ -22,7 +22,7 @@ public class PhBanner implements Serializable {
     /** banner **/
     private String banner;
 
-    /** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
+    /** 类型[0-男装,1-女装] **/
     private String type;
 
     /** 跳转对应ID **/
@@ -132,5 +132,14 @@ public class PhBanner implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "type", length = 2)
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
