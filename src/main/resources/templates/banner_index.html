@@ -107,6 +107,15 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
+                                <label class="control-label">类别</label>
+                                <label><input name="type" id="type_brand" class="notMe" type="radio" checked="checked" value="0"/>男装</label>
+                                <label><input name="type" class="notMe" type="radio" value="1"/>女装</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
                                 <label class="control-label">banner名称</label>
                                 <input type="text" class="form-control" name="remark" placeholder="banner名称"/>
                             </div>
@@ -445,16 +454,16 @@
                         return "1" == data && new Date(row["endTime"]).getTime() > new Date().getTime() ?  "已上架": "<font color='blue'>未上架</font>" ;
                     }
                 },
+                // {
+                //     targets: 7,
+                //     data: "sort",
+                //     title: "排序",
+                //     render: function (data, type, row, meta) {
+                //         return "1" == row["status"] ? data : "";
+                //     }
+                // },
                 {
                     targets: 7,
-                    data: "sort",
-                    title: "排序",
-                    render: function (data, type, row, meta) {
-                        return "1" == row["status"] ? data : "";
-                    }
-                },
-                {
-                    targets: 8,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -462,9 +471,21 @@
                     }
                 },
                 {
-                    targets: 9,
+                    targets: 8,
                     data: "remark",
                     title: "banner名称"
+                },
+                {
+                    targets: 9,
+                    data: "type",
+                    title: "banner名称",
+                    render:function (data, type, full, meta) {
+                        if (data == "0"){
+                            return "男装";
+                        }else {
+                            return "女装";
+                        }
+                    }
                 },
                 {
                     targets: 10,
@@ -480,21 +501,21 @@
                         }
                         return str;
                     }
-                },
-                {
-                    targets: 11,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        if (parseInt(full["status"]) == 1) {
-                            return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
-                        } else {
-                            // return '<input type="button" name="checkIt" disabled="disabled" value="下架无法排序"/>';
-                            return '';
-                        }
-                    }
-                }
+                 }
+                // {
+                //     targets: 11,
+                //     data: "id",
+                //     orderable: false,
+                //     title: "操作",
+                //     render: function (data, type, full, meta) {
+                //         if (parseInt(full["status"]) == 1) {
+                //             return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
+                //         } else {
+                //             // return '<input type="button" name="checkIt" disabled="disabled" value="下架无法排序"/>';
+                //             return '';
+                //         }
+                //     }
+                // }
             ]
         });
         table_global = oTable;
