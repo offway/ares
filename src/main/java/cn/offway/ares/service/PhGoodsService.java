@@ -34,7 +34,7 @@ public interface PhGoodsService {
 
     List<PhGoods> findAll(String name, Object value, String brandId);
 
-    Page<PhGoods> findAll(String name, Long id, String code, String status, String type, String category, String kind, Pageable pageable);
+    Page<PhGoods> findAll(String name, Long id, String status, String type, String category, String kind, Pageable pageable);
 
     void del(Long id);
 }

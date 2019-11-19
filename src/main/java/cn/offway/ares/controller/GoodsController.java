@@ -113,14 +113,13 @@ public class GoodsController {
             id = "0";
         }
         String name = request.getParameter("name");
-        String code = request.getParameter("code");
         String status = request.getParameter("status");
         String type = request.getParameter("type");
         String category = request.getParameter("category");
         String kind = request.getParameter("kind");
         Sort sort = new Sort("id");
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
-        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, type, category, kind, pr);
+        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), status, type, category, kind, pr);
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map> arr = new ArrayList<>();
         for (PhGoods goods : pages.getContent()) {

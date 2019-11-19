@@ -259,28 +259,28 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
-    public Page<PhGoods> findAll(String name, Long id, String code, String status, String type, String category, String kind, Pageable pageable) {
+    public Page<PhGoods> findAll(String name, Long id, String status, String type, String category, String kind, Pageable pageable) {
         return phGoodsRepository.findAll(new Specification<PhGoods>() {
             @Override
             public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
-                params.add(criteriaBuilder.like(root.get("code"), "%" + code + "%"));
-
-                if (!"".equals(status)) {
+                if (StringUtils.isNotBlank(name)) {
+                    params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
+                }
+                if (StringUtils.isNotBlank(status)) {
                     params.add(criteriaBuilder.equal(root.get("status"), status));
                 }
                 if (id != 0L) {
                     params.add(criteriaBuilder.equal(root.get("id"), id));
                 }
-                if (!"".equals(type)) {
+                if (StringUtils.isNotBlank(type)) {
                     params.add(criteriaBuilder.equal(root.get("type"), type));
                 }
-                if (!"".equals(category)) {
+                if (StringUtils.isNotBlank(category)) {
                     params.add(criteriaBuilder.equal(root.get("category"), category));
                 }
-                if (!"".equals(kind)) {
-                    params.add(criteriaBuilder.equal(root.get("kind"), kind));
+                if (StringUtils.isNotBlank(kind)) {
+                    params.add(criteriaBuilder.equal(root.get("categoryDetails"), kind));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
