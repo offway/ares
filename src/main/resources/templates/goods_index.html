@@ -385,17 +385,17 @@
 					}
 				},
 				{
-					targets: 7,
+					targets: 4,
 					data: "brandId",
 					title: "品牌ID"
 				},
 				{
-					targets: 8,
+					targets: 5,
 					data: "brandName",
 					title: "品牌名称"
 				},
 				{
-					targets: 9,
+					targets: 6,
 					data: "brandLogo",
 					title: "品牌LOGO",
 					render: function (data, type, row, meta) {
@@ -403,17 +403,22 @@
 					}
 				},
 				{
-					targets: 10,
+					targets: 7,
 					data: "type",
 					title: "类别"
 				},
 				{
-					targets: 11,
+					targets: 8,
 					data: "category",
 					title: "类目"
 				},
+                {
+                    targets: 9,
+                    data: "categoryDetails",
+                    title: "种类"
+                },
 				{
-					targets: 15,
+					targets: 10,
 					data: "status",
 					title: "状态",
 					render: function (data, type, row, meta) {
@@ -421,7 +426,7 @@
 					}
 				},
 				{
-					targets: 18,
+					targets: 11,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -429,7 +434,7 @@
 					}
 				},
 				{
-					targets: 20,
+					targets: 12,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -440,7 +445,7 @@
 					}
 				},
 				{
-					targets: 21,
+					targets: 13,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -478,48 +483,6 @@
 
 		$(".btn.btn-info.add").click(function () {
 			window.location.href = '/goods_add.html';
-		});
-
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#beginTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#endTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-
-		$('[name="now"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			var beginTime = $("#beginTime");
-			var endTime = $("#endTime");
-			var div = $("#period");
-			switch (parseInt(value)) {
-				case 0:
-					var pushTimeStr = new Date().Format('yyyy-MM-dd hh:mm:ss');
-					beginTime.val(pushTimeStr);
-					endTime.val(pushTimeStr);
-					div.show();
-					break;
-				default:
-					div.hide();
-					beginTime.val("");
-					endTime.val("");
-					break;
-			}
 		});
 
         $(".btn.btn-info.updateSku").click(function () {
