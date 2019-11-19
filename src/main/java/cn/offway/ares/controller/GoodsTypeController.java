@@ -4,6 +4,7 @@ import cn.offway.ares.domain.PhGoodsCategory;
 import cn.offway.ares.domain.PhGoodsType;
 import cn.offway.ares.properties.QiniuProperties;
 import cn.offway.ares.service.PhGoodsCategoryService;
+import cn.offway.ares.service.PhGoodsKindService;
 import cn.offway.ares.service.PhGoodsTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,8 @@ public class GoodsTypeController {
     private PhGoodsTypeService goodsTypeService;
     @Autowired
     private PhGoodsCategoryService goodsCategoryService;
+    @Autowired
+    private PhGoodsKindService goodsKindService;
 
     @RequestMapping("/goodsType.html")
     public String index(ModelMap map) {
@@ -71,6 +74,7 @@ public class GoodsTypeController {
         for (Long id : ids) {
             goodsTypeService.del(id);
             goodsCategoryService.delByPid(id);
+            goodsKindService.delByPPid(id);
         }
         return true;
     }
