@@ -242,6 +242,10 @@ public class GoodsController {
         if (goodsCategory != null) {
             goods.setCategory(goodsCategory.getName());
         }
+        PhGoodsKind goodsKind = goodsKindService.findOne(Long.valueOf(goods.getKind()));
+        if (goodsKind != null) {
+            goods.setKind(goodsKind.getName());
+        }
         if (goods.getId() == null) {//add
             goods.setCreateTime(new Date());
             goods.setStatus("0");//默认未上架
