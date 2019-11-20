@@ -280,7 +280,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
                     params.add(criteriaBuilder.equal(root.get("category"), category));
                 }
                 if (StringUtils.isNotBlank(kind)) {
-                    params.add(criteriaBuilder.equal(root.get("categoryDetails"), kind));
+                    params.add(criteriaBuilder.equal(root.get("kind"), kind));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
