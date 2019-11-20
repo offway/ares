@@ -80,6 +80,15 @@
 											</div>
 										</div>
 									</div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="field-3" class="control-label"><font color="red">*</font>是否自营</label>
+                                                <label><input type="radio" class="" name="isOffway" value="0" checked="checked" />非自营</label>
+                                                <label><input type="radio" class="" name="isOffway" value="1" />自营</label>
+                                            </div>
+                                        </div>
+                                    </div>
 									<div class="row">
 										<div class="col-md-4">
 											<div class="form-group">
@@ -1015,6 +1024,7 @@
 			var type = form.find("select[name='type']").val();
 			var category = form.find("select[name='category']").val();
 			var kind = form.find("select[name='kind']").val();
+			var isOffway = form.find("input[name='isOffway']:checked").val();
 			var name = form.find("input[name='name']").val();
 			var brand_id = form.find("input[name='brand_id']").parent().find("li.es-visible").val();
 			var remark = form.find("input[name='remark']").val();
@@ -1146,6 +1156,7 @@
 								"type": type,
 								"category": category,
 								"kind": kind,
+								"isOffway": isOffway,
 								"remark": remark,
 								"stocks": JSON.stringify(stockList),
 								"banners": bannerList.join(","),
