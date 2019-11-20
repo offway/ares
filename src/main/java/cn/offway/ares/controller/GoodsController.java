@@ -52,6 +52,8 @@ public class GoodsController {
     private PhGoodsTypeService goodsTypeService;
     @Autowired
     private PhGoodsCategoryService goodsCategoryService;
+    @Autowired
+    private PhGoodsKindService goodsKindService;
 
 
     /**
@@ -340,9 +342,22 @@ public class GoodsController {
         for (PhGoodsType type : typeList) {
             Map container = objectMapper.convertValue(type, Map.class);
             List<PhGoodsCategory> categoryList = goodsCategoryService.findByPid(type.getId());
-            container.put("sub", categoryList);
+            List<Object> innerArr = new ArrayList<>();
+            for (PhGoodsCategory category : categoryList) {
+                Map container_c = objectMapper.convertValue(category, Map.class);
+                List<PhGoodsKind> kindList = goodsKindService.findByPid(category.getId());
+                container_c.put("sub", kindList);
+                innerArr.add(container_c);
+            }
+            container.put("sub", innerArr);
             ret.add(container);
         }
         return ret;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_list_all")
+    public List<PhBrand> getBrands() {
+        return brandService.findAll();
     }
 }
