@@ -37,6 +37,8 @@ public interface PhGoodsStockService {
 
     List<PhGoodsStock> findByPid(Long pid);
 
+    List<PhGoodsStock> findByPids(Long[] ids);
+
     void delByPid(Long id);
 
     void del(Long id);

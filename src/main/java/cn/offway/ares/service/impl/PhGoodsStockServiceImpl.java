@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -179,6 +180,26 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
     @Override
     public List<PhGoodsStock> findByPid(Long pid) {
         return phGoodsStockRepository.findAll(getFilter("goodsId", pid));
+    }
+
+    @Override
+    public List<PhGoodsStock> findByPids(Long[] ids) {
+        return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {
+            @Override
+            public Predicate toPredicate(Root<PhGoodsStock> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (ids != null && ids.length > 0) {
+                    CriteriaBuilder.In<Long> in = criteriaBuilder.in(root.get("goodsId"));
+                    for (long id : ids) {
+                        in.value(id);
+                    }
+                    params.add(in);
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, new Sort("goodsId"));
     }
 
     @Override
