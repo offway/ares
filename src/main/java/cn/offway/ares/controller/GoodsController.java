@@ -307,6 +307,7 @@ public class GoodsController {
             goodsStock.setRemark(obj.getString("remark"));
             goodsStock.setImage(obj.getString("image"));
             goodsStock.setCreateTime(new Date());
+            goodsStock.setIsOffway(goodsSaved.getIsOffway());
             PhGoodsStock goodsStockSaved = goodsStockService.save(goodsStock);
             if (goodsStock.getId() != null) {
                 //try purge first 规格
@@ -357,6 +358,18 @@ public class GoodsController {
             ret.add(container);
         }
         return ret;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_stock_update_stock")
+    @Transactional
+    public boolean updateStockStock(@RequestParam("ids[]") Long[] ids, Long stock) {
+        for (Long id : ids) {
+            PhGoodsStock goodsStock = goodsStockService.findOne(id);
+            goodsStock.setStock(goodsStock.getStock() + stock);
+            goodsStockService.save(goodsStock);
+        }
+        return true;
     }
 
     @ResponseBody
