@@ -65,7 +65,7 @@ public class PhOrderGoods implements Serializable {
     /** 快递单号 **/
     private String mailNo;
 
-    /** 衣柜ID **/
+    /** 库存ID **/
     private String stockId;
 
     @Id
