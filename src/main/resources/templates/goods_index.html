@@ -300,19 +300,22 @@
 		}
 	}
 
-	function renderKind(self) {
-		var jsonStr = $("#type_and_category_list").val();
-		var list = JSON.parse(jsonStr);
-		var selectedId = $(self).val();
-		loop:for (var type of list) {
-			for (var category of type["sub"]) {
-				if (selectedId == category["name"]) {
-					bindKindSelector(category["sub"]);
-					break loop;
-				}
-			}
-		}
-	}
+    function renderKind(self) {
+        var jsonStr = $("#type_and_category_list").val();
+        var list = JSON.parse(jsonStr);
+        var selectedId = $(self).val();
+        loop:for (var type of list) {
+            if (type["name"] != $("#type").val()) {
+                continue;
+            }
+            for (var category of type["sub"]) {
+                if (selectedId == category["name"]) {
+                    bindKindSelector(category["sub"]);
+                    break loop;
+                }
+            }
+        }
+    }
 
 	function renderBrand() {
 		$.getJSON("/brand_list_all", {}, function (data) {
