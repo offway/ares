@@ -65,6 +65,9 @@ public class PhOrderGoods implements Serializable {
     /** 快递单号 **/
     private String mailNo;
 
+    /** 库存ID **/
+    private Long stockId;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -219,5 +222,14 @@ public class PhOrderGoods implements Serializable {
 
     public void setMailNo(String mailNo) {
         this.mailNo = mailNo;
+    }
+
+    @Column(name = "stock_id", length = 50)
+    public Long getStockId() {
+        return stockId;
+    }
+
+    public void setStockId(Long stockId) {
+        this.stockId = stockId;
     }
 }
