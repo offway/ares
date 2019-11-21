@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>衣柜审核</title>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery-editable-select.min.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+		.form-group img{
+			max-width:400px;
+			max-height:300px;
+		}
+	</style>
+</head>
+<body class="page-body">
+
+<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+
+	<div th:replace="sidebar-menu"></div>
+	<div class="main-content">
+		<!-- User Info, Notifications and activity Bar -->
+		<nav th:replace="navbar"></nav>
+		<div class="page-title">
+
+			<div class="title-env">
+				<h1 class="title">衣柜审核</h1>
+				<p class="activityDescription"></p>
+			</div>
+
+			<div class="breadcrumb-env">
+
+				<ol class="breadcrumb bc-1">
+					<li><a href="/"><i class="fa-home"></i>Home</a></li>
+					<li><a>系统管理</a></li>
+					<li class="active"><strong>衣柜审核</strong></li>
+				</ol>
+
+			</div>
+
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<form role="form" class="form-inline">
+					<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+						<div class="input-group">
+							<label for="brandId" class="control-label">品牌</label>
+						</div>
+						<div class="input-group">
+							<select id="brandId" name="brandId" class="form-control" style="height:35px">
+							</select>
+						</div>
+						<div class="input-group">
+							<input type="text" name="goodsName" class="form-control" style="height:35px" placeholder="商品名"/>
+						</div>
+						<div class="input-group">
+							<input type="text" name="goodsId" class="form-control" style="height:35px" placeholder="商品ID"/>
+						</div>
+						<div class="input-group">
+							<label for="state" class="control-box">状态</label>
+						</div>
+						<div class="input-group">
+							<select id="state" name="state" class="form-control" style="height:35px">
+								<option value="" selected="selected">全部</option>
+								<option value="2">拒绝</option>
+								<option value="1">通过</option>
+								<option value="0">待审核</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: none;">
+						<div class="input-group">
+							<label for="type" class="control-box">主分类</label>
+						</div>
+						<div class="input-group">
+							<select id="type" name="type" class="form-control" style="height:35px" onchange="renderCategory(this)">
+								<option value="" selected="selected">全部</option>
+							</select>
+						</div>
+						<div class="input-group">
+							<label for="category" class="control-box">子分类</label>
+						</div>
+						<div class="input-group">
+							<select id="category" name="category" class="form-control" style="height:35px" onchange="renderKind(this)">
+								<option value="" selected="selected">全部</option>
+							</select>
+						</div>
+						<div class="input-group">
+							<label for="kind" class="control-box">三级分类</label>
+						</div>
+						<div class="input-group">
+							<select id="kind" name="kind" class="form-control" style="height:35px">
+								<option value="" selected="selected">全部</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+						<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+					</div>
+				</form>
+			</div>
+			<div class="panel-body">
+				<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+				</table>
+			</div>
+<!--			<button class="btn btn-info pass">同意</button>-->
+<!--			<button class="btn btn-info reject">拒绝</button>-->
+		</div>
+		<footer th:replace="footer"></footer>
+	</div>
+</div>
+
+<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">查看详情</h4>
+			</div>
+
+			<div class="modal-body" id="preview_body"></div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="type_and_category_list"/>
+<script src="https://admin.offway.cn/js/common1.js"></script>
+<script src="https://admin.offway.cn/assets/js/moment.min.js"></script>
+<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="https://admin.offway.cn/assets/js/select2/select2.min.js"></script>
+<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
+<script src="https://admin.offway.cn/assets/js/jquery-editable-select.js"></script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	function formatTime(time) {
+		return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+	}
+
+	function buildImg(url) {
+		return "<img width='100px' height='100px' src='#' />".replace("#", url);
+	}
+
+	function appendToPreviewList(one, two, three, four, five, six) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				one +
+				'</div>' +
+				'<div class="col-md-2">' +
+				two +
+				'</div>' +
+				'<div class="col-md-2">' +
+				three +
+				'</div>' +
+				'<div class="col-md-2">' +
+				four +
+				'</div>' +
+				'<div class="col-md-2">' +
+				five +
+				'</div>' +
+				'<div class="col-md-2">' +
+				six +
+				'</div>' +
+				'</div>';
+	}
+
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
+
+	function checkIt(id) {
+		$.post("/audit_findOne", {"id": id}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				var mainObj = data;
+				contentStr += appendToPreview("编号:", mainObj["id"]);
+				contentStr += appendToPreview("衣柜id:", mainObj["wardrobeId"]);
+				contentStr += appendToPreview("微信开放平台帐号:", mainObj["unionid"]);
+				contentStr += appendToPreview("使用艺人:", mainObj["useName"]);
+				contentStr += appendToPreview("使用用途:", mainObj["content"]);
+				contentStr += appendToPreview("商品ID:", mainObj["goodsId"]);
+				contentStr += appendToPreview("商品名称:", mainObj["goodsName"]);
+				contentStr += appendToPreview("封面图片:", buildImg(mainObj["image"]));
+				contentStr += appendToPreview("品牌ID:", mainObj["brandId"]);
+				contentStr += appendToPreview("品牌名称:", mainObj["brandName"]);
+				contentStr += appendToPreview("品牌LOGO:", buildImg(mainObj["brandLogo"]));
+				contentStr += appendToPreview("返图时间:", formatTime(mainObj["photoDate"]));
+				contentStr += appendToPreview("使用时间:", formatTime(mainObj["useDate"]));
+				contentStr += appendToPreview("归还时间:", formatTime(mainObj["returnDate"]));
+				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+				contentStr += appendToPreview("状态[0-待审核,1-通过,2-拒绝]:", mainObj["state"]);
+				contentStr += "<hr/>";
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function bindTypeSelector(data) {
+		var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var type in data) {
+			type = data[type];
+			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+		}
+		$("#type").html(typeStr);
+		bindCategorySelector(data[0]["sub"]);
+	}
+
+	function bindCategorySelector(data) {
+		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+		}
+		$("#category").html(categoryStr);
+		bindKindSelector(data[0]["sub"]);
+	}
+
+	function bindKindSelector(data) {
+		var kindStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var kind in data) {
+			kind = data[kind];
+			kindStr += '<option value="VALUE">KEY</option>'.replace("VALUE", kind["name"]).replace("KEY", kind["name"]);
+		}
+		$("#kind").html(kindStr);
+	}
+
+	function bindBrandSelector(data) {
+		var categoryStr = "<option value=\"0\" selected=\"selected\">全部</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
+		}
+		$("#brandId").html(categoryStr);
+		$("#brandId").editableSelect();
+	}
+
+	function renderCategory(self) {
+		var jsonStr = $("#type_and_category_list").val();
+		var list = JSON.parse(jsonStr);
+		var selectedId = $(self).val();
+		for (var type in list) {
+			if (selectedId == list[type]["name"]) {
+				bindCategorySelector(list[type]["sub"]);
+				break;
+			}
+		}
+	}
+
+	function renderKind(self) {
+		var jsonStr = $("#type_and_category_list").val();
+		var list = JSON.parse(jsonStr);
+		var selectedId = $(self).val();
+		loop:for (var type of list) {
+			if (type["name"] != $("#type").val()) {
+				continue;
+			}
+			for (var category of type["sub"]) {
+				if (selectedId == category["name"]) {
+					bindKindSelector(category["sub"]);
+					break loop;
+				}
+			}
+		}
+	}
+
+	function renderBrand() {
+		$.getJSON("/brand_list_all", {}, function (data) {
+			bindBrandSelector(data);
+		});
+	}
+
+	function upIt(id, self) {
+		$.post("/audit_up", {"id": id}, function (data) {
+			if (data) {
+				$(self).val("已通过");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				table_global.fnDraw();  //or fnReloadAjax()
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function downIt(id, self) {
+		var str = prompt("输入拒绝理由", "");
+		$.post("/audit_down", {"id": id, "str": str ? str : "无"}, function (data) {
+			if (data) {
+				$(self).val("已拒绝");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				table_global.fnDraw();  //or fnReloadAjax()
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	var table_global;
+	jQuery(document).ready(function($)
+	{
+		var oTable;
+		renderBrand();
+		oTable = $("#example-1").dataTable({
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/audit_list",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				var brandId = $("#brandId").parent().find("li.es-visible").val();
+				if (brandId != "0") {
+					searchArray.push({"name": "brandId", "value": brandId});
+				} else {
+					searchArray.push({"name": "brandId", "value": ""});
+				}
+				$.merge(aData, searchArray);
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+					}
+				},
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "wardrobeId",
+					title: "衣柜id"
+				},
+				{
+					targets: 3,
+					data: "unionid",
+					title: "开放平台帐号"
+				},
+				{
+					targets: 4,
+					data: "useName",
+					title: "使用艺人"
+				},
+				{
+					targets: 5,
+					data: "content",
+					title: "使用用途"
+				},
+				{
+					targets: 6,
+					data: "goodsId",
+					title: "商品ID"
+				},
+				{
+					targets: 7,
+					data: "goodsName",
+					title: "商品名称"
+				},
+				{
+					targets: 8,
+					data: "image",
+					title: "封面图片",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 9,
+					data: "brandId",
+					title: "品牌ID"
+				},
+				{
+					targets: 10,
+					data: "brandName",
+					title: "品牌名称"
+				},
+				{
+					targets: 11,
+					data: "brandLogo",
+					title: "品牌LOGO",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 12,
+					data: "photoDate",
+					title: "返图时间",
+					render: function (data, type, row, meta) {
+						return formatTime(data);
+					}
+				},
+				{
+					targets: 13,
+					data: "useDate",
+					title: "使用时间",
+					render: function (data, type, row, meta) {
+						return formatTime(data);
+					}
+				},
+				{
+					targets: 14,
+					data: "returnDate",
+					title: "归还时间",
+					render: function (data, type, row, meta) {
+						return formatTime(data);
+					}
+				},
+				{
+					targets: 15,
+					data: "state",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						var map = ["待审核", "通过", "拒绝"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 16,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return formatTime(data);
+					}
+				},
+				{
+					targets: 17,
+					data: "reason",
+					title: "拒绝理由"
+				},
+				{
+					targets: 18,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+					}
+				},
+				{
+					targets: 19,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						var str = "";
+						if (full["state"] == "0") {
+							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="通过"/>';
+							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="拒绝"/>';
+						}
+						return str;
+					}
+				}
+			]
+		});
+		table_global = oTable;
+
+		$.getJSON("/type_and_category_list", {}, function (data) {
+			$("#type_and_category_list").val(JSON.stringify(data));
+			bindTypeSelector(data);
+		});
+
+		$(".searchBtn").click(function () {
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()
+			return false;
+		});
+
+		$('#example-1').on('click', "#checkbox-all", function () {
+			var obj = $(this);
+			$("input[name='activityId']").each(function (i, e) {
+				this.checked = obj[0].checked;
+			});
+		});
+	});
+	/*]]>*/
+</script>
+</body>
+
+</html>
