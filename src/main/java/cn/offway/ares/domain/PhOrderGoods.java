@@ -66,7 +66,7 @@ public class PhOrderGoods implements Serializable {
     private String mailNo;
 
     /** 衣柜ID **/
-    private String wardrobeId;
+    private String stockId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -224,12 +224,12 @@ public class PhOrderGoods implements Serializable {
         this.mailNo = mailNo;
     }
 
-    @Column(name = "wardrobe_id", length = 50)
-    public String getWardrobeId() {
-        return wardrobeId;
+    @Column(name = "stock_id", length = 50)
+    public String getStockId() {
+        return stockId;
     }
 
-    public void setWardrobeId(String wardrobeId) {
-        this.wardrobeId = wardrobeId;
+    public void setStockId(String stockId) {
+        this.stockId = stockId;
     }
 }
