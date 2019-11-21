@@ -58,11 +58,8 @@
 					</table>
 					
 				</div>
-                <!--<button class="btn btn-info add" >添加</button>-->
-                <!--<button class="btn btn-info edit">修改</button>-->
 				<button class="btn btn-info del">删除</button>
 				<button class="btn btn-info editStock">修改库存</button>
-				<button class="btn btn-info editPrice">修改价格</button>
 			</div>
 			
 					
@@ -71,29 +68,6 @@
 	</div>
 	
 	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加商品</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
 
 	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
 		<div class="modal-dialog">
@@ -119,21 +93,6 @@
 	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
-
-    function addMoreImg(self) {
-        var that = $(self);
-        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
-    }
-
-    function addMoreText(self) {
-        var that = $(self);
-        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
-    }
-
-    function closeIt(self) {
-        var that = $(self);
-        that.hide();
-    }
 
     function formatTime(time) {
         return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
@@ -163,9 +122,9 @@
                 contentStr += appendToPreview("编号:", mainObj["id"]);
                 contentStr += appendToPreview("一级分类:", mainObj["type"]);
                 contentStr += appendToPreview("二级分类:", mainObj["category"]);
+				contentStr += appendToPreview("三级分类:", mainObj["kind"]);
                 contentStr += appendToPreview("SKU编码:", mainObj["sku"]);
                 contentStr += appendToPreview("库存余量:", mainObj["stock"]);
-                contentStr += appendToPreview("价格:", mainObj["price"]);
                 contentStr += appendToPreview("库存图片:", buildImg(mainObj["image"]));
                 contentStr += appendToPreview("商品ID:", mainObj["goodsId"]);
                 contentStr += appendToPreview("商品名称:", mainObj["goodsName"]);
@@ -173,9 +132,6 @@
                 contentStr += appendToPreview("品牌id:", mainObj["brandId"]);
                 contentStr += appendToPreview("品牌名:", mainObj["brandName"]);
                 contentStr += appendToPreview("品牌logo:", buildImg(mainObj["brandLogo"]));
-                contentStr += appendToPreview("商家id:", mainObj["merchantId"]);
-                contentStr += appendToPreview("商家名:", mainObj["merchantName"]);
-                contentStr += appendToPreview("商家logo:", buildImg(mainObj["merchantLogo"]));
                 contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
                 contentStr += appendToPreview("备注:", mainObj["remark"]);
                 contentStr += "<hr/>";
@@ -195,72 +151,15 @@
         });
     }
 
-    function checkSku(id) {
-        window.location.href = '/goods_stock_index.html?id=' + id;
-    }
-
 	var table_global;
-
-    function toggleTopIt(id) {
-        $.post("/brand_toggleTop", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
-    function topIt(id) {
-        $.post("/brand_top", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
-    function unTopIt(id) {
-        $.post("/brand_untop", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-	function checkImg(list) {
-		var returnList = {};
-		for (var i in list) {
-			i = list[i];
-			var v = i[0];
-			var name = i[1];
-			var form = $("#saveForm");
-			var footer = $(this).parent(".modal-footer");
-			var imageFile = '';
-			//上传文件获得文件地址
-			if (v != '') {
-				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
-				returnList[name] = imageFile;
-			}
-		}
-		return returnList;
-	}
+	var qiniuUrl = [[${qiniuUrl}]];
+	var theId = [[${theId}]];
 	jQuery(document).ready(function($)
 	{
-        var qiniuUrl = [[${qiniuUrl}]];
-        var theId = [[${theId}]];
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
@@ -270,7 +169,6 @@
 				$.merge(aData, searchArray);
 				aData.push({"name": "theId", "value": theId});//append pid
 			},
-            order: [[ 6, "desc" ]],
 			columnDefs: [
 				{
 					targets: 0,
@@ -316,34 +214,16 @@
 				},
 				{
 					targets: 6,
-					data: "merchantId",
-					title: "商户ID"
-				},
-				{
-					targets: 7,
-					data: "merchantLogo",
-					title: "商户LOGO",
-					render: function (data, type, row, meta) {
-						return buildImg(data);
-					}
-				},
-				{
-					targets: 8,
-					data: "merchantName",
-					title: "商户名称"
-				},
-				{
-					targets: 9,
 					data: "brandId",
 					title: "品牌ID"
 				},
 				{
-					targets: 10,
+					targets: 7,
 					data: "brandName",
 					title: "品牌名称"
 				},
 				{
-					targets: 11,
+					targets: 8,
 					data: "brandLogo",
 					title: "品牌LOGO",
 					render: function (data, type, row, meta) {
@@ -351,32 +231,32 @@
 					}
 				},
 				{
-					targets: 12,
+					targets: 9,
 					data: "type",
 					title: "类别"
 				},
 				{
-					targets: 13,
+					targets: 10,
 					data: "category",
 					title: "类目"
 				},
 				{
-					targets: 14,
+					targets: 11,
+					data: "kind",
+					title: "分类"
+				},
+				{
+					targets: 12,
 					data: "stock",
 					title: "库存余量"
 				},
 				{
-					targets: 15,
-					data: "price",
-					title: "价格"
-				},
-				{
-					targets: 16,
+					targets: 13,
 					data: "sku",
 					title: "SKU编码"
 				},
 				{
-					targets: 17,
+					targets: 14,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -384,12 +264,12 @@
 					}
 				},
 				{
-					targets: 18,
+					targets: 15,
 					data: "remark",
 					title: "备注"
 				},
 				{
-					targets: 19,
+					targets: 16,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -406,133 +286,6 @@
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  
 			return false;
-		});
-
-        $(".btn.btn-info.add").click(function(){
-        	//
-        });
-
-			//保存
-		$(".btn.btn-info.save").click(function(){
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			// var code = form.find("input[name='code']").val();
-			var name = form.find("input[name='name']").val();
-			var type = form.find("input[name='type']").val();
-			var info = form.find("input[name='info']").val();
-			var remark = form.find("input[name='remark']").val();
-			//文件
-			var logo = form.find("input[name='logoFile']").val();
-			var logoBig = form.find("input[name='logoBigFile']").val();
-			var banner = form.find("input[name='bannerFile']").val();
-			var background = form.find("input[name='backgroundFile']").val();
-			//已上传的图片地址
-			var logoImg = form.find("input[name='logo']").val();
-			var logoBigImg = form.find("input[name='logoBig']").val();
-			var bannerImg = form.find("input[name='banner']").val();
-			var backgroundImg = form.find("input[name='background']").val();
-
-			if(name==''|| type==''||info==''||
-					(logo=='' && logoImg=='')
-			){
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return ;
-			}
-
-			var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
-			if (typeof isOK == 'boolean') {
-				return;
-			}
-
-			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
-					async.series({
-						one: function(callback) {
-							if(typeof isOK == 'object'){
-								callback();
-							}else {
-								callback("ERROR");
-							}
-						},
-						two: function(callback){
-							//上传详情图
-							async.eachSeries(Object.keys(isOK), function (item, cb) {
-								var f = isOK[item];
-								upload(item, token, f, function () {
-									//
-								}, function (err) {
-									console.log("上传imageFile异常:" + err);
-									cb(err);
-								}, function (res) {
-									//上传成功
-									if (res != '') {
-										var url = qiniuUrl + "/" + res.key;
-										form.find("input[name='" + res.param + "']").val(url);
-									}
-									cb();
-								});
-							}, function () {
-								callback();
-							});
-						},
-						three: function(callback){
-							//提交保存
-							$.post("/brand_save",$("#saveForm").serialize(),function(data){
-								if(data){
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								}else{
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
-						}
-					}, function(err, results) {
-						console.log("OK");
-					});
-				}else{
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("上传文件错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
-
-		$(".btn.btn-info.edit").click(function(){
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-
-			$.post("/brand_get", {id: activityId.val()}, function (data) {
-				var form = $("#saveForm");
-				form.find("input:not(.notMe)").val("");
-				for (var i in data) {
-					var ele = form.find("input[name='" + i + "']");
-					switch (ele.attr("type")) {
-						case "radio":
-							ele.val([data[i]]);
-							break;
-						default:
-							ele.val(data[i]);
-					}
-					form.find("img[name='" + i + "Img']").attr("src", data[i]);
-					form.find("img[name='" + i + "Img']").show();
-				}
-				form.find(".btn.image").show();
-				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
-			});
 		});
 
         $(".btn.btn-info.del").click(function () {
@@ -576,30 +329,6 @@
 					oTable.fnDraw();
 				}
 			});
-		});
-
-		$(".btn.btn-info.editPrice").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
-			var price = prompt("请输入价格", "0");
-			if (isNaN(price) || price == null) {
-				alert("请输入数字！")
-			} else {
-				$.post("/goods_stock_update_price", {"ids": ids, "price": price}, function (data) {
-					if (data) {
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
-					}
-				});
-			}
 		});
 	});
 	/*]]>*/
