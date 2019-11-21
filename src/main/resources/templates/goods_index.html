@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>商品管理</title>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery-editable-select.min.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">商品管理</h1>
+					<p class="activityDescription"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>商品管理</strong></li>
+					</ol>
+
+				</div>
+
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+							<div class="input-group">
+								<label for="merchantBrandId" class="control-label">品牌</label>
+							</div>
+							<div class="input-group">
+								<select id="merchantBrandId" name="merchantBrandId" class="form-control" style="height:35px">
+								</select>
+							</div>
+							<div class="input-group">
+								<input type="text" name="name" class="form-control" style="height:35px" placeholder="商品名"/>
+							</div>
+							<div class="input-group">
+								<input type="text" name="id" class="form-control" style="height:35px" placeholder="商品ID"/>
+							</div>
+                            <div class="input-group">
+                                <label for="status" class="control-box">状态</label>
+                            </div>
+                            <div class="input-group">
+                                <select id="status" name="status" class="form-control" style="height:35px">
+                                    <option value="" selected="selected">全部</option>
+                                    <option value="1">已上架</option>
+                                    <option value="0">已下架</option>
+                                </select>
+                            </div>
+						</div>
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+                            <div class="input-group">
+                                <label for="type" class="control-box">主分类</label>
+                            </div>
+                            <div class="input-group">
+                                <select id="type" name="type" class="form-control" style="height:35px" onchange="renderCategory(this)">
+                                    <option value="" selected="selected">全部</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="category" class="control-box">子分类</label>
+                            </div>
+                            <div class="input-group">
+                                <select id="category" name="category" class="form-control" style="height:35px">
+                                    <option value="" selected="selected">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
+					</form>
+				</div>
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+				</div>
+				<button class="btn btn-info add" >添加</button>
+				<button class="btn btn-info edit">修改</button>
+				<button class="btn btn-info del">删除</button>
+                <button class="btn btn-info updateSku">修改库存</button>
+			</div>
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">查看详情</h4>
+				</div>
+
+				<div class="modal-body" id="preview_body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="type_and_category_list"/>
+	<script src="https://admin.offway.cn/js/common1.js"></script>
+	<script src="https://admin.offway.cn/assets/js/moment.min.js"></script>
+	<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
+	<script src="https://admin.offway.cn/assets/js/select2/select2.min.js"></script>
+	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
+	<script src="https://admin.offway.cn/assets/js/jquery-editable-select.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+    function appendToPreviewList(one, two, three, four, five, six) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            one +
+            '</div>' +
+            '<div class="col-md-2">' +
+            two +
+            '</div>' +
+            '<div class="col-md-2">' +
+            three +
+            '</div>' +
+            '<div class="col-md-2">' +
+            four +
+            '</div>' +
+            '<div class="col-md-2">' +
+            five +
+            '</div>' +
+            '<div class="col-md-2">' +
+            six +
+            '</div>' +
+            '</div>';
+    }
+
+	function updateStockBatch() {
+		var form = $("#stockForm");
+		console.log(form.serializeArray());
+		$.post("/goods_stock_update_mix", form.serializeArray(), function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+				jQuery('#preview').modal('hide');
+			}
+		});
+	}
+
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
+
+	function checkIt(id) {
+		$.post("/goods_find", {"id": id}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				var mainObj = data["main"];
+				contentStr += appendToPreview("编号:", mainObj["id"]);
+				contentStr += appendToPreview("名称:", mainObj["name"]);
+				contentStr += appendToPreview("一级分类:", mainObj["type"]);
+				contentStr += appendToPreview("二级分类:", mainObj["category"]);
+				contentStr += appendToPreview("商品编码:", mainObj["code"]);
+				contentStr += appendToPreview("材质:", mainObj["material"]);
+				contentStr += appendToPreview("价格:", mainObj["price"]);
+				contentStr += appendToPreview("原价:", mainObj["originalPrice"]);
+				contentStr += appendToPreview("价格区间:", mainObj["priceRange"]);
+				contentStr += appendToPreview("销售数量:", mainObj["saleCount"]);
+				contentStr += appendToPreview("查看数量:", mainObj["viewCount"]);
+				contentStr += appendToPreview("品牌id:", mainObj["brandId"]);
+				contentStr += appendToPreview("品牌名:", mainObj["brandName"]);
+				contentStr += appendToPreview("品牌logo:", buildImg(mainObj["brandLogo"]));
+				contentStr += appendToPreview("商家id:", mainObj["merchantId"]);
+				contentStr += appendToPreview("商家名:", mainObj["merchantName"]);
+				contentStr += appendToPreview("商家logo:", buildImg(mainObj["merchantLogo"]));
+				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
+				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+				contentStr += appendToPreview("备注:", mainObj["remark"]);
+				contentStr += "<hr/>";
+				for (var a in data["propertyList"]) {
+					a = data["propertyList"][a];
+					contentStr += appendToPreview("商品规格名称:", a["name"]);
+					contentStr += appendToPreview("商品属性值:", a["value"]);
+					contentStr += appendToPreview("备注:", a["remark"]);
+					contentStr += appendToPreview("排序:", a["sort"]);
+				}
+				contentStr += "<hr/>";
+				for (var b in data["imageList"]) {
+					b = data["imageList"][b];
+					contentStr += appendToPreview("商品图片:", buildImg(b["imageUrl"]));
+					contentStr += appendToPreview("图片类型:", b["type"]);
+					contentStr += appendToPreview("备注:", b["remark"]);
+					contentStr += appendToPreview("排序:", b["sort"]);
+				}
+				contentStr += "<hr/>";
+				for (var c in data["stockList"]) {
+					c = data["stockList"][c];
+					contentStr += appendToPreview("图片:", buildImg(c["image"]));
+					contentStr += appendToPreview("价格:", c["price"]);
+					contentStr += appendToPreview("sku:", c["sku"]);
+					contentStr += appendToPreview("stock:", c["stock"]);
+					contentStr += appendToPreview("备注:", c["remark"]);
+				}
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function checkSku(id) {
+		window.open('/goods_stock_index.html?id=' + id, "_blank");
+		// window.location.href = '/goods_stock_index.html?id=' + id;
+	}
+
+	function bindTypeSelector(data) {
+		var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var type in data) {
+			type = data[type];
+			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+		}
+		$("#type").html(typeStr);
+		bindCategorySelector(data[0]["sub"]);
+	}
+
+	function bindCategorySelector(data) {
+		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+		}
+		$("#category").html(categoryStr);
+	}
+
+	function bindBrandSelector(data) {
+		var categoryStr = "<option value=\"0\" selected=\"selected\">全部</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["brandId"]).replace("KEY", category["brandName"]);
+		}
+		$("#merchantBrandId").html(categoryStr);
+		$("#merchantBrandId").editableSelect();
+	}
+
+	function renderCategory(self) {
+		var jsonStr = $("#type_and_category_list").val();
+		var list = JSON.parse(jsonStr);
+		var selectedId = $(self).val();
+		for (var type in list) {
+			if (selectedId == list[type]["name"]) {
+				bindCategorySelector(list[type]["sub"]);
+				break;
+			}
+		}
+	}
+
+	function renderBrand() {
+		// $.getJSON("/merchant_brand_list", {}, function (data) {
+		// 	bindBrandSelector(data);
+		// });
+	}
+
+	function upIt(id, self) {
+		$.post("/goods_up", {"id": id}, function (data) {
+			if (data) {
+				$(self).val("下架");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				//bind new
+				$(self).on("click", function () {
+					downIt(id, self);
+				});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function downIt(id, self) {
+		$.post("/goods_down", {"id": id}, function (data) {
+			if (data) {
+				$(self).val("上架");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				//bind new
+				$(self).on("click", function () {
+					upIt(id, self);
+				});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	var table_global;
+	var qiniuUrl = [[${qiniuUrl}]];
+    jQuery(document).ready(function($)
+	{
+		var oTable;
+		renderBrand();
+		oTable = $("#example-1").dataTable({
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/goods_list",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+					}
+				},
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "name",
+					title: "名称"
+				},
+				{
+					targets: 3,
+					data: "image",
+					title: "封面图片",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 4,
+					data: "brandId",
+					title: "品牌ID"
+				},
+				{
+					targets: 5,
+					data: "brandName",
+					title: "品牌名称"
+				},
+				{
+					targets: 6,
+					data: "brandLogo",
+					title: "品牌LOGO",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 7,
+					data: "type",
+					title: "类别"
+				},
+				{
+					targets: 8,
+					data: "category",
+					title: "类目"
+				},
+                {
+                    targets: 9,
+                    data: "kind",
+                    title: "种类"
+                },
+				{
+					targets: 10,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
+					}
+				},
+				{
+					targets: 11,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 12,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+						str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+						return str;
+					}
+				},
+				{
+					targets: 13,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						var str = "";
+						if (full["status"] == "0") {
+							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+						} else {
+							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+						}
+						return str;
+					}
+				}
+			]
+		});
+		table_global = oTable;
+
+		$.getJSON("/type_and_category_list", {}, function (data) {
+			$("#type_and_category_list").val(JSON.stringify(data));
+			bindTypeSelector(data);
+		});
+
+		$(".searchBtn").click(function(){
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
+		$(".btn.btn-info.add").click(function () {
+			window.location.href = '/goods_add.html';
+		});
+
+        $(".btn.btn-info.updateSku").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+            $.post("/goods_stock_list_mix", {"ids": ids}, function (data) {
+                if (data) {
+                    var preview = $("#preview_body");
+                    var contentStr = "<form id='stockForm'>";
+                    contentStr += "<hr/>";
+                    for (var a in data) {
+                        a = data[a];
+                        var idEle = '<input type="hidden" name="id" value="VV" />'.replace("VV", a["id"]);
+                        var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
+                        var skuEle = 'SKU编码:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["sku"]);
+                        var remarkEle = '备注:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["remark"]);
+                        var stockEle = '库存数:<input type="text" name="stock" value="VV" />'.replace("VV", a["stock"]);
+						contentStr += appendToPreviewList(imgEle, idEle, skuEle, remarkEle, stockEle, "");
+                        contentStr += "<hr/>";
+                    }
+                    var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updateStockBatch()" />';
+					contentStr += appendToPreviewList("", "", "", "", "", btnEle);
+                    preview.html(contentStr + "</form>");
+                    jQuery('#preview').modal({backdrop: 'static', keyboard: false});
+                    toastr.success("操作已成功！", "温馨提示");
+                } else {
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+            return false;
+        });
+
+		$(".btn.btn-info.edit").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+			$.post("/goods_findOne", {"id": activityId[0].value}, function (data) {
+				if (data) {
+                    if (data["status"] == "1") {
+                        toastr.error("操作失败,已上架商品不允许编辑", "温馨提示");
+                    } else {
+                        window.open('/goods_edit.html?id=' + activityId[0].value, "_blank");
+                        // window.location.href = '/goods_edit.html?id=' + activityId[0].value;
+                    }
+				}
+			});
+		});
+
+		$(".btn.btn-info.del").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if(activityId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+			var confirm = window.confirm("你确定要这么做？");
+			if (confirm == false) {
+				return;
+			}
+			var ids = [];
+			activityId.each(function(i,e){
+				ids.push(e.value);
+			});
+
+			$.post("/goods_del", {ids: ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				} else {
+					toastr.error("您无权操作！", "温馨提示");
+				}
+			});
+		});
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>

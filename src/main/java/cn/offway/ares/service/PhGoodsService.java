@@ -1,10 +1,10 @@
 package cn.offway.ares.service;
 
-import java.util.List;
-
 import cn.offway.ares.domain.PhGoods;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 /**
  * 商品表Service接口
@@ -33,4 +33,8 @@ public interface PhGoodsService {
     String delete(List<Long> goodsIds);
 
     List<PhGoods> findAll(String name, Object value, String brandId);
+
+    Page<PhGoods> findAll(String name, Long id, String status, String type, String category, String kind, Pageable pageable);
+
+    void del(Long id);
 }

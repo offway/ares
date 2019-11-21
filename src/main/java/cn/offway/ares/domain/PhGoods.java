@@ -54,7 +54,7 @@ public class PhGoods implements Serializable {
     private String remark;
 
     /** 类目二 **/
-    private String categoryDetails;
+    private String kind;
 
 
     @Id
@@ -178,12 +178,12 @@ public class PhGoods implements Serializable {
     }
 
     @Column(name = "category_details", length = 20)
-    public String getCategoryDetails() {
-        return categoryDetails;
+    public String getKind() {
+        return kind;
     }
 
-    public void setCategoryDetails(String categoryDetails) {
-        this.categoryDetails = categoryDetails;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
 }
