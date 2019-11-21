@@ -66,7 +66,7 @@ public class PhOrderGoods implements Serializable {
     private String mailNo;
 
     /** 库存ID **/
-    private String stockId;
+    private Long stockId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -225,11 +225,11 @@ public class PhOrderGoods implements Serializable {
     }
 
     @Column(name = "stock_id", length = 50)
-    public String getStockId() {
+    public Long getStockId() {
         return stockId;
     }
 
-    public void setStockId(String stockId) {
+    public void setStockId(Long stockId) {
         this.stockId = stockId;
     }
 }
