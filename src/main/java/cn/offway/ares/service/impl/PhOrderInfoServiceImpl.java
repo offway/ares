@@ -7,6 +7,7 @@ import cn.offway.ares.dto.sf.ReqAddOrder;
 import cn.offway.ares.repository.PhOrderGoodsRepository;
 import cn.offway.ares.repository.PhOrderInfoRepository;
 import cn.offway.ares.service.PhOrderExpressInfoService;
+import cn.offway.ares.service.PhOrderGoodsService;
 import cn.offway.ares.service.PhOrderInfoService;
 import cn.offway.ares.service.SfExpressService;
 import cn.offway.ares.utils.JsonResult;
@@ -42,13 +43,12 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
     @Autowired
     private PhOrderInfoRepository phOrderInfoRepository;
-
     @Autowired
     private SfExpressService sfExpressService;
-
+    @Autowired
+    private PhOrderGoodsService orderGoodsService;
     @Autowired
     private PhOrderExpressInfoService phOrderExpressInfoService;
-
     @Autowired
     private PhOrderGoodsRepository phOrderGoodsRepository;
 
@@ -178,17 +178,15 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
 
     @Override
-    public JsonResult saveOrder(String orderNo) {
-        /**
+    public void saveOrder(String orderNo, String[] ids) {
+        /*
          * 1.修改订单状态
          * 2.快递预约上门
          */
-
         PhOrderInfo phOrderInfo = findByOrderNo(orderNo);
         if ("1".equals(phOrderInfo.getStatus())) {
-            return new JsonResult("500", "订单已发货！", null);
+            return;
         }
-
 
         PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByOrderNoAndType(orderNo, "0");
         phOrderExpressInfo.setExpressOrderNo(generateOrderNo("SF"));
@@ -210,15 +208,25 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
         addOrder.setSendstarttime("");
         JsonResult result = sfExpressService.addOrder(addOrder);
         if ("200".equals(result.getCode())) {
+            long batch = -1;
             String mailNo = String.valueOf(result.getData());
             phOrderExpressInfo.setMailNo(mailNo);
             phOrderExpressInfo.setStatus("1");//已下单
             phOrderExpressInfoService.save(phOrderExpressInfo);
             phOrderInfo.setStatus("1");
             save(phOrderInfo);
+            for (String id : ids) {
+                PhOrderGoods orderGoods = orderGoodsService.findOne(Long.valueOf(id));
+                if (orderGoods != null) {
+                    if (batch < 0) {
+                        batch = orderGoodsService.getMaxBatch(orderGoods.getOrderNo());
+                    }
+                    orderGoods.setMailNo(mailNo);
+                    orderGoods.setBatch(batch + 1);
+                    orderGoodsService.save(orderGoods);
+                }
+            }
         }
-        return result;
-
     }
 
 

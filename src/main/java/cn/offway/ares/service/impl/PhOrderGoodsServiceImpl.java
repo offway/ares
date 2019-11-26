@@ -28,43 +28,53 @@ import java.util.List;
 @Service
 public class PhOrderGoodsServiceImpl implements PhOrderGoodsService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhOrderGoodsRepository phOrderGoodsRepository;
-	
-	@Override
-	public PhOrderGoods save(PhOrderGoods phOrderGoods){
-		return phOrderGoodsRepository.save(phOrderGoods);
-	}
-	
-	@Override
-	public PhOrderGoods findOne(Long id){
-		return phOrderGoodsRepository.findOne(id);
-	}
-	
-	@Override
-	public List<PhOrderGoods> findByOrderNo(String orderNo){
-		return phOrderGoodsRepository.findByOrderNoOrderByBrandId(orderNo);
-	}
+    @Autowired
+    private PhOrderGoodsRepository phOrderGoodsRepository;
 
-	@Override
-	public Page<PhOrderGoods> findByBrandId(final Long brandId, Pageable page){
-		return phOrderGoodsRepository.findAll(new Specification<PhOrderGoods>() {
+    @Override
+    public PhOrderGoods save(PhOrderGoods phOrderGoods) {
+        return phOrderGoodsRepository.save(phOrderGoods);
+    }
 
-			@Override
-			public Predicate toPredicate(Root<PhOrderGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-				List<Predicate> params = new ArrayList<Predicate>();
+    @Override
+    public PhOrderGoods findOne(Long id) {
+        return phOrderGoodsRepository.findOne(id);
+    }
 
-				if(!"".equals(brandId)){
-					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
-				}
+    @Override
+    public List<PhOrderGoods> findByOrderNo(String orderNo) {
+        return phOrderGoodsRepository.findByOrderNoOrderByBrandId(orderNo);
+    }
 
-				Predicate[] predicates = new Predicate[params.size()];
-				criteriaQuery.where(params.toArray(predicates));
+    @Override
+    public int getMaxBatch(String oid) {
+        Object o = phOrderGoodsRepository.getMaxBatch(oid);
+        if (o != null) {
+            return Integer.valueOf(String.valueOf(o));
+        } else {
+            return 0;
+        }
+    }
 
-				return null;
-			}
-		}, page);
-	}
+    @Override
+    public Page<PhOrderGoods> findByBrandId(final Long brandId, Pageable page) {
+        return phOrderGoodsRepository.findAll(new Specification<PhOrderGoods>() {
+
+            @Override
+            public Predicate toPredicate(Root<PhOrderGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+
+                if (!"".equals(brandId)) {
+                    params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
+                }
+
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+
+                return null;
+            }
+        }, page);
+    }
 }

@@ -12,13 +12,15 @@ import java.util.List;
  * @author wn
  * @version $v: 1.0.0, $time:2018-02-12 11:26:00 Exp $
  */
-public interface PhOrderGoodsService{
+public interface PhOrderGoodsService {
 
-	PhOrderGoods save(PhOrderGoods phOrderGoods);
-	
-	PhOrderGoods findOne(Long id);
+    PhOrderGoods save(PhOrderGoods phOrderGoods);
 
-	List<PhOrderGoods> findByOrderNo(String orderNo);
+    PhOrderGoods findOne(Long id);
 
-	Page<PhOrderGoods> findByBrandId(Long brandId, Pageable page);
+    List<PhOrderGoods> findByOrderNo(String orderNo);
+
+    Page<PhOrderGoods> findByBrandId(Long brandId, Pageable page);
+
+    int getMaxBatch(String oid);
 }

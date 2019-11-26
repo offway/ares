@@ -5,7 +5,6 @@
 	<title>待发货订单</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<link rel="stylesheet" href="assets/js/jquery-editable-select-master/jquery-editable-select.css"/>
 	<script src="js/qiniu.min.js"></script>
 	<style type="text/css">
@@ -60,7 +59,7 @@
 						<div class="form-group ">
 							<div class="input-group">
 								<select name="isOffway" class="form-control" style="height:35px">
-									<option value="">是否自营</option>
+									<option value="">是否限定</option>
 									<option value="0">否</option>
 									<option value="1">是</option>
 								</select>
@@ -101,14 +100,10 @@
 				<button class="btn btn-info deliver">确认发货</button>
 				<button class="btn btn-info cancel">取消订单</button>
 			</div>
-			
-					
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
-	
 	<div th:replace="body-under"></div>
-	
 	<div class="modal fade in" data-backdrop="static" id="modal-rule">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
@@ -164,17 +159,13 @@
 			</div>
 		</div>
 	</div>
-	
-	
 	<div class="modal fade in" data-backdrop="static" id="modal-goods">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
-				
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4 class="modal-title">商品明细</h4>
 				</div>
-				
 				<div class="modal-body">
 					<table class="table table-bordered table-striped">
 						<thead>
@@ -188,47 +179,51 @@
 								<th>颜色</th>
 							</tr>
 						</thead>
-						
 						<tbody>
 						</tbody>
 					</table>
-									
 				</div>
-				
 				<div class="modal-footer">
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
-				
 			</div>
 		</div>
 	</div>
-	
 	<div class="modal fade" id="modal-deliver">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<input type="hidden" id="orderid"/>
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">温馨提示</h4>
+					<h4 class="modal-title">发货</h4>
 				</div>
-				
 				<div class="modal-body">
-					请确认要发货吗？
+					<table class="table table-bordered table-striped">
+						<thead>
+						<tr>
+							<th>ID</th>
+							<th>SKU编码</th>
+							<th style="width:120px">商品图片</th>
+							<th>商品名称</th>
+							<th>品牌名称</th>
+							<th>尺码</th>
+							<th>颜色</th>
+							<th>状态</th>
+						</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+					<button type="button" class="btn btn-info" onclick="submitDeliver()">发货</button>
 				</div>
-				
 				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-info submit-deliver">确定</button>
-					
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	
 	<div class="modal fade" id="modal-cancel">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<input type="hidden" id="orderid"/>
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4 class="modal-title">温馨提示</h4>
@@ -246,15 +241,34 @@
 			</div>
 		</div>
 	</div>
-	
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
-	/*<![CDATA[*/	
+	/*<![CDATA[*/
+
+	function submitDeliver() {
+		var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
+		if (activityPrizeId.length == 0) {
+			toastr.error("请至少选择一条数据操作", "温馨提示");
+		} else {
+			var ids = [];
+			activityPrizeId.each(function (i, e) {
+				ids.push(e.value);
+			});
+			var expressNo = prompt("非平台发货请输入快递单号，平台发货请留空", "");
+			$.post("/deliver-save", {"ids": ids, "expressNo": expressNo, "orderNo": ORDER_NO}, function (data) {
+				if (data) {
+					jQuery('#modal-deliver').modal('hide');
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw(oTable.fnSettings());
+				} else {
+					toastr.error("操作失败,请联系管理员", "温馨提示");
+				}
+			});
+		}
+	}
+	var ORDER_NO;
 	jQuery(document).ready(function($)
 	{
 		$("#brandId").editableSelect();
@@ -262,24 +276,21 @@
 			language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
             sAjaxSource : "/deliver-data",//通过ajax实现分页的url路径。
             fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
+				var searchArray = $(".form-inline").serializeArray();
 				var brandId = $("#brandId").parent().find("li.es-visible").val();
-				if (brandId != "0"){
+				if (brandId != "0") {
 					searchArray.push({"name": "brandId", "value": brandId});
-				}else {
+				} else {
 					searchArray.push({"name": "brandId", "value": ""});
 				}
-                $.merge(aData, searchArray);
+				$.merge(aData, searchArray);
             },
-            order: [[ 0, "desc" ]],columnDefs: [
+			columnDefs: [
 				{	
 					targets: 0,
 				    data: "orderNo",
@@ -333,7 +344,7 @@
             	{
                		targets: 8,
 	                data: "isOffway",
-	                title: "是否自营",
+	                title: "是否限定",
                     render: function (data, type, row, meta) {
                         return "1"==data?"是":"否";
                     }
@@ -376,7 +387,6 @@
                         return "<a href='javascript:void(0)' class='showGoods' orderNo='"+data+"' color='blue'>查看</a>";
                     }
             	},
-            	
                 {
                     targets: 13,
                     data: "createTime",
@@ -387,165 +397,126 @@
                 }
                ]
 		});
-		
-		$(".searchBtn").click(function(){
+
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw();  //or fnReloadAjax()  
 			return false;
 		});
-		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
+		$('#example-1').on('click', "#checkbox-all", function () {
 			var obj = $(this);
-			$("input[name='authId']").each(function(i,e){
-				 this.checked = obj[0].checked;
+			$("input[name='authId']").each(function (i, e) {
+				this.checked = obj[0].checked;
 			});
-		})
-			 
-			
-		$(".btn.btn-info.addr").click(function(){
+		});
+		$(".btn.btn-info.addr").click(function () {
 			var activityPrizeId = $("input[name='authId']:checked");
-			if(activityPrizeId.length!=1){
+			if (activityPrizeId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
-				return ;
+				return;
 			}
-			
+
 			activityPrizeId = activityPrizeId[0].value;
-			
+
 			var form = $("#authForm");
-			form.find("input[name='id']").val(activityPrizeId); 
-			$.get("/deliver-one",{orderNo:activityPrizeId},function(data){
+			form.find("input[name='id']").val(activityPrizeId);
+			$.get("/deliver-one", {orderNo: activityPrizeId}, function (data) {
 				/* form.find("input[name='toProvince']").val(data.toProvince);  */
-				form.find("input[name='toRealName']").val(data.toRealName); 
-				form.find("input[name='toPhone']").val(data.toPhone); 
-				form.find("input[name='toContent']").val(data.toContent); 
+				form.find("input[name='toRealName']").val(data.toRealName);
+				form.find("input[name='toPhone']").val(data.toPhone);
+				form.find("input[name='toContent']").val(data.toContent);
 				jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
 			});
-			
 		});
-		 
-		 
-		 $("body").on("click","a.showGoods",function(){
-			 var orderNo = $(this).attr("orderNo");
-			 $.get("/deliver-goods",{orderNo:orderNo},function(data){
+		$("body").on("click", "a.showGoods", function () {
+			var orderNo = $(this).attr("orderNo");
+			$.get("/deliver-goods", {orderNo: orderNo}, function (data) {
 				var html = "";
 				$('#modal-goods tbody').html("");
-				 $.each(data,function(i,e){
-					 html+="<tr><td>"+e.sku+"</td><td><img src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.brandName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
-				 });
-				 $('#modal-goods tbody').html(html);
-			 
-			 });
-			 
-			 jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
-		 });
-		 
-		
-		$(".btn.btn-info.updateAddr").click(function(){
-			
+				$.each(data, function (i, e) {
+					html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
+				});
+				$('#modal-goods tbody').html(html);
+			});
+			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+		});
+		$(".btn.btn-info.updateAddr").click(function () {
 			var form = $("#authForm");
-			/* var toProvince = form.find("input[name='toProvince']").val();*/ 
-			var toRealName = form.find("input[name='toRealName']").val(); 
-			var toPhone = form.find("input[name='toPhone']").val();  
-			var toContent = form.find("input[name='toContent']").val(); 
+			/* var toProvince = form.find("input[name='toProvince']").val();*/
+			var toRealName = form.find("input[name='toRealName']").val();
+			var toPhone = form.find("input[name='toPhone']").val();
+			var toContent = form.find("input[name='toContent']").val();
 
 			/* if(''==toProvince ||''==toCity||''==toCounty||''==toContent){ */
-				
-			if(''==toRealName ||''==toPhone||''==toContent){
+
+			if ('' == toRealName || '' == toPhone || '' == toContent) {
 				toastr.error("请填写完整信息", "温馨提示");
 				return false;
 			}
-			$.post("/deliver-updateAddr",form.serialize(),function(data){
-				if(data){
+			$.post("/deliver-updateAddr", form.serialize(), function (data) {
+				if (data) {
 					jQuery('#modal-rule').modal('hide');
 					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings()); 
+					oTable.fnDraw(oTable.fnSettings());
 				}
 			})
-			
 		});
-		
-		$(".btn.btn-info.deliver").click(function(){
+		$(".btn.btn-info.deliver").click(function () {
 			var activityPrizeId = $("input[name='authId']:checked");
-			if(activityPrizeId.length!=1){
+			if (activityPrizeId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
-			}else{
-				 jQuery('#modal-deliver').modal('show', {backdrop: 'fade'});
-			}
-		});
-		
-		
-		var sub = false;
-		$(".btn.btn-info.submit-deliver").click(function(){
-			
-			if(!sub){
-				sub = true;
-				var activityPrizeId = $("input[name='authId']:checked");
-				if(activityPrizeId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
-					sub = false;
-				}else{
-					
-					activityPrizeId = activityPrizeId[0].value;
-					
-					$.post("/deliver-save",{orderNo:activityPrizeId},function(data){
-						sub = false;
-						if(data.code=="200"){
-							jQuery('#modal-deliver').modal('hide');
-							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw(oTable.fnSettings()); 
-						}else{
-							toastr.error(data.msg, "温馨提示");
-						}
+			} else {
+				activityPrizeId = activityPrizeId[0].value;
+				ORDER_NO = activityPrizeId;
+				$.get("/deliver-goods", {orderNo: activityPrizeId}, function (data) {
+					var tbody = $('#modal-deliver tbody');
+					var html = "";
+					tbody.html("");
+					$.each(data, function (i, e) {
+						html += "<tr>" +
+								"<td><input type='checkbox' value='VVV' name='id' DISABLE/>".replace("VVV", e.id).replace("DISABLE", (e.mailNo ? "disabled='disabled'" : "")) + "</td>" +
+								"<td>" + e.sku + "</td>" +
+								"<td><img src=\"" + e.image + "\" /></td>" +
+								"<td>" + e.goodsName + "</td>" +
+								"<td>" + e.brandName + "</td>" +
+								"<td>" + e.size + "</td>" +
+								"<td>" + e.color + "</td>" +
+								"<td>" + (e.mailNo ? "已寄出" : "未寄出") + "</td>" +
+								"</tr>";
 					});
-				}
-				
+					tbody.html(html);
+				});
+				jQuery('#modal-deliver').modal('show', {backdrop: 'fade'});
 			}
-			
 		});
-		
-		
-		$(".btn.btn-info.cancel").click(function(){
+		$(".btn.btn-info.cancel").click(function () {
 			var activityPrizeId = $("input[name='authId']:checked");
-			if(activityPrizeId.length!=1){
+			if (activityPrizeId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
-			}else{
-				 jQuery('#modal-cancel').modal('show', {backdrop: 'fade'});
+			} else {
+				jQuery('#modal-cancel').modal('show', {backdrop: 'fade'});
 			}
-			
+
 		});
-		
-		var issub = false;
-		$(".btn.btn-info.submit-cancel").click(function(){
-			
-			if(!issub){
-				issub = true;
-				var activityPrizeId = $("input[name='authId']:checked");
-				if(activityPrizeId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
-					issub = false;
-				}else{
-					
-					activityPrizeId = activityPrizeId[0].value;
-					
-					$.post("/deliver-cancel",{orderNo:activityPrizeId},function(data){
-						issub = false;
-						if(data){
-							jQuery('#modal-cancel').modal('hide');
-							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw(oTable.fnSettings()); 
-						}else{
-							toastr.error("操作失败,请联系管理员", "温馨提示");
-						}
-					});
-				}
-				
+		$(".btn.btn-info.submit-cancel").click(function () {
+			var activityPrizeId = $("input[name='authId']:checked");
+			if (activityPrizeId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+			} else {
+				activityPrizeId = activityPrizeId[0].value;
+				$.post("/deliver-cancel", {orderNo: activityPrizeId}, function (data) {
+					if (data) {
+						jQuery('#modal-cancel').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw(oTable.fnSettings());
+					} else {
+						toastr.error("操作失败,请联系管理员", "温馨提示");
+					}
+				});
 			}
-			
 		});
-		
 	});
 	/*]]>*/
 	</script>
 </body>
-
 </html>

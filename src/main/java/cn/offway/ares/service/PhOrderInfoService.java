@@ -23,7 +23,7 @@ public interface PhOrderInfoService {
 
     Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String status, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Pageable page);
 
-    JsonResult saveOrder(String orderNo);
+    void saveOrder(String orderNo, String[] ids);
 
     PhOrderInfo findByOrderNo(String orderNo);
 
