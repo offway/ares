@@ -213,10 +213,45 @@
 						<tbody>
 						</tbody>
 					</table>
-					<button type="button" class="btn btn-info" onclick="submitDeliver()">发货</button>
+					<button type="button" class="btn btn-info" onclick="pickDeliver()">发货</button>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="modal-method">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">温馨提示</h4>
+				</div>
+
+				<div class="modal-body">
+					<form role="form" id="methodForm">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>平台发货<input type="radio" name="method" checked="checked" onclick="toggleMethod(true)" class="form-control" /></label>
+									<label>非平台发货<input type="radio" name="method" onclick="toggleMethod(false)" class="form-control" /></label>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="method_expressNo" style="display: none">
+							<div class="col-md-12">
+								<div class="form-group">
+									<input type="text" name="expressNo" class="form-control" placeholder="快递单号"/>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info" onclick="submitDeliver()">确定</button>
 				</div>
 			</div>
 		</div>
@@ -247,25 +282,42 @@
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
+	function toggleMethod(v) {
+		var div = $("#method_expressNo");
+		if (v) {
+			div.hide();
+			div.find("input[name='expressNo']").val("");
+		} else {
+			div.show();
+		}
+	}
+
 	function submitDeliver() {
+		var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
+		var ids = [];
+		activityPrizeId.each(function (i, e) {
+			ids.push(e.value);
+		});
+		// var expressNo = prompt("非平台发货请输入快递单号，平台发货请留空", "");
+		var expressNo = $("#modal-method").find("input[name='expressNo']").val();
+		$.post("/deliver-save", {"ids": ids, "expressNo": expressNo, "orderNo": ORDER_NO}, function (data) {
+			if (data) {
+				jQuery('#modal-method').modal('hide');
+				jQuery('#modal-deliver').modal('hide');
+				toastr.success("操作已成功！", "温馨提示");
+				oTable.fnDraw(oTable.fnSettings());
+			} else {
+				toastr.error("操作失败,请联系管理员", "温馨提示");
+			}
+		});
+	}
+
+	function pickDeliver() {
 		var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
 		if (activityPrizeId.length == 0) {
 			toastr.error("请至少选择一条数据操作", "温馨提示");
 		} else {
-			var ids = [];
-			activityPrizeId.each(function (i, e) {
-				ids.push(e.value);
-			});
-			var expressNo = prompt("非平台发货请输入快递单号，平台发货请留空", "");
-			$.post("/deliver-save", {"ids": ids, "expressNo": expressNo, "orderNo": ORDER_NO}, function (data) {
-				if (data) {
-					jQuery('#modal-deliver').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings());
-				} else {
-					toastr.error("操作失败,请联系管理员", "温馨提示");
-				}
-			});
+			jQuery('#modal-method').modal('show', {backdrop: 'fade'});
 		}
 	}
 	var ORDER_NO;
