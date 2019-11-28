@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/selectize.bootstrap3.css"/>
 	<script src="js/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -177,6 +178,24 @@
 							</div>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group" onclick="checkIt(false)">
+								<label class="control-label">发货地址</label>
+								<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
+								<input type="hidden" class="form-control" name="address_send_jsonStr"/>
+								<input type="hidden" class="form-control" name="addrId"/>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group" onclick="checkIt(true)">
+								<label class="control-label">退货地址</label>
+								<input type="text" class="form-control" readonly="readonly" name="address_back" placeholder="退货地址"/>
+								<input type="hidden" class="form-control" name="address_back_jsonStr"/>
+								<input type="hidden" class="form-control" name="returnAddrId"/>
+							</div>
+						</div>
+					</div>
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -187,6 +206,10 @@
 			</div>
 		</div>
 	</div>
+
+	<div id="preview" style="display: none;
+    position: fixed;top: 190px;left: 650px;background: white;overflow: hidden;border: solid;width: 700px;height: 200px;z-index: 1050;">
+	</div>
 	
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
@@ -194,6 +217,9 @@
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/address.js"></script>
+	<script src="https://admin.offway.cn/assets/js/distpicker.js"></script>
+	<script src="https://admin.offway.cn/assets/js/selectize.min.js"></script>
+	<script src="https://admin.offway.cn/assets/js/jquery.base64.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -216,6 +242,104 @@
 					putExtra, config);
 			var subscription = observable.subscribe(next, error, complete);
 		}
+	}
+
+	function checkIt(isBack) {
+		var preview = $("#preview");
+		var contentStr = "\t<div id=\"distpicker\">\n" +
+				"\t\t<select name='p' ></select>\n" +
+				"\t\t<select name='c' ></select>\n" +
+				"\t\t<select name='d' ></select>\n" +
+				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
+				// "\t\t<input type=\"text\" name='telephone' placeholder='手机号'/>\n" +
+				"\t\t<select style='height: 35px;width: 300px' name=\"telephone\" id=\"telephone\"\n" +
+				"\t\tmultiple=\"multiple\"></select>" +
+				"\t\t<input type=\"text\" name='real_name' placeholder='XXX'/>\n".replace("XXX", isBack ? "收件人" : "发件人") +
+				"\t</div>";
+		if (isBack) {
+			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(true)" />';
+		} else {
+			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(false)" />';
+		}
+		contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
+		preview.html(contentStr);
+		//render
+		var jsonStr = "";
+		if (isBack) {
+			jsonStr = $("input[name='address_back_jsonStr']").val();
+		} else {
+			jsonStr = $("input[name='address_send_jsonStr']").val();
+		}
+		var phoneEle = preview.find("select[name='telephone']");
+		var phoneStr = "";
+		var phoneArr = [];
+		if (jsonStr != '') {
+			var jsonObj = JSON.parse(jsonStr);
+			preview.find("input[name='location']").val(jsonObj["content"]);
+			preview.find("input[name='real_name']").val(jsonObj["realName"]);
+			phoneArr = jsonObj["phone"].split(",");
+			for (var i in phoneArr) {
+				i = phoneArr[i];
+				phoneStr += '<option value="VV">KK</option>'.replace("VV", i).replace("KK", i);
+			}
+			phoneEle.html(phoneStr);
+			$("#distpicker").distpicker({
+				province: jsonObj["province"],
+				city: jsonObj["city"],
+				district: jsonObj["county"]
+			});
+		} else {
+			$("#distpicker").distpicker({
+				province: '---- 所在省 ----',
+				city: '---- 所在市 ----',
+				district: '---- 所在区 ----'
+			});
+		}
+		phoneEle.selectize({
+			// "plugins": ['drag_drop', 'remove_button'],
+			"items": phoneArr,
+			"addPrecedence": true,
+			"persist": false,
+			"create": true,
+			"maxItems": null,
+			"delimiter": ",",
+			"hideSelected": true,
+			"sortField": "text",
+			"searchField": ['text'],
+			"placeholder": "手机号"
+		});
+		preview.show();
+	}
+
+	function closeAndSaveIt(isBack) {
+		var that = $("#preview");
+		var p = that.find("select[name='p']").val();
+		var c = that.find("select[name='c']").val();
+		var d = that.find("select[name='d']").val();
+		var location = that.find("input[name='location']").val();
+		var telephone = that.find("select[name='telephone']").val().join(",");
+		var real_name = that.find("input[name='real_name']").val();
+		var json = {
+			"realName": real_name,
+			"phone": telephone,
+			"province": p,
+			"city": c,
+			"county": d,
+			"content": location
+		};
+		if (isBack) {
+			$("input[name='address_back_jsonStr']").val(JSON.stringify(json));
+			$("input[name='address_back']").val(p + "" + c + "" + d + "" + location);
+		} else {
+			$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
+			$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
+		}
+		that.hide();
+	}
+
+	function closeIt() {
+		var that = $("#preview");
+		that.hide();
 	}
 
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -408,7 +532,6 @@
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
-
 					upload("background", token, backgroundFile, function (res) {
 					}, function (err) {
 						console.log("上传backgroundFile异常:" + err);
@@ -461,7 +584,6 @@
 				return;
 			}
 
-
 			$.post("/brand-one", {id: brandId.val()}, function (data) {
 				var form = $("#saveForm");
 
@@ -471,7 +593,6 @@
 				form.find("input[name='realName']").val(data.realName);
 				form.find("input[name='phone']").val(data.phone);
 				form.find("[name='content']").val(data.content);
-
 
 				addressInit('province', 'city', 'county', data.province, data.city, data.county);
 
@@ -488,7 +609,6 @@
 					form.find("img[name='logoImage']").attr("src", data.logo);
 					form.find("img[name='logoImage']").show();
 					form.find(".btn.logo").show();
-
 				}
 
 				if ('' != data.background) {
@@ -496,14 +616,9 @@
 					form.find("img[name='backgroundImage']").attr("src", data.background);
 					form.find("img[name='backgroundImage']").show();
 					form.find(".btn.background").show();
-
 				}
-
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-
 			});
-
-
 		});
 
 		$("body").on("click", ".imageShow button", function () {
