@@ -57,10 +57,10 @@ public class PhBrand implements Serializable {
     private String status;
 
     /** 发货地址ID[见ph_address.id] **/
-    private String addrId;
+    private Long addrId;
 
     /** 退货地址ID[见ph_address.id] **/
-    private String returnAddrId;
+    private Long returnAddrId;
 
 
     @Id
@@ -193,20 +193,20 @@ public class PhBrand implements Serializable {
     }
 
     @Column(name = "addr_id", length = 11)
-    public String getAddrId() {
+    public Long getAddrId() {
         return addrId;
     }
 
-    public void setAddrId(String addrId) {
+    public void setAddrId(Long addrId) {
         this.addrId = addrId;
     }
 
     @Column(name = "return_addr_id", length = 11)
-    public String getReturnAddrId() {
+    public Long getReturnAddrId() {
         return returnAddrId;
     }
 
-    public void setReturnAddrId(String returnAddrId) {
+    public void setReturnAddrId(Long returnAddrId) {
         this.returnAddrId = returnAddrId;
     }
 
