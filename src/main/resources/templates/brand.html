@@ -603,7 +603,6 @@
 				form.find("input[name='logo']").val(data.logo);
 				form.find("input[name='background']").val(data.background);
 
-
 				if ('' != data.logo) {
 					form.find("input[name='logoFile']").hide();
 					form.find("img[name='logoImage']").attr("src", data.logo);
@@ -616,6 +615,20 @@
 					form.find("img[name='backgroundImage']").attr("src", data.background);
 					form.find("img[name='backgroundImage']").show();
 					form.find(".btn.background").show();
+				}
+				var address = data["address"];
+				form.find("input[name='addrId']").val(data["addrId"]);
+				if (address && typeof address == 'object') {
+					//发货地址
+					form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
+					form.find("input[name='address_send_jsonStr']").val(address["remark"]);
+				}
+				var addressBack = data["addressBack"];
+				form.find("input[name='returnAddrId']").val(data["returnAddrId"]);
+				if (addressBack && typeof addressBack == 'object') {
+					//退货地址
+					form.find("input[name='address_back']").val(addressBack["province"] + "" + addressBack["city"] + "" + addressBack["county"] + "" + addressBack["content"]);
+					form.find("input[name='address_back_jsonStr']").val(addressBack["remark"]);
 				}
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 			});
