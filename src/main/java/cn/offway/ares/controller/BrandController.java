@@ -78,13 +78,18 @@ public class BrandController {
         try {
             phBrand.setCreateTime(new Date());
             phBrand.setStatus("1");
+            PhBrand brandSaved = phBrandService.save(phBrand);
             //发货地址
-            PhAddressBrand addressObj = saveAddress(address_send_jsonStr, phBrand.getAddrId());
-            phBrand.setAddrId(addressObj.getId());
+            if (StringUtils.isNotBlank(address_send_jsonStr)) {
+                PhAddressBrand addressObj = saveAddress(address_send_jsonStr, brandSaved.getAddrId(), brandSaved.getId());
+                brandSaved.setAddrId(addressObj.getId());
+            }
             //退货地址
-            PhAddressBrand addressObjBack = saveAddress(address_back_jsonStr, phBrand.getReturnAddrId());
-            phBrand.setReturnAddrId(addressObjBack.getId());
-            phBrandService.save(phBrand);
+            if (StringUtils.isNotBlank(address_back_jsonStr)) {
+                PhAddressBrand addressObjBack = saveAddress(address_back_jsonStr, brandSaved.getReturnAddrId(), brandSaved.getId());
+                brandSaved.setReturnAddrId(addressObjBack.getId());
+            }
+            phBrandService.save(brandSaved);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,8 +98,9 @@ public class BrandController {
         }
     }
 
-    private PhAddressBrand saveAddress(String address_jsonStr, Long addrId) {
+    private PhAddressBrand saveAddress(String address_jsonStr, Long addrId, Long bid) {
         PhAddressBrand address = new PhAddressBrand();
+        address.setBrand(bid);
         JSONObject addrObj = JSON.parseObject(address_jsonStr);
         address.setProvince(addrObj.getString("province"));
         address.setCity(addrObj.getString("city"));
