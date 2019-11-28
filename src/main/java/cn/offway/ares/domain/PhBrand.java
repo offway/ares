@@ -56,6 +56,12 @@ public class PhBrand implements Serializable {
     /** 是否上架 **/
     private String status;
 
+    /** 发货地址ID[见ph_address.id] **/
+    private String addrId;
+
+    /** 退货地址ID[见ph_address.id] **/
+    private String returnAddrId;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -184,6 +190,24 @@ public class PhBrand implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "addr_id", length = 11)
+    public String getAddrId() {
+        return addrId;
+    }
+
+    public void setAddrId(String addrId) {
+        this.addrId = addrId;
+    }
+
+    @Column(name = "return_addr_id", length = 11)
+    public String getReturnAddrId() {
+        return returnAddrId;
+    }
+
+    public void setReturnAddrId(String returnAddrId) {
+        this.returnAddrId = returnAddrId;
     }
 
 }
