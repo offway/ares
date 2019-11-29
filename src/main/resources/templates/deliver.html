@@ -96,7 +96,6 @@
 					</table>
 					
 				</div>
-				<button class="btn btn-info addr">修改收货地址</button>
 				<button class="btn btn-info deliver">确认发货</button>
 				<button class="btn btn-info cancel">取消订单</button>
 			</div>
@@ -112,50 +111,39 @@
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4 class="modal-title">修改收货地址</h4>
 				</div>
-				
 				<div class="modal-body">
 					<form role="form" id="authForm">
-					<input type="hidden" name="id"/>
-					<!-- <div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" name="toProvince" class="form-control" style="height:35px" placeholder="收件方省份"/>
-							</div>	
-							
+						<input type="hidden" name="id"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<input type="text" name="toRealName" class="form-control" style="height:35px" placeholder="收件方姓名"/>
+								</div>
+
+							</div>
 						</div>
-					</div> -->
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" name="toRealName" class="form-control" style="height:35px" placeholder="收件方姓名"/>
-							</div>	
-							
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<input type="text" name="toPhone" class="form-control" style="height:35px" placeholder="收件方手机"/>
+								</div>
+
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" name="toPhone" class="form-control" style="height:35px" placeholder="收件方手机"/>
-							</div>	
-							
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<input type="text" name="toContent" class="form-control" style="height:35px" placeholder="收件方详细地址"/>
+								</div>
+
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" name="toContent" class="form-control" style="height:35px" placeholder="收件方详细地址"/>
-							</div>	
-							
-						</div>
-					</div>
 					</form>
 				</div>
-				
 				<div class="modal-footer">
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info updateAddr">保存</button>
+					<button type="button" class="btn btn-info">保存</button>
 				</div>
-				
 			</div>
 		</div>
 	</div>
@@ -320,6 +308,7 @@
 			jQuery('#modal-method').modal('show', {backdrop: 'fade'});
 		}
 	}
+
 	var ORDER_NO;
 	jQuery(document).ready(function($)
 	{
@@ -461,25 +450,6 @@
 				this.checked = obj[0].checked;
 			});
 		});
-		$(".btn.btn-info.addr").click(function () {
-			var activityPrizeId = $("input[name='authId']:checked");
-			if (activityPrizeId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-
-			activityPrizeId = activityPrizeId[0].value;
-
-			var form = $("#authForm");
-			form.find("input[name='id']").val(activityPrizeId);
-			$.get("/deliver-one", {orderNo: activityPrizeId}, function (data) {
-				/* form.find("input[name='toProvince']").val(data.toProvince);  */
-				form.find("input[name='toRealName']").val(data.toRealName);
-				form.find("input[name='toPhone']").val(data.toPhone);
-				form.find("input[name='toContent']").val(data.toContent);
-				jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
-			});
-		});
 		$("body").on("click", "a.showGoods", function () {
 			var orderNo = $(this).attr("orderNo");
 			$.get("/deliver-goods", {orderNo: orderNo}, function (data) {
@@ -491,27 +461,6 @@
 				$('#modal-goods tbody').html(html);
 			});
 			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
-		});
-		$(".btn.btn-info.updateAddr").click(function () {
-			var form = $("#authForm");
-			/* var toProvince = form.find("input[name='toProvince']").val();*/
-			var toRealName = form.find("input[name='toRealName']").val();
-			var toPhone = form.find("input[name='toPhone']").val();
-			var toContent = form.find("input[name='toContent']").val();
-
-			/* if(''==toProvince ||''==toCity||''==toCounty||''==toContent){ */
-
-			if ('' == toRealName || '' == toPhone || '' == toContent) {
-				toastr.error("请填写完整信息", "温馨提示");
-				return false;
-			}
-			$.post("/deliver-updateAddr", form.serialize(), function (data) {
-				if (data) {
-					jQuery('#modal-rule').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings());
-				}
-			})
 		});
 		$(".btn.btn-info.deliver").click(function () {
 			var activityPrizeId = $("input[name='authId']:checked");

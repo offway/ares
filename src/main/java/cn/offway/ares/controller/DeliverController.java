@@ -1,11 +1,9 @@
 package cn.offway.ares.controller;
 
 import cn.offway.ares.domain.PhAdmin;
-import cn.offway.ares.domain.PhOrderExpressInfo;
 import cn.offway.ares.domain.PhOrderGoods;
 import cn.offway.ares.domain.VOrder;
 import cn.offway.ares.service.*;
-import cn.offway.ares.utils.JsonResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,23 +77,6 @@ public class DeliverController {
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数  
         map.put("aData", pages.getContent());//数据集合 
         return map;
-    }
-
-    @ResponseBody
-    @RequestMapping("/deliver-one")
-    public VOrder findByOrderNo(String orderNo) {
-        return vOrderService.findByOrderNo(orderNo);
-    }
-
-    @ResponseBody
-    @RequestMapping("/deliver-updateAddr")
-    public boolean updateAddr(String id, String toRealName, String toPhone, String toContent) {
-        PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByOrderNoAndType(id, "0");
-        phOrderExpressInfo.setToContent(toContent);
-        phOrderExpressInfo.setToRealName(toRealName);
-        phOrderExpressInfo.setToPhone(toPhone);
-        phOrderExpressInfoService.save(phOrderExpressInfo);
-        return true;
     }
 
     @ResponseBody
