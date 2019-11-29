@@ -176,6 +176,36 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
         }, page);
     }
 
+    @Override
+    public Page<PhOrderInfo> findByPage(String realName, String position, String orderNo, String unionid, Long brandId, String isOffway, Pageable page) {
+        return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (StringUtils.isNotBlank(orderNo)) {
+                    params.add(cb.equal(root.get("orderNo"), orderNo));
+                }
+                if (StringUtils.isNotBlank(realName)) {
+                    params.add(cb.like(root.get("realName"), "%" + realName + "%"));
+                }
+                if (StringUtils.isNotBlank(position)) {
+                    params.add(cb.like(root.get("position"), "%" + position + "%"));
+                }
+                if (StringUtils.isNotBlank(unionid)) {
+                    params.add(cb.equal(root.get("unionid"), unionid));
+                }
+                if (null != brandId) {
+                    params.add(cb.equal(root.get("brandId"), brandId));
+                }
+                if (StringUtils.isNotBlank(isOffway)) {
+                    params.add(cb.equal(root.get("isOffway"), isOffway));
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                query.where(params.toArray(predicates));
+                return null;
+            }
+        }, page);
+    }
 
     @Override
     public void saveOrder(String orderNo, String[] ids) {

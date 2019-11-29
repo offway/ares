@@ -1,11 +1,10 @@
 package cn.offway.ares.service;
 
-import java.util.List;
-
 import cn.offway.ares.domain.PhOrderInfo;
-import cn.offway.ares.utils.JsonResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 /**
  * 订单Service接口
@@ -28,5 +27,7 @@ public interface PhOrderInfoService {
     PhOrderInfo findByOrderNo(String orderNo);
 
     void cancel(String orderNo) throws Exception;
+
+    Page<PhOrderInfo> findByPage(String realName, String position, String orderNo, String unionid, Long brandId, String isOffway, Pageable page);
 
 }

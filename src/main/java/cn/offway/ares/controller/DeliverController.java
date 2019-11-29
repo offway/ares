@@ -1,17 +1,17 @@
 package cn.offway.ares.controller;
 
-import cn.offway.ares.domain.PhAdmin;
+import cn.offway.ares.domain.PhAddress;
 import cn.offway.ares.domain.PhOrderGoods;
-import cn.offway.ares.domain.VOrder;
+import cn.offway.ares.domain.PhOrderInfo;
 import cn.offway.ares.service.*;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +36,6 @@ public class DeliverController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private VOrderService vOrderService;
-    @Autowired
     private PhOrderExpressInfoService phOrderExpressInfoService;
     @Autowired
     private PhOrderGoodsService phOrderGoodsService;
@@ -44,6 +43,8 @@ public class DeliverController {
     private PhOrderInfoService phOrderInfoService;
     @Autowired
     private PhBrandService brandService;
+    @Autowired
+    private PhAddressService addressService;
 
     @RequestMapping("/deliver.html")
     public String deliver(ModelMap map) {
@@ -56,26 +57,38 @@ public class DeliverController {
      */
     @ResponseBody
     @RequestMapping("/deliver-data")
-    public Map<String, Object> deliverData(HttpServletRequest request, String orderNo,
-                                           String realName, String position, String unionid, Long brandId, String isOffway, Authentication authentication) {
-
+    public Map<String, Object> deliverData(HttpServletRequest request, String orderNo, String realName, String position, String unionid, Long brandId, String isOffway) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-
-        PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
-        List<Long> brandIds = phAdmin.getBrandIds();
-        Page<VOrder> pages = vOrderService.findByPage(realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, brandId, isOffway, brandIds, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName));
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
+        Page<PhOrderInfo> pages = phOrderInfoService.findByPage(realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, brandId, isOffway, pr);
+        ObjectMapper mapper = new ObjectMapper();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (PhOrderInfo info : pages.getContent()) {
+            Map<String, Object> m = mapper.convertValue(info, Map.class);
+            PhAddress address = addressService.findOne(info.getAddressId());
+            if (address != null) {
+                m.put("toRealName", address.getRealName());
+                m.put("toPhone", address.getPhone());
+                m.put("toContent", address.getContent());
+            } else {
+                m.put("toRealName", "");
+                m.put("toPhone", "");
+                m.put("toContent", "");
+            }
+            list.add(m);
+        }
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数  
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数  
-        map.put("aData", pages.getContent());//数据集合 
+        map.put("aData", list);//数据集合
         return map;
     }
 
