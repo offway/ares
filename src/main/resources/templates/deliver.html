@@ -428,8 +428,23 @@
 						return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
                     }
             	},
+				{
+					targets: 13,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						switch (data) {
+							case "0":
+								return "未发货";
+							case "7":
+								return "部分发货";
+							default:
+								return "";
+						}
+					}
+				},
                 {
-                    targets: 13,
+                    targets: 14,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
