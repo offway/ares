@@ -84,7 +84,7 @@ public class PhOrderExpressInfo implements Serializable {
     private String lastTime;
 
     /** 快递批次 **/
-    private String batch;
+    private Long batch;
 
 
     @Id
@@ -298,11 +298,11 @@ public class PhOrderExpressInfo implements Serializable {
     }
 
     @Column(name = "batch", length = 5)
-    public String getBatch() {
+    public Long getBatch() {
         return batch;
     }
 
-    public void setBatch(String batch) {
+    public void setBatch(Long batch) {
         this.batch = batch;
     }
 
