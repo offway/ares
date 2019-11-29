@@ -474,11 +474,14 @@
 					data: "id",
 					title: "序号"
 				},
-				{
-					targets: 2,
-					data: "orderNo",
-					title: "订单号"
-				},
+                {
+                    targets: 2,
+                    data: "orderNo",
+                    title: "订单号",
+                    render: function (data, type, row, meta) {
+                        return data + "_" + row["batch"];
+                    }
+                },
 				{
 					targets: 3,
 					data: "useDate",
