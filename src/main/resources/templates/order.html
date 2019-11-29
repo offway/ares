@@ -58,7 +58,7 @@
 							</div>
 							<div class="input-group">
 								<select name="isOffway" class="form-control" style="height:35px">
-									<option value="">是否自营</option>
+									<option value="">是否限定</option>
 									<option value="0">否</option>
 									<option value="1">是</option>
 								</select>
@@ -83,12 +83,14 @@
 							<div class="input-group">
 								<select name="status" class="form-control" style="height:35px">
 									<option value="">状态</option>
-									<option value="0">已下单</option>
+<!--									<option value="6">审核</option>-->
+<!--									<option value="0">已下单</option>-->
 									<option value="1">已发货</option>
+									<option value="7">部分寄出</option>
 									<option value="2">已寄回</option>
 									<option value="3">已收货</option>
 									<option value="5">已部分收货</option>
-									<option value="4">已取消</option>
+<!--									<option value="4">已取消</option>-->
 								</select>
 							</div>
 							<div class="input-group">
@@ -526,7 +528,8 @@
 					data: "status",
 					title: "状态",
 					render: function (data, type, row, meta) {
-						var map = ["已下单", "已发货", "已寄回", "已收货", "已取消", "已部分收货", ""];
+						/** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出] **/
+						var map = ["已下单", "已发货", "已寄回", "已收货", "已取消", "已部分收货", "审核", "部分寄出"];
 						return map[data];
 					}
 				},

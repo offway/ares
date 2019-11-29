@@ -94,6 +94,13 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
                 if (StringUtils.isNotBlank(status)) {
                     params.add(criteriaBuilder.equal(root.get("status"), status));
+                } else {
+                    In<Object> in = criteriaBuilder.in(root.get("status"));
+                    String[] statusArr = new String[]{"1", "2", "3", "5", "7"};
+                    for (Object status : statusArr) {
+                        in.value(status);
+                    }
+                    params.add(in);
                 }
 
 //				if(null != brandId){
