@@ -103,17 +103,27 @@ public class DeliverController {
     @Transactional
     public boolean save(@RequestParam("ids[]") String[] ids, String expressNo, String orderNo) {
         if (StringUtils.isNotBlank(expressNo)) {
-            long batch = -1;
-            for (String id : ids) {
-                PhOrderGoods orderGoods = phOrderGoodsService.findOne(Long.valueOf(id));
-                if (orderGoods != null) {
-                    if (batch < 0) {
-                        batch = phOrderGoodsService.getMaxBatch(orderGoods.getOrderNo());
+            PhOrderInfo orderInfo = phOrderInfoService.findByOrderNo(orderNo);
+            if (orderInfo != null) {
+                long batch = -1;
+                for (String id : ids) {
+                    PhOrderGoods orderGoods = phOrderGoodsService.findOne(Long.valueOf(id));
+                    if (orderGoods != null) {
+                        if (batch < 0) {
+                            batch = phOrderGoodsService.getMaxBatch(orderGoods.getOrderNo());
+                        }
+                        orderGoods.setMailNo(expressNo);
+                        orderGoods.setBatch(batch + 1);
+                        phOrderGoodsService.save(orderGoods);
                     }
-                    orderGoods.setMailNo(expressNo);
-                    orderGoods.setBatch(batch + 1);
-                    phOrderGoodsService.save(orderGoods);
                 }
+                //状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出]
+                if (phOrderGoodsService.getRest(orderNo) == 0) {
+                    orderInfo.setStatus("1");
+                } else {
+                    orderInfo.setStatus("7");
+                }
+                phOrderInfoService.save(orderInfo);
             }
         } else {
             phOrderInfoService.saveOrder(orderNo, ids);

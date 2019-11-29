@@ -59,7 +59,13 @@ public class PhOrderGoodsServiceImpl implements PhOrderGoodsService {
     }
 
     @Override
-    public Page<PhOrderGoods> findByBrandId(final Long brandId, Pageable page) {
+    public int getRest(String oid) {
+        Object o = phOrderGoodsRepository.getRest(oid);
+        return Integer.valueOf(String.valueOf(o));
+    }
+
+    @Override
+    public Page<PhOrderGoods> findByBrandId(final String brandId, Pageable page) {
         return phOrderGoodsRepository.findAll(new Specification<PhOrderGoods>() {
 
             @Override

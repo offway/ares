@@ -25,6 +25,9 @@ public interface PhOrderGoodsRepository extends JpaRepository<PhOrderGoods, Long
     @Query(nativeQuery = true, value = "select max(batch) from ph_order_goods where order_no = ?1")
     Object getMaxBatch(String order_no);
 
+    @Query(nativeQuery = true, value = "select count(id) as ct from ph_order_goods where mail_no is null and order_no = ?1")
+    Object getRest(String order_no);
+
     @Transactional
     @Modifying
     @Query(nativeQuery = true, value = "update ph_goods_stock gs set gs.stock = gs.stock +1 where EXISTS (select 1 from ph_order_goods og where og.order_no=?1 and og.goods_id = gs.goods_id and og.size = gs.size and og.color = gs.color)")
