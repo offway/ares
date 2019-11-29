@@ -484,6 +484,10 @@
 			} else {
 				activityPrizeId = activityPrizeId[0].value;
 				ORDER_NO = activityPrizeId;
+				$.get("/deliver-address", {orderNo: activityPrizeId}, function (data) {
+					var h4 = $('#modal-deliver h4.modal-title')[0];
+					h4.innerText = "发货" + data["province"] + data["city"] + data["county"] + data["content"] + data["realName"] + data["phone"];
+				});
 				$.get("/deliver-goods", {orderNo: activityPrizeId}, function (data) {
 					var tbody = $('#modal-deliver tbody');
 					var html = "";

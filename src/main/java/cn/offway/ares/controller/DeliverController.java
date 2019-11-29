@@ -98,6 +98,16 @@ public class DeliverController {
     }
 
     @ResponseBody
+    @RequestMapping("/deliver-address")
+    public PhAddress userAddr(String orderNo) {
+        PhOrderInfo info = phOrderInfoService.findByOrderNo(orderNo);
+        if (info != null) {
+            return addressService.findOne(info.getAddressId());
+        }
+        return null;
+    }
+
+    @ResponseBody
     @RequestMapping("/deliver-save")
     @Transactional
     public boolean save(@RequestParam("ids[]") String[] ids, String expressNo, String orderNo) {
