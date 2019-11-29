@@ -200,6 +200,12 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                 if (StringUtils.isNotBlank(isOffway)) {
                     params.add(cb.equal(root.get("isOffway"), isOffway));
                 }
+                In<Object> in = cb.in(root.get("status"));
+                String[] statusArr = new String[]{"0", "7"};
+                for (Object status : statusArr) {
+                    in.value(status);
+                }
+                params.add(in);
                 Predicate[] predicates = new Predicate[params.size()];
                 query.where(params.toArray(predicates));
                 return null;
