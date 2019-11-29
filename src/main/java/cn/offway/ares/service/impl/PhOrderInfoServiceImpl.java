@@ -1,16 +1,10 @@
 package cn.offway.ares.service.impl;
 
-import cn.offway.ares.domain.PhOrderExpressInfo;
 import cn.offway.ares.domain.PhOrderGoods;
 import cn.offway.ares.domain.PhOrderInfo;
-import cn.offway.ares.dto.sf.ReqAddOrder;
 import cn.offway.ares.repository.PhOrderGoodsRepository;
 import cn.offway.ares.repository.PhOrderInfoRepository;
-import cn.offway.ares.service.PhOrderExpressInfoService;
-import cn.offway.ares.service.PhOrderGoodsService;
 import cn.offway.ares.service.PhOrderInfoService;
-import cn.offway.ares.service.SfExpressService;
-import cn.offway.ares.utils.JsonResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -43,12 +37,6 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
     @Autowired
     private PhOrderInfoRepository phOrderInfoRepository;
-    @Autowired
-    private SfExpressService sfExpressService;
-    @Autowired
-    private PhOrderGoodsService orderGoodsService;
-    @Autowired
-    private PhOrderExpressInfoService phOrderExpressInfoService;
     @Autowired
     private PhOrderGoodsRepository phOrderGoodsRepository;
 
@@ -213,70 +201,12 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
         }, page);
     }
 
-    @Override
-    public void saveOrder(String orderNo, String[] ids) {
-        /*
-         * 1.修改订单状态
-         * 2.快递预约上门
-         */
-        PhOrderInfo phOrderInfo = findByOrderNo(orderNo);
-        if ("1".equals(phOrderInfo.getStatus())) {
-            return;
-        }
-
-        PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByOrderNoAndType(orderNo, "0");
-        phOrderExpressInfo.setExpressOrderNo(generateOrderNo("SF"));
-
-        ReqAddOrder addOrder = new ReqAddOrder();
-        addOrder.setD_address(phOrderExpressInfo.getToContent());
-        addOrder.setD_contact(phOrderExpressInfo.getToRealName());
-        addOrder.setD_tel(phOrderExpressInfo.getToPhone());
-        addOrder.setJ_province(phOrderExpressInfo.getFromProvince());
-        addOrder.setJ_city(phOrderExpressInfo.getFromCity());
-        addOrder.setJ_county(phOrderExpressInfo.getFromCounty());
-        addOrder.setJ_address(phOrderExpressInfo.getFromContent());
-        addOrder.setJ_contact(phOrderExpressInfo.getFromRealName());
-        addOrder.setJ_tel(phOrderExpressInfo.getFromPhone());
-        addOrder.setOrder_source("OFFWAY");
-        addOrder.setOrder_id(phOrderExpressInfo.getExpressOrderNo());
-        addOrder.setPay_method("2");//付款方式：1:寄方付2:收方付3:第三方付
-        addOrder.setRemark("");
-        addOrder.setSendstarttime("");
-        JsonResult result = sfExpressService.addOrder(addOrder);
-        if ("200".equals(result.getCode())) {
-            long batch = -1;
-            String mailNo = String.valueOf(result.getData());
-            phOrderExpressInfo.setMailNo(mailNo);
-            phOrderExpressInfo.setStatus("1");//已下单
-            phOrderExpressInfoService.save(phOrderExpressInfo);
-            phOrderInfo.setStatus("1");
-            save(phOrderInfo);
-            for (String id : ids) {
-                PhOrderGoods orderGoods = orderGoodsService.findOne(Long.valueOf(id));
-                if (orderGoods != null) {
-                    if (batch < 0) {
-                        batch = orderGoodsService.getMaxBatch(orderGoods.getOrderNo());
-                    }
-                    orderGoods.setMailNo(mailNo);
-                    orderGoods.setBatch(batch + 1);
-                    orderGoodsService.save(orderGoods);
-                }
-            }
-        }
-    }
-
-
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
     @Override
-    public void cancel(String orderNo) throws Exception {
-
+    public void cancel(String orderNo) {
         PhOrderInfo phOrderInfo = findByOrderNo(orderNo);
         phOrderInfo.setStatus("4");
         save(phOrderInfo);
-
         phOrderGoodsRepository.updateStock(orderNo);
-
     }
-
-
 }

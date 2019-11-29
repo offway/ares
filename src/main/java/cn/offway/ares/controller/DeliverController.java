@@ -1,9 +1,9 @@
 package cn.offway.ares.controller;
 
-import cn.offway.ares.domain.PhAddress;
-import cn.offway.ares.domain.PhOrderGoods;
-import cn.offway.ares.domain.PhOrderInfo;
+import cn.offway.ares.domain.*;
+import cn.offway.ares.dto.sf.ReqAddOrder;
 import cn.offway.ares.service.*;
+import cn.offway.ares.utils.JsonResult;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 发货
@@ -45,6 +42,8 @@ public class DeliverController {
     private PhBrandService brandService;
     @Autowired
     private PhAddressService addressService;
+    @Autowired
+    private SfExpressService sfExpressService;
 
     @RequestMapping("/deliver.html")
     public String deliver(ModelMap map) {
@@ -102,10 +101,13 @@ public class DeliverController {
     @RequestMapping("/deliver-save")
     @Transactional
     public boolean save(@RequestParam("ids[]") String[] ids, String expressNo, String orderNo) {
+        PhOrderInfo orderInfo = phOrderInfoService.findByOrderNo(orderNo);
+        PhOrderExpressInfo phOrderExpressInfo;
         if (StringUtils.isNotBlank(expressNo)) {
-            PhOrderInfo orderInfo = phOrderInfoService.findByOrderNo(orderNo);
             if (orderInfo != null) {
+                phOrderExpressInfo = createExpressOfBrand(orderInfo);
                 long batch = -1;
+                phOrderExpressInfo.setMailNo(expressNo);
                 for (String id : ids) {
                     PhOrderGoods orderGoods = phOrderGoodsService.findOne(Long.valueOf(id));
                     if (orderGoods != null) {
@@ -117,6 +119,8 @@ public class DeliverController {
                         phOrderGoodsService.save(orderGoods);
                     }
                 }
+                phOrderExpressInfo.setBatch(batch + 1);
+                phOrderExpressInfoService.save(phOrderExpressInfo);
                 //状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出]
                 if (phOrderGoodsService.getRest(orderNo) == 0) {
                     orderInfo.setStatus("1");
@@ -126,9 +130,108 @@ public class DeliverController {
                 phOrderInfoService.save(orderInfo);
             }
         } else {
-            phOrderInfoService.saveOrder(orderNo, ids);
+            /*
+             * 1.修改订单状态
+             * 2.快递预约上门
+             */
+            phOrderExpressInfo = createExpressOfPlatform(orderInfo);
+            JsonResult result = callSF(phOrderExpressInfo);
+            if ("200".equals(result.getCode())) {
+                long batch = -1;
+                String mailNo = String.valueOf(result.getData());
+                phOrderExpressInfo.setMailNo(mailNo);
+                for (String id : ids) {
+                    PhOrderGoods orderGoods = phOrderGoodsService.findOne(Long.valueOf(id));
+                    if (orderGoods != null) {
+                        if (batch < 0) {
+                            batch = phOrderGoodsService.getMaxBatch(orderGoods.getOrderNo());
+                        }
+                        orderGoods.setMailNo(mailNo);
+                        orderGoods.setBatch(batch + 1);
+                        phOrderGoodsService.save(orderGoods);
+                    }
+                }
+                phOrderExpressInfo.setBatch(batch + 1);
+                phOrderExpressInfoService.save(phOrderExpressInfo);
+                //状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出]
+                if (phOrderGoodsService.getRest(orderNo) == 0) {
+                    orderInfo.setStatus("1");
+                } else {
+                    orderInfo.setStatus("7");
+                }
+                phOrderInfoService.save(orderInfo);
+            }
         }
         return true;
+    }
+
+    private PhOrderExpressInfo createExpressOfPlatform(PhOrderInfo orderInfo) {
+        //保存订单物流
+        PhAddress toAddress = addressService.findOne(orderInfo.getAddressId());
+        PhAddress offwayAddress = addressService.findOne(1L);
+        PhOrderExpressInfo phOrderExpressInfo = new PhOrderExpressInfo();
+        phOrderExpressInfo.setCreateTime(new Date());
+        phOrderExpressInfo.setExpressOrderNo(phOrderInfoService.generateOrderNo("SF"));
+        phOrderExpressInfo.setFromPhone(offwayAddress.getPhone());
+        phOrderExpressInfo.setFromCity(offwayAddress.getCity());
+        phOrderExpressInfo.setFromContent(offwayAddress.getContent());
+        phOrderExpressInfo.setFromCounty(offwayAddress.getCounty());
+        phOrderExpressInfo.setFromProvince(offwayAddress.getProvince());
+        phOrderExpressInfo.setFromRealName(offwayAddress.getRealName());
+        phOrderExpressInfo.setOrderNo(orderInfo.getOrderNo());
+        phOrderExpressInfo.setStatus("0");
+        phOrderExpressInfo.setToPhone(toAddress.getPhone());
+        phOrderExpressInfo.setToCity(toAddress.getCity());
+        phOrderExpressInfo.setToContent(toAddress.getContent());
+        phOrderExpressInfo.setToCounty(toAddress.getCounty());
+        phOrderExpressInfo.setToProvince(toAddress.getProvince());
+        phOrderExpressInfo.setToRealName(toAddress.getRealName());
+        phOrderExpressInfo.setType("0");
+        return phOrderExpressInfo;
+    }
+
+    private PhOrderExpressInfo createExpressOfBrand(PhOrderInfo orderInfo) {
+        //保存订单物流
+        PhBrand phBrand = brandService.findOne(orderInfo.getBrandId());
+        PhAddress toAddress = addressService.findOne(orderInfo.getAddressId());
+        PhOrderExpressInfo phOrderExpressInfo = new PhOrderExpressInfo();
+        phOrderExpressInfo.setCreateTime(new Date());
+        phOrderExpressInfo.setExpressOrderNo("无");
+        phOrderExpressInfo.setFromPhone(phBrand.getPhone());
+        phOrderExpressInfo.setFromCity(phBrand.getCity());
+        phOrderExpressInfo.setFromContent(phBrand.getContent());
+        phOrderExpressInfo.setFromCounty(phBrand.getCounty());
+        phOrderExpressInfo.setFromProvince(phBrand.getProvince());
+        phOrderExpressInfo.setFromRealName(phBrand.getRealName());
+        phOrderExpressInfo.setOrderNo(orderInfo.getOrderNo());
+        phOrderExpressInfo.setStatus("0");
+        phOrderExpressInfo.setToPhone(toAddress.getPhone());
+        phOrderExpressInfo.setToCity(toAddress.getCity());
+        phOrderExpressInfo.setToContent(toAddress.getContent());
+        phOrderExpressInfo.setToCounty(toAddress.getCounty());
+        phOrderExpressInfo.setToProvince(toAddress.getProvince());
+        phOrderExpressInfo.setToRealName(toAddress.getRealName());
+        phOrderExpressInfo.setType("0");
+        return phOrderExpressInfo;
+    }
+
+    private JsonResult callSF(PhOrderExpressInfo phOrderExpressInfo) {
+        ReqAddOrder addOrder = new ReqAddOrder();
+        addOrder.setD_address(phOrderExpressInfo.getToContent());
+        addOrder.setD_contact(phOrderExpressInfo.getToRealName());
+        addOrder.setD_tel(phOrderExpressInfo.getToPhone());
+        addOrder.setJ_province(phOrderExpressInfo.getFromProvince());
+        addOrder.setJ_city(phOrderExpressInfo.getFromCity());
+        addOrder.setJ_county(phOrderExpressInfo.getFromCounty());
+        addOrder.setJ_address(phOrderExpressInfo.getFromContent());
+        addOrder.setJ_contact(phOrderExpressInfo.getFromRealName());
+        addOrder.setJ_tel(phOrderExpressInfo.getFromPhone());
+        addOrder.setOrder_source("OFFWAY");
+        addOrder.setOrder_id(phOrderExpressInfo.getExpressOrderNo());
+        addOrder.setPay_method("2");//付款方式：1:寄方付2:收方付3:第三方付
+        addOrder.setRemark("");
+        addOrder.setSendstarttime("");
+        return sfExpressService.addOrder(addOrder);
     }
 
     @ResponseBody
