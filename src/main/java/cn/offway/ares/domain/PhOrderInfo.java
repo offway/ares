@@ -41,7 +41,7 @@ public class PhOrderInfo implements Serializable {
     /** 是否自营[0-否,1-是] **/
     private String isOffway;
 
-    /** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货] **/
+    /** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出] **/
     private String status;
     
     /** 是否返图[0-否,1-是]**/
