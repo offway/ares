@@ -71,6 +71,9 @@ public class PhOrderInfo implements Serializable {
     /** 备注 **/
     private String extra;
 
+    /** 地址id **/
+    private Long addressId;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -247,5 +250,14 @@ public class PhOrderInfo implements Serializable {
 
     public void setExtra(String extra) {
         this.extra = extra;
+    }
+
+    @Column(name = "address_id", length = 11)
+    public Long getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
     }
 }
