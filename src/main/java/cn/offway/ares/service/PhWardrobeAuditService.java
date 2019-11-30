@@ -23,5 +23,5 @@ public interface PhWardrobeAuditService {
 
     List<PhWardrobeAudit> save(List<PhWardrobeAudit> entities);
 
-    Page<PhWardrobeAudit> listAll(String brandId, String goodsName, String goodsId, String state, Pageable pageable);
+    Page<PhWardrobeAudit> listAll(String brandId, String goodsName, String goodsId, String state, List<Long> brandIds, Pageable pageable);
 }

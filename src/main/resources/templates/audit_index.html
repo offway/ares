@@ -51,6 +51,8 @@
 						</div>
 						<div class="input-group">
 							<select id="brandId" name="brandId" class="form-control" style="height:35px">
+								<option value="" selected="selected">全部</option>
+                                <option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
 							</select>
 						</div>
 						<div class="input-group">
@@ -248,7 +250,7 @@
 			category = data[category];
 			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
 		}
-		$("#brandId").html(categoryStr);
+		//$("#brandId").html(categoryStr);
 		$("#brandId").editableSelect();
 	}
 
@@ -320,6 +322,7 @@
 		});
 	}
 
+    var brandId = [[${brandId}]];
 	var table_global;
 	jQuery(document).ready(function($)
 	{

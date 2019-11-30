@@ -50,7 +50,7 @@ public class PhWardrobeAuditServiceImpl implements PhWardrobeAuditService {
     }
 
     @Override
-    public Page<PhWardrobeAudit> listAll(String brandId, String goodsName, String goodsId, String state, Pageable pageable) {
+    public Page<PhWardrobeAudit> listAll(String brandId, String goodsName, String goodsId, String state, List<Long> brandIds, Pageable pageable) {
         return phWardrobeAuditRepository.findAll(new Specification<PhWardrobeAudit>() {
             @Override
             public Predicate toPredicate(Root<PhWardrobeAudit> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -66,6 +66,13 @@ public class PhWardrobeAuditServiceImpl implements PhWardrobeAuditService {
                 }
                 if (StringUtils.isNotBlank(state)) {
                     params.add(cb.equal(root.get("state"), state));
+                }
+                if (brandIds != null) {
+                    CriteriaBuilder.In<Object> in = cb.in(root.get("brandId"));
+                    for (Object id : brandIds) {
+                        in.value(id);
+                    }
+                    params.add(in);
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 query.where(params.toArray(predicates));

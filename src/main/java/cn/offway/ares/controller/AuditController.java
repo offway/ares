@@ -1,7 +1,9 @@
 package cn.offway.ares.controller;
 
+import cn.offway.ares.domain.PhAdmin;
 import cn.offway.ares.domain.PhWardrobe;
 import cn.offway.ares.domain.PhWardrobeAudit;
+import cn.offway.ares.service.PhBrandService;
 import cn.offway.ares.service.PhWardrobeAuditService;
 import cn.offway.ares.service.PhWardrobeService;
 import org.slf4j.Logger;
@@ -10,12 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -25,18 +30,34 @@ public class AuditController {
     private PhWardrobeAuditService wardrobeAuditService;
     @Autowired
     private PhWardrobeService wardrobeService;
+    @Autowired
+    private PhBrandService brandService;
 
     @RequestMapping("/audit.html")
-    public String index(ModelMap map) {
+    public String index(ModelMap map, Authentication authentication) {
+        PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
+        if (phAdmin.getRoleIds().contains(BigInteger.ONE)) {
+            map.addAttribute("brands", brandService.findAll());
+        } else {
+            List<Long> brandIds = phAdmin.getBrandIds();
+            map.addAttribute("brands", brandService.findByIds(brandIds));
+        }
         return "audit_index";
     }
 
     @ResponseBody
     @RequestMapping("/audit_list")
-    public Map<String, Object> getStockList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, String goodsName, String goodsId, String state) {
+    public Map<String, Object> getStockList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, String goodsName, String goodsId, String state, Authentication authentication) {
         Sort sort = new Sort("id");
+        PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
+        List<Long> brandIds;
+        if (phAdmin.getRoleIds().contains(BigInteger.ONE)) {
+            brandIds = null;
+        } else {
+            brandIds = phAdmin.getBrandIds();
+        }
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
-        Page<PhWardrobeAudit> pages = wardrobeAuditService.listAll(brandId, goodsName, goodsId, state, pr);
+        Page<PhWardrobeAudit> pages = wardrobeAuditService.listAll(brandId, goodsName, goodsId, state, brandIds, pr);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
