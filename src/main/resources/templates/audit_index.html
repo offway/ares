@@ -484,20 +484,20 @@
 						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
 					}
 				},
-				{
-					targets: 18,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var str = "";
-						if (full["state"] == "0") {
-							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="通过"/>';
-							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="拒绝"/>';
-						}
-						return str;
-					}
-				}
+                {
+                    targets: 18,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = "";
+                        if (full["state"] == "0" && full["isDel"] != "1") {
+                            str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="通过"/>';
+                            str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="拒绝"/>';
+                        }
+                        return str;
+                    }
+                }
 			]
 		});
 		table_global = oTable;
