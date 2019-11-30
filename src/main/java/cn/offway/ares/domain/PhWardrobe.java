@@ -62,6 +62,9 @@ public class PhWardrobe implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 状态[0-待审核,1-审核通过,2-审核不通过,3-无需审核] **/
+    private String state;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -209,6 +212,15 @@ public class PhWardrobe implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "state", length = 2)
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
 }

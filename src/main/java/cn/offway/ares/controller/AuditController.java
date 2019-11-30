@@ -1,5 +1,6 @@
 package cn.offway.ares.controller;
 
+import cn.offway.ares.domain.PhWardrobe;
 import cn.offway.ares.domain.PhWardrobeAudit;
 import cn.offway.ares.service.PhWardrobeAuditService;
 import cn.offway.ares.service.PhWardrobeService;
@@ -55,9 +56,12 @@ public class AuditController {
     @RequestMapping("/audit_up")
     public boolean allow(Long id) {
         PhWardrobeAudit obj = wardrobeAuditService.findOne(id);
+        PhWardrobe wardrobe = wardrobeService.findOne(obj.getWardrobeId());
         if (obj != null) {
             obj.setState("1");
             wardrobeAuditService.save(obj);
+            wardrobe.setState("1");
+            wardrobeService.save(wardrobe);
         }
         return true;
     }
@@ -66,10 +70,13 @@ public class AuditController {
     @RequestMapping("/audit_down")
     public boolean deny(Long id, String str) {
         PhWardrobeAudit obj = wardrobeAuditService.findOne(id);
+        PhWardrobe wardrobe = wardrobeService.findOne(obj.getWardrobeId());
         if (obj != null) {
             obj.setState("2");
             obj.setReason(str);
             wardrobeAuditService.save(obj);
+            wardrobe.setState("2");
+            wardrobeService.save(wardrobe);
         }
         return true;
     }
