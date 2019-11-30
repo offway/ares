@@ -74,6 +74,9 @@ public class PhWardrobeAudit implements Serializable {
     /** 归还时间 **/
     private Date returnDate;
 
+    /** 是否删除[0-未删除,1-删除,2-已下单] **/
+    private String isDel;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -259,6 +262,15 @@ public class PhWardrobeAudit implements Serializable {
 
     public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
+    }
+
+    @Column(name = "is_del", length = 2)
+    public String getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(String isDel) {
+        this.isDel = isDel;
     }
 
 }
