@@ -126,6 +126,7 @@ public class DeliverController {
                         }
                         orderGoods.setMailNo(expressNo);
                         orderGoods.setBatch(batch + 1);
+                        orderGoods.setRemark("商家发货");
                         phOrderGoodsService.save(orderGoods);
                     }
                 }
@@ -158,6 +159,7 @@ public class DeliverController {
                         }
                         orderGoods.setMailNo(mailNo);
                         orderGoods.setBatch(batch + 1);
+                        orderGoods.setRemark("平台发货");
                         phOrderGoodsService.save(orderGoods);
                     }
                 }

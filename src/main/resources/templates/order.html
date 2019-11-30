@@ -161,15 +161,13 @@
 								<th>品牌名称</th>
 								<th>尺码</th>
 								<th>颜色</th>
+								<th>发货方式</th>
 							</tr>
 						</thead>
-						
 						<tbody>
 						</tbody>
 					</table>
-									
 				</div>
-				
 				<div class="modal-footer">
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
@@ -644,10 +642,17 @@
 				var html = "";
 				$('#modal-goods tbody').html("");
 				$.each(data, function (i, e) {
-					html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
+					html += "<tr>" +
+							"<td>" + e.sku + "</td>" +
+							"<td><img src=\"" + e.image + "\" /></td>" +
+							"<td>" + e.goodsName + "</td>" +
+							"<td>" + e.brandName + "</td>" +
+							"<td>" + e.size + "</td>" +
+							"<td>" + e.color + "</td>" +
+							"<td>" + e.remark + "</td>" +
+							"</tr>";
 				});
 				$('#modal-goods tbody').html(html);
-
 			});
 
 			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
