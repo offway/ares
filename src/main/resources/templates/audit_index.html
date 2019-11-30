@@ -367,31 +367,26 @@
 				},
 				{
 					targets: 3,
-					data: "unionid",
-					title: "开放平台帐号"
-				},
-				{
-					targets: 4,
 					data: "useName",
 					title: "使用艺人"
 				},
 				{
-					targets: 5,
+					targets: 4,
 					data: "content",
 					title: "使用用途"
 				},
 				{
-					targets: 6,
+					targets: 5,
 					data: "goodsId",
 					title: "商品ID"
 				},
 				{
-					targets: 7,
+					targets: 6,
 					data: "goodsName",
 					title: "商品名称"
 				},
 				{
-					targets: 8,
+					targets: 7,
 					data: "image",
 					title: "封面图片",
 					render: function (data, type, row, meta) {
@@ -399,17 +394,12 @@
 					}
 				},
 				{
-					targets: 9,
-					data: "brandId",
-					title: "品牌ID"
-				},
-				{
-					targets: 10,
+					targets: 8,
 					data: "brandName",
 					title: "品牌名称"
 				},
 				{
-					targets: 11,
+					targets: 9,
 					data: "brandLogo",
 					title: "品牌LOGO",
 					render: function (data, type, row, meta) {
@@ -417,7 +407,7 @@
 					}
 				},
 				{
-					targets: 12,
+					targets: 10,
 					data: "photoDate",
 					title: "返图时间",
 					render: function (data, type, row, meta) {
@@ -425,7 +415,7 @@
 					}
 				},
 				{
-					targets: 13,
+					targets: 11,
 					data: "useDate",
 					title: "使用时间",
 					render: function (data, type, row, meta) {
@@ -433,7 +423,7 @@
 					}
 				},
 				{
-					targets: 14,
+					targets: 12,
 					data: "returnDate",
 					title: "归还时间",
 					render: function (data, type, row, meta) {
@@ -441,16 +431,39 @@
 					}
 				},
 				{
-					targets: 15,
+					targets: 13,
 					data: "state",
-					title: "状态",
+					title: "审核状态",
 					render: function (data, type, row, meta) {
 						var map = ["待审核", "通过", "拒绝"];
 						return map[parseInt(data)];
 					}
 				},
 				{
-					targets: 16,
+					targets: 14,
+					data: "isDel",
+					title: "衣柜状态",
+					render: function (data, type, row, meta) {
+						//是否删除[0-未删除,1-删除,2-已下单]
+						switch (data) {
+							case "1":
+								return "已删除";
+							case "2":
+								return "已提交";
+							case "0":
+								var useDate = row["useDate"];
+								var now = new Date();
+								var twoDaysLater = now + 3600 * 60 * 24 * 2;
+								if (useDate < now || useDate < twoDaysLater) {
+									return "已失效";
+								} else {
+									return "正常";
+								}
+						}
+					}
+				},
+				{
+					targets: 15,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -458,12 +471,12 @@
 					}
 				},
 				{
-					targets: 17,
+					targets: 16,
 					data: "reason",
 					title: "拒绝理由"
 				},
 				{
-					targets: 18,
+					targets: 17,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -472,7 +485,7 @@
 					}
 				},
 				{
-					targets: 19,
+					targets: 18,
 					data: "id",
 					orderable: false,
 					title: "操作",
