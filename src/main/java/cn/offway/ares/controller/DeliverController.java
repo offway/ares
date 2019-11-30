@@ -116,12 +116,12 @@ public class DeliverController {
         if (StringUtils.isNotBlank(expressNo)) {
             if (orderInfo != null) {
                 phOrderExpressInfo = createExpressOfBrand(orderInfo);
-                long batch = -1;
+                long batch = -2;
                 phOrderExpressInfo.setMailNo(expressNo);
                 for (String id : ids) {
                     PhOrderGoods orderGoods = phOrderGoodsService.findOne(Long.valueOf(id));
                     if (orderGoods != null) {
-                        if (batch < 0) {
+                        if (batch == -2) {
                             batch = phOrderGoodsService.getMaxBatch(orderGoods.getOrderNo());
                         }
                         orderGoods.setMailNo(expressNo);
@@ -147,13 +147,13 @@ public class DeliverController {
             phOrderExpressInfo = createExpressOfPlatform(orderInfo);
             JsonResult result = callSF(phOrderExpressInfo);
             if ("200".equals(result.getCode())) {
-                long batch = -1;
+                long batch = -2;
                 String mailNo = String.valueOf(result.getData());
                 phOrderExpressInfo.setMailNo(mailNo);
                 for (String id : ids) {
                     PhOrderGoods orderGoods = phOrderGoodsService.findOne(Long.valueOf(id));
                     if (orderGoods != null) {
-                        if (batch < 0) {
+                        if (batch == -2) {
                             batch = phOrderGoodsService.getMaxBatch(orderGoods.getOrderNo());
                         }
                         orderGoods.setMailNo(mailNo);

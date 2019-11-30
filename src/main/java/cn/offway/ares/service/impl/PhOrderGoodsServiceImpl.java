@@ -54,7 +54,7 @@ public class PhOrderGoodsServiceImpl implements PhOrderGoodsService {
         if (o != null) {
             return Integer.valueOf(String.valueOf(o));
         } else {
-            return 0;
+            return -1;
         }
     }
 
