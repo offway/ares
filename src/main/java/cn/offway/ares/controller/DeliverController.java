@@ -199,22 +199,24 @@ public class DeliverController {
         phOrderExpressInfo.setToProvince(toAddress.getProvince());
         phOrderExpressInfo.setToRealName(toAddress.getRealName());
         phOrderExpressInfo.setType("0");
+        phOrderExpressInfo.setReturnId(1L);
         return phOrderExpressInfo;
     }
 
     private PhOrderExpressInfo createExpressOfBrand(PhOrderInfo orderInfo) {
         //保存订单物流
-        PhBrand phBrand = brandService.findOne(orderInfo.getBrandId());
         PhAddress toAddress = addressService.findOne(orderInfo.getAddressId());
+        PhBrand phBrand = brandService.findOne(orderInfo.getBrandId());
+        PhAddress brandAddress = addressService.findOne(phBrand.getAddrId());
         PhOrderExpressInfo phOrderExpressInfo = new PhOrderExpressInfo();
         phOrderExpressInfo.setCreateTime(new Date());
         phOrderExpressInfo.setExpressOrderNo("无");
-        phOrderExpressInfo.setFromPhone(phBrand.getPhone());
-        phOrderExpressInfo.setFromCity(phBrand.getCity());
-        phOrderExpressInfo.setFromContent(phBrand.getContent());
-        phOrderExpressInfo.setFromCounty(phBrand.getCounty());
-        phOrderExpressInfo.setFromProvince(phBrand.getProvince());
-        phOrderExpressInfo.setFromRealName(phBrand.getRealName());
+        phOrderExpressInfo.setFromPhone(brandAddress.getPhone());
+        phOrderExpressInfo.setFromCity(brandAddress.getCity());
+        phOrderExpressInfo.setFromContent(brandAddress.getContent());
+        phOrderExpressInfo.setFromCounty(brandAddress.getCounty());
+        phOrderExpressInfo.setFromProvince(brandAddress.getProvince());
+        phOrderExpressInfo.setFromRealName(brandAddress.getRealName());
         phOrderExpressInfo.setOrderNo(orderInfo.getOrderNo());
         phOrderExpressInfo.setStatus("0");
         phOrderExpressInfo.setToPhone(toAddress.getPhone());
@@ -224,6 +226,7 @@ public class DeliverController {
         phOrderExpressInfo.setToProvince(toAddress.getProvince());
         phOrderExpressInfo.setToRealName(toAddress.getRealName());
         phOrderExpressInfo.setType("0");
+        phOrderExpressInfo.setReturnId(phBrand.getReturnAddrId());
         return phOrderExpressInfo;
     }
 
