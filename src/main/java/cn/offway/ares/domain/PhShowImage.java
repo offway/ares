@@ -71,6 +71,9 @@ public class PhShowImage implements Serializable {
 	/** 备注 **/
 	private String remark;
 
+	/** 批次 **/
+	private String batch;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true, nullable = false)
@@ -245,6 +248,13 @@ public class PhShowImage implements Serializable {
     public void setRealName(String realName) {
         this.realName = realName;
     }
-	
-	
+
+	@Column(name = "batch", length = 5)
+	public String getBatch() {
+		return batch;
+	}
+
+	public void setBatch(String batch) {
+		this.batch = batch;
+	}
 }

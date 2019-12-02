@@ -86,6 +86,9 @@ public class PhOrderExpressInfo implements Serializable {
     /** 快递批次 **/
     private Long batch;
 
+    /** 退货地址ID **/
+    private Long returnId;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -304,6 +307,15 @@ public class PhOrderExpressInfo implements Serializable {
 
     public void setBatch(Long batch) {
         this.batch = batch;
+    }
+
+    @Column(name = "return_id", length = 11)
+    public Long getReturnId() {
+        return returnId;
+    }
+
+    public void setReturnId(Long returnId) {
+        this.returnId = returnId;
     }
 
 }
