@@ -93,8 +93,12 @@ public class DeliverController {
 
     @ResponseBody
     @RequestMapping("/deliver-goods")
-    public List<PhOrderGoods> phOrderGoods(String orderNo) {
-        return phOrderGoodsService.findByOrderNo(orderNo);
+    public List<PhOrderGoods> phOrderGoods(String orderNo, @RequestParam(name = "batch", required = false, defaultValue = "") String batch) {
+        if (StringUtils.isNotBlank(batch)) {
+            return phOrderGoodsService.findByOrderNo(orderNo, batch);
+        } else {
+            return phOrderGoodsService.findByOrderNo(orderNo);
+        }
     }
 
     @ResponseBody
