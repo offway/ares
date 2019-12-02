@@ -20,7 +20,7 @@ public interface PhOrderInfoService {
 
     String generateOrderNo(String prefix);
 
-    Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String status, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Pageable page);
+    Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String mode, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Pageable page);
 
     PhOrderInfo findByOrderNo(String orderNo);
 

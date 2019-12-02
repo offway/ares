@@ -65,7 +65,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
-    public Page<PhOrderInfo> findByPage(final String sku, final String isUpload, final String realName, final String position, final String orderNo, final String unionid, final String status, final Long brandId, final String isOffway, final List<Long> brandIds, String users, String size, Pageable page) {
+    public Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String mode, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Pageable page) {
         return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
 
             @Override
@@ -92,16 +92,17 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                     params.add(criteriaBuilder.equal(root.get("unionid"), unionid));
                 }
 
-                if (StringUtils.isNotBlank(status)) {
-                    params.add(criteriaBuilder.equal(root.get("status"), status));
+                String[] statusArr;
+                if (StringUtils.isNotBlank(mode)) {
+                    statusArr = StringUtils.split(mode, ",");
                 } else {
-                    In<Object> in = criteriaBuilder.in(root.get("status"));
-                    String[] statusArr = new String[]{"1", "2", "3", "5", "7"};
-                    for (Object status : statusArr) {
-                        in.value(status);
-                    }
-                    params.add(in);
+                    statusArr = new String[]{"1", "2", "3", "5", "7", "8"};
                 }
+                In<Object> inStatus = criteriaBuilder.in(root.get("status"));
+                for (Object status : statusArr) {
+                    inStatus.value(status);
+                }
+                params.add(inStatus);
 
 //				if(null != brandId){
 //					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));

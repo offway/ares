@@ -123,8 +123,7 @@
 				</div>
 				<button class="btn btn-info updateStatus">更新状态</button>
 			</div>
-			
-					
+
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
@@ -525,16 +524,16 @@
 						return "1" == data ? "是" : "否";
 					}
 				},
-				{
-					targets: 10,
-					data: "status",
-					title: "状态",
-					render: function (data, type, row, meta) {
-						/** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出] **/
-						var map = ["已下单", "已发货", "已寄回", "已收货", "已取消", "已部分收货", "审核", "部分寄出"];
-						return map[data];
-					}
-				},
+                {
+                    targets: 10,
+                    data: "status",
+                    title: "状态",
+                    render: function (data, type, row, meta) {
+                        /** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出] **/
+                        var map = ["已下单", "已发货", "已寄回", "已收货", "已取消", "已部分收货", "审核", "部分寄出", "部分寄回"];
+                        return map[data];
+                    }
+                },
 				{
 					targets: 11,
 					data: "isUpload",

@@ -60,9 +60,9 @@
 						<div class="form-group ">
 							<div class="input-group">
 								<select name="isOffway" class="form-control" style="height:35px">
-									<option value="">是否自营</option>
-									<option value="0">否</option>
-									<option value="1">是</option>
+									<option value="">是否限定</option>
+									<option value="0">是</option>
+									<option value="1">否</option>
 								</select>
 							</div>
 						</div>
@@ -104,9 +104,7 @@
 	</div>
 	
 	<div th:replace="body-under"></div>
-	
-	
-	
+
 	<div class="modal fade in" data-backdrop="static" id="modal-goods">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
@@ -127,15 +125,13 @@
 								<th>品牌名称</th>
 								<th>尺码</th>
 								<th>颜色</th>
+								<th>物流单号</th>
 							</tr>
 						</thead>
-						
 						<tbody>
 						</tbody>
 					</table>
-									
 				</div>
-				
 				<div class="modal-footer">
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
@@ -198,265 +194,242 @@
 	<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
-	/*<![CDATA[*/	
-	jQuery(document).ready(function($)
-	{
+	/*<![CDATA[*/
+	jQuery(document).ready(function ($) {
 		$("#brandId").editableSelect();
 		var oTable = $("#example-1").dataTable({
 			language: {
-                url: "../assets/Chinese.txt"
-            },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/order-data?status=2",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/order-data?status=2,8",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
 				var brandId = $("#brandId").parent().find("li.es-visible").val();
-				if (brandId != "0"){
+				if (brandId != "0") {
 					searchArray.push({"name": "brandId", "value": brandId});
-				}else {
+				} else {
 					searchArray.push({"name": "brandId", "value": ""});
 				}
-                $.merge(aData, searchArray);
-            },
-            order: [[ 0, "desc" ]],columnDefs: [
-				{	
+				$.merge(aData, searchArray);
+			},
+			order: [[0, "desc"]],
+			columnDefs: [
+				{
 					targets: 0,
-				    data: "orderNo",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="authId" value="'+data+'" />';  
-				    }
+					data: "orderNo",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="authId" value="' + data + '" />';
+					}
 				},
-                {
-                    targets: 1,
-                    data: "id",
-                    title: "序号"
-                },
-                {
-               		targets: 2,
-	                data: "orderNo",
-	                title: "订单号"
-            	},
-            	
-            	{
-               		targets: 3,
-	                data: "useDate",
-	                title: "使用日期",
-                    render: function (data, type, row, meta) {
-                        return new Date(data).Format("yyyy-MM-dd");
-                    }
-            	}, 
-            	{
-               		targets: 4,
-	                data: "realName",
-	                title: "姓名"
-            	},
-            	{
-               		targets: 5,
-	                data: "position",
-	                title: "职位"
-            	},
-            	{
-               		targets: 6,
-	                data: "users",
-	                title: "使用者"
-            	},
-            	{
-               		targets: 7,
-	                data: "brandLogo",
-	                title: "品牌LOGO",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
-            	},
-            	{
-               		targets: 8,
-	                data: "brandName",
-	                title: "品牌名称"
-            	},
-            	{
-               		targets: 9,
-	                data: "isOffway",
-	                title: "是否自营",
-                    render: function (data, type, row, meta) {
-                        return "1"==data?"是":"否";
-                    }
-            	},
-            	{
-               		targets: 10,
-	                data: "status",
-	                title: "状态",
-                    render: function (data, type, row, meta) {
-                        if("0"==data){
-                        	return "已下单";
-                        }else if("1"==data){
-                        	return "已发货";
-                        }else if("2"==data){
-                        	return "已寄回";
-                        }else if("3"==data){
-                        	return "已收货";
-                        }else if("4"==data){
-                        	return "已取消";
-                        }
-                    }
-            	},
-            	
-            	{
-               		targets: 11,
-	                data: "orderNo",
-	                title: "商品明细",
-	                render: function (data, type, row, meta) {
-                        return "<a href='javascript:void(0)' class='showGoods' orderNo='"+data+"' color='blue'>查看</a>";
-                    }
-            	},
-            	{
-               		targets: 12,
-	                data: "orderNo",
-	                title: "物流明细",
-	                render: function (data, type, row, meta) {
-                        return "<a href='javascript:void(0)' class='showEx' orderNo='"+data+"' type='0' color='blue'>寄</a> &nbsp; <a href='javascript:void(0)' class='showEx' orderNo='"+data+"' type='1' color='blue'>返</a>";
-                    }
-            	},
-            	
-                {
-                    targets: 13,
-                    data: "createTime",
-                    title: "创建时间",
-                    render: function (data, type, row, meta) {
-                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    }
-                },
-            	
-                {
-                    targets: 14,
-                    data: "returnTime",
-                    title: "归还时间",
-                    render: function (data, type, row, meta) {
-                    	if(data == null){
-	                   		return "";
-	                   	}else{
-	                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-	                   	}
-                    }
-                },
-            	
-                {
-                    targets: 15,
-                    data: "showTime",
-                    title: "返图时间",
-                    render: function (data, type, row, meta) {
-	                   	if(data == null){
-	                   		return "";
-	                   	}else{
-	                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-	                   	}
-                    }
-                }
-               ]
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "orderNo",
+					title: "订单号",
+					render: function (data, type, row, meta) {
+						return data + "_" + row["batch"];
+					}
+				},
+				{
+					targets: 3,
+					data: "useDate",
+					title: "使用日期",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd");
+					}
+				},
+				{
+					targets: 4,
+					data: "realName",
+					title: "姓名"
+				},
+				{
+					targets: 5,
+					data: "position",
+					title: "职位"
+				},
+				{
+					targets: 6,
+					data: "users",
+					title: "使用者"
+				},
+				{
+					targets: 7,
+					data: "brandLogo",
+					title: "品牌LOGO",
+					render: function (data, type, row, meta) {
+						return "<img src=" + data + "></img>";
+					}
+				},
+				{
+					targets: 8,
+					data: "brandName",
+					title: "品牌名称"
+				},
+				{
+					targets: 9,
+					data: "isOffway",
+					title: "是否自营",
+					render: function (data, type, row, meta) {
+						return "1" == data ? "是" : "否";
+					}
+				},
+				{
+					targets: 10,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						/** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出,8-部分寄回] **/
+						var map = ["已下单", "已发货", "已寄回", "已收货", "已取消", "已部分收货", "审核", "部分寄出", "部分寄回"];
+						return map[data];
+					}
+				},
+				{
+					targets: 11,
+					data: "orderNo",
+					title: "商品明细",
+					render: function (data, type, row, meta) {
+						return "<a href='javascript:void(0)' class='showGoods' batch='" + row["batch"] + "' orderNo='" + data + "' color='blue'>查看</a>";
+					}
+				},
+				{
+					targets: 12,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 13,
+					data: "returnTime",
+					title: "归还时间",
+					render: function (data, type, row, meta) {
+						if (data == null) {
+							return "";
+						} else {
+							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+						}
+					}
+				},
+				{
+					targets: 14,
+					data: "showTime",
+					title: "返图时间",
+					render: function (data, type, row, meta) {
+						if (data == null) {
+							return "";
+						} else {
+							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+						}
+					}
+				}
+			]
 		});
-		
-		$(".searchBtn").click(function(){
+
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw();  //or fnReloadAjax()  
 			return false;
 		});
-		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
+
+		$('#example-1').on('click', "#checkbox-all", function () {
 			var obj = $(this);
-			$("input[name='authId']").each(function(i,e){
-				 this.checked = obj[0].checked;
+			$("input[name='authId']").each(function (i, e) {
+				this.checked = obj[0].checked;
 			});
-		})
-			 
-			
-		 
-		 $("body").on("click","a.showGoods",function(){
-			 var orderNo = $(this).attr("orderNo");
-			 $.get("/deliver-goods",{orderNo:orderNo},function(data){
+		});
+
+		$("body").on("click", "a.showGoods", function () {
+			var orderNo = $(this).attr("orderNo");
+			var batch = $(this).attr("batch");
+			$.get("/deliver-goods", {"orderNo": orderNo, "batch": batch}, function (data) {
 				var html = "";
 				$('#modal-goods tbody').html("");
-				 $.each(data,function(i,e){
-					 html+="<tr><td>"+e.sku+"</td><td><img src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.brandName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
-				 });
-				 $('#modal-goods tbody').html(html);
-			 
-			 });
-			 
-			 jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
-		 });
-		 
-		 $("body").on("click","a.showEx",function(){
-			 var orderNo = $(this).attr("orderNo");
-			 var type = $(this).attr("type");
-			 $.get("/order-express",{orderNo:orderNo,type:type},function(e){
-				var html = "";
-				$('#modal-ex tbody').html("");
-				if(e!=''){
-					 html+="<tr><th>订单号</th><td>"+e.orderNo+"</td></tr>";
-					 html+="<tr><th>快递运单号</th><td>"+e.mailNo+"</td></tr>";
-					 html+="<tr><th>寄件方手机</th><td>"+e.fromPhone+"</td></tr>";
-					 html+="<tr><th>寄件方姓名</th><td>"+e.fromRealName+"</td></tr>";
-					 html+="<tr><th>寄件方省份</th><td>"+e.fromProvince+"</td></tr>";
-					 html+="<tr><th>寄件方城市</th><td>"+e.fromCity+"</td></tr>";
-					 html+="<tr><th>寄件方区/县</th><td>"+e.fromCounty+"</td></tr>";
-					 html+="<tr><th>寄件方详细地址</th><td>"+e.fromContent+"</td></tr>";
-					 html+="<tr><th>取件快递员手机号</th><td>"+e.exPhone+"</td></tr>";
-					 html+="<tr><th>快递员最晚上门时间</th><td>"+e.lastTime+"</td></tr>";
-					 html+="<tr><th>收件方手机</th><td>"+e.toPhone+"</td></tr>";
-					 html+="<tr><th>收件方姓名</th><td>"+e.toRealName+"</td></tr>";
-					 html+="<tr><th>收件方省份</th><td>"+e.toProvince+"</td></tr>";
-					 html+="<tr><th>收件方城市</th><td>"+e.toCity+"</td></tr>";
-					 html+="<tr><th>收件方区/县</th><td>"+e.toCounty+"</td></tr>";
-					 html+="<tr><th>收件方详细地址</th><td>"+e.toContent+"</td></tr>";
-					 
-					 html = html.replace(new RegExp("null","g"),"暂无");
-					 $('#modal-ex tbody').html(html);
-				}
-				 jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
-			 
-			 });
-		 });
-		 
-		 $(".btn.btn-info.add").click(function(){
-			
-			var stockId = $("input[name='authId']:checked");
-			if(stockId.length!=1){
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return ;
-			}
-			
-			stockId = stockId[0].value;
+				$.each(data, function (i, e) {
+					var td = e["returnMailNo"] ? "<td><a href='#' class='showEx' color='blue' mailNo='AAA'>AAA</a></td>".replace(/AAA/g, e["returnMailNo"]) : "<td>未寄回</td>";
+					html += "<tr><td>" + e.sku + "</td>" +
+							"<td><img src=\"" + e.image + "\" />" +
+							"</td><td>" + e.goodsName + "</td>" +
+							"<td>" + e.brandName + "</td>" +
+							"<td>" + e.size + "</td>" +
+							"<td>" + e.color + "</td>" +
+							td +
+							"</tr>";
+				});
+				$('#modal-goods tbody').html(html);
+			});
+			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+		});
 
+		function checkIt(data) {
+			var preview = $("#modal-ex tbody");
+			var contentStr = "";
+			contentStr += appendToPreview("信息:", data["message"]);
+			contentStr += "<hr/>";
+			for (var a in data["data"]) {
+				a = data["data"][a];
+				contentStr += appendToPreview("内容:", a["context"]);
+				contentStr += appendToPreview("时间:", a["time"]);
+			}
+			preview.html(contentStr);
+			jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
+		}
+
+		function appendToPreview(key, value) {
+			return '<div class="row">' +
+					'<div class="col-md-2">' +
+					key +
+					'</div>' +
+					'<div class="col-md-10">' +
+					value +
+					'</div>' +
+					'</div>';
+		}
+
+		$("body").on("click", "a.showEx", function () {
+			var mailNo = $(this).attr("mailNo");
+			$.get("/order_trackOrder", {"mailNo": mailNo}, function (data) {
+				checkIt(JSON.parse(data));
+			});
+		});
+
+		$(".btn.btn-info.add").click(function () {
+			var stockId = $("input[name='authId']:checked");
+			if (stockId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+			stockId = stockId[0].value;
 			$("#orderid").val(stockId);
-			
 			jQuery('#modal-add').modal('show', {backdrop: 'fade'});
-				
-		 });
-		 
-		 $(".btn.btn-info.save").click(function(){
-			 var orderNo = $("#orderid").val();
-			 $.post("/order-check",{orderNo:orderNo},function(data){
-				 if(data){
-					 	jQuery('#modal-add').modal('hide');
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw(oTable.fnSettings()); 
-				 }else{
-					 toastr.error("操作失败", "温馨提示");
-				 }
-			 });
-		 });
-		
+		});
+
+		$(".btn.btn-info.save").click(function () {
+			var orderNo = $("#orderid").val();
+			$.post("/order-check", {orderNo: orderNo}, function (data) {
+				if (data) {
+					jQuery('#modal-add').modal('hide');
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw(oTable.fnSettings());
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		});
 	});
 	/*]]>*/
 	</script>
 </body>
-
 </html>
