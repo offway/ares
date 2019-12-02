@@ -2,6 +2,9 @@ package cn.offway.ares.controller;
 
 import cn.offway.ares.domain.*;
 import cn.offway.ares.service.*;
+import cn.offway.ares.utils.HttpClientUtil;
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -181,6 +184,29 @@ public class OrderController {
     @RequestMapping("/order-express")
     public PhOrderExpressInfo phOrderExpress(String orderNo, String type) {
         return phOrderExpressInfoService.findByOrderNoAndType(orderNo, type);
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/order_trackOrder")
+    public String trackOrder(String mailNo) {
+        return queryExpress("shunfeng", mailNo);
+    }
+
+    private String queryExpress(String expressCode, String mailNo) {
+        String key = "uyUDaSuE5009";
+        String customer = "28B3DE9A2485E14FE0DAD40604A8922C";
+        Map<String, String> innerParam = new HashMap<>();
+        innerParam.put("com", expressCode);
+        innerParam.put("num", mailNo);
+        String innerParamStr = JSON.toJSONString(innerParam);
+        String signStr = innerParamStr + key + customer;
+        String sign = DigestUtils.md5Hex(signStr.getBytes()).toUpperCase();
+        Map<String, String> param = new HashMap<>();
+        param.put("customer", customer);
+        param.put("param", innerParamStr);
+        param.put("sign", sign);
+        return HttpClientUtil.post("https://poll.kuaidi100.com/poll/query.do", param);
     }
 
     @ResponseBody

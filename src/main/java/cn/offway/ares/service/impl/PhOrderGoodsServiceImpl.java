@@ -49,6 +49,11 @@ public class PhOrderGoodsServiceImpl implements PhOrderGoodsService {
     }
 
     @Override
+    public List<PhOrderGoods> findByOrderNo(String orderNo, String batch) {
+        return phOrderGoodsRepository.findByOrderNoAndBatch(orderNo, Long.valueOf(batch));
+    }
+
+    @Override
     public int getMaxBatch(String oid) {
         Object o = phOrderGoodsRepository.getMaxBatch(oid);
         if (o != null) {

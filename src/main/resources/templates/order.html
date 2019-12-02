@@ -162,6 +162,7 @@
 								<th>尺码</th>
 								<th>颜色</th>
 								<th>发货方式</th>
+                                <th>物流单号</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -551,19 +552,11 @@
 					data: "orderNo",
 					title: "商品明细",
 					render: function (data, type, row, meta) {
-						return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
+						return "<a href='javascript:void(0)' class='showGoods' batch='" + row["batch"] + "' orderNo='" + data + "' color='blue'>查看</a>";
 					}
 				},
 				{
 					targets: 13,
-					data: "orderNo",
-					title: "物流明细",
-					render: function (data, type, row, meta) {
-						return "<a href='javascript:void(0)' class='showEx' orderNo='" + data + "' type='0' color='blue'>寄</a> &nbsp; <a href='javascript:void(0)' class='showEx' orderNo='" + data + "' type='1' color='blue'>返</a>";
-					}
-				},
-				{
-					targets: 14,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -571,7 +564,7 @@
 					}
 				},
 				{
-					targets: 15,
+					targets: 14,
 					data: "returnTime",
 					title: "归还时间",
 					render: function (data, type, row, meta) {
@@ -583,7 +576,7 @@
 					}
 				},
 				{
-					targets: 16,
+					targets: 15,
 					data: "showTime",
 					title: "返图时间",
 					render: function (data, type, row, meta) {
@@ -595,7 +588,7 @@
 					}
 				},
 				{
-					targets: 17,
+					targets: 16,
 					data: "id",
 					title: "操作",
 					render: function (data, type, row, meta) {
@@ -630,7 +623,8 @@
 
 		$("body").on("click", "a.showGoods", function () {
 			var orderNo = $(this).attr("orderNo");
-			var tr = $(this).parents("tr")
+			var batch = $(this).attr("batch");
+			var tr = $(this).parents("tr");
 			$('#modal-goods .a .col-xs-4:nth-child(1)').text("序号：" + tr.find("td:nth-child(2)").text());
 			$('#modal-goods .a .col-xs-4:nth-child(2)').text("订单号：" + tr.find("td:nth-child(3)").text());
 			$('#modal-goods .a .col-xs-4:nth-child(3)').text("使用日期：" + tr.find("td:nth-child(4)").text());
@@ -638,7 +632,7 @@
 			$('#modal-goods .b .col-xs-4:nth-child(2)').text("职位：" + tr.find("td:nth-child(6)").text());
 			$('#modal-goods .b .col-xs-4:nth-child(3)').text("使用者：" + tr.find("td:nth-child(7)").text());
 
-			$.get("/deliver-goods", {orderNo: orderNo}, function (data) {
+			$.get("/deliver-goods", {"orderNo": orderNo, "batch": batch}, function (data) {
 				var html = "";
 				$('#modal-goods tbody').html("");
 				$.each(data, function (i, e) {
@@ -650,46 +644,44 @@
 							"<td>" + e.size + "</td>" +
 							"<td>" + e.color + "</td>" +
 							"<td>" + e.remark + "</td>" +
+							"<td><a href='#' class='showEx' color='blue' mailNo='AAA'>AAA</a></td>".replace(/AAA/g, e["mailNo"]) +
 							"</tr>";
 				});
 				$('#modal-goods tbody').html(html);
 			});
-
 			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
 		});
 
+		function checkIt(data) {
+			var preview = $("#modal-ex tbody");
+			var contentStr = "";
+			contentStr += appendToPreview("信息:", data["message"]);
+			contentStr += "<hr/>";
+			for (var a in data["data"]) {
+				a = data["data"][a];
+				contentStr += appendToPreview("内容:", a["context"]);
+				contentStr += appendToPreview("时间:", a["time"]);
+			}
+			preview.html(contentStr);
+			jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
+		}
+
+		function appendToPreview(key, value) {
+			return '<div class="row">' +
+					'<div class="col-md-2">' +
+					key +
+					'</div>' +
+					'<div class="col-md-10">' +
+					value +
+					'</div>' +
+					'</div>';
+		}
+
 		$("body").on("click", "a.showEx", function () {
-			var orderNo = $(this).attr("orderNo");
-			var type = $(this).attr("type");
-			$.get("/order-express", {orderNo: orderNo, type: type}, function (e) {
-				var html = "";
-				$('#modal-ex tbody').html("");
-				if (e != '') {
-					html += "<tr><th>订单号</th><td>" + e.orderNo + "</td></tr>";
-					html += "<tr><th>快递运单号</th><td>" + e.mailNo + "</td></tr>";
-					html += "<tr><th>寄件方手机</th><td>" + e.fromPhone + "</td></tr>";
-					html += "<tr><th>寄件方姓名</th><td>" + e.fromRealName + "</td></tr>";
-					html += "<tr><th>寄件方省份</th><td>" + e.fromProvince + "</td></tr>";
-					html += "<tr><th>寄件方城市</th><td>" + e.fromCity + "</td></tr>";
-					html += "<tr><th>寄件方区/县</th><td>" + e.fromCounty + "</td></tr>";
-					html += "<tr><th>寄件方详细地址</th><td>" + e.fromContent + "</td></tr>";
-					html += "<tr><th>取件快递员手机号</th><td>" + e.exPhone + "</td></tr>";
-					html += "<tr><th>快递员最晚上门时间</th><td>" + e.lastTime + "</td></tr>";
-					html += "<tr><th>收件方手机</th><td>" + e.toPhone + "</td></tr>";
-					html += "<tr><th>收件方姓名</th><td>" + e.toRealName + "</td></tr>";
-					html += "<tr><th>收件方省份</th><td>" + e.toProvince + "</td></tr>";
-					html += "<tr><th>收件方城市</th><td>" + e.toCity + "</td></tr>";
-					html += "<tr><th>收件方区/县</th><td>" + e.toCounty + "</td></tr>";
-					html += "<tr><th>收件方详细地址</th><td>" + e.toContent + "</td></tr>";
-
-					html = html.replace(new RegExp("null", "g"), "暂无");
-					$('#modal-ex tbody').html(html);
-				}
-				jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
-
+			var mailNo = $(this).attr("mailNo");
+			$.get("/order_trackOrder", {"mailNo": mailNo}, function (data) {
+				checkIt(JSON.parse(data));
 			});
-
-
 		});
 
 		$(".btn.btn-danger.confirmBack").click(function () {
