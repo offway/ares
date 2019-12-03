@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.*;
 import javax.persistence.criteria.CriteriaBuilder.In;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -65,7 +66,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
-    public Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String mode, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Pageable page) {
+    public Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String mode, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Date sTime, Date eTime, Pageable page) {
         return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
 
             @Override
@@ -164,6 +165,13 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                     params.add(criteriaBuilder.exists(subquery));
                 }
 
+                if (sTime != null && eTime != null) {
+                    params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
+                } else if (sTime != null) {
+                    params.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime"), sTime));
+                } else if (eTime != null) {
+                    params.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime"), eTime));
+                }
 
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));

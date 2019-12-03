@@ -5,8 +5,12 @@ import cn.offway.ares.service.*;
 import cn.offway.ares.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,14 +85,11 @@ public class OrderController {
     @ResponseBody
     @RequestMapping("/order-data")
     public Map<String, Object> orderData(HttpServletRequest request, String orderNo, String unionid, String sku,
-                                         String realName, String position, String status, Long brandId, String isOffway, String isUpload, Authentication authentication, String users, String size) {
+                                         String realName, String position, String status, Long brandId, String isOffway, String isUpload, Authentication authentication, String users, String size, String sTime, String eTime, int sEcho, int iDisplayStart, int iDisplayLength) {
 
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
-        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
-        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
 
         PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
         List<Long> brandIds;
@@ -98,8 +99,17 @@ public class OrderController {
             brandIds = phAdmin.getBrandIds();
         }
 
+        Date sTimeDate = null, eTimeDate = null;
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        if (StringUtils.isNotBlank(sTime)) {
+            sTimeDate = DateTime.parse(sTime, format).toDate();
+        }
+        if (StringUtils.isNotBlank(eTime)) {
+            eTimeDate = DateTime.parse(eTime, format).toDate();
+        }
+
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
-        Page<PhOrderInfo> pages = phOrderInfoService.findByPage(sku, isUpload, realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, status.trim(), brandId, isOffway, brandIds, users, size, pr);
+        Page<PhOrderInfo> pages = phOrderInfoService.findByPage(sku, isUpload, realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, status.trim(), brandId, isOffway, brandIds, users, size, sTimeDate, eTimeDate, pr);
         List<Map<String, Object>> list = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         for (PhOrderInfo info : pages.getContent()) {

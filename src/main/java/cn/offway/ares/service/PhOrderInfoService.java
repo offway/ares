@@ -4,6 +4,7 @@ import cn.offway.ares.domain.PhOrderInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public interface PhOrderInfoService {
 
     String generateOrderNo(String prefix);
 
-    Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String mode, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Pageable page);
+    Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String mode, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Date sTime, Date eTime, Pageable page);
 
     PhOrderInfo findByOrderNo(String orderNo);
 
