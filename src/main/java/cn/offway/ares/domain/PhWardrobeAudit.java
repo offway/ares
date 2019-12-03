@@ -77,6 +77,9 @@ public class PhWardrobeAudit implements Serializable {
     /** 是否删除[0-未删除,1-删除,2-已下单] **/
     private String isDel;
 
+    /** 表单提交场景下，为 submit 事件带上的 formId；支付场景下，为本次支付的 prepay_id **/
+    private String formId;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -271,6 +274,15 @@ public class PhWardrobeAudit implements Serializable {
 
     public void setIsDel(String isDel) {
         this.isDel = isDel;
+    }
+
+    @Column(name = "form_id", length = 200)
+    public String getFormId() {
+        return formId;
+    }
+
+    public void setFormId(String formId) {
+        this.formId = formId;
     }
 
 }
