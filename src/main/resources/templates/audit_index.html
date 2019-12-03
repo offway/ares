@@ -421,20 +421,20 @@
 				},
 				{
 					targets: 12,
-					data: "photoDate",
-					title: "返图时间",
-					render: function (data, type, row, meta) {
-						return formatTime(data);
-					}
-				},
-				{
-					targets: 13,
 					data: "useDate",
 					title: "使用时间",
 					render: function (data, type, row, meta) {
 						return formatTime(data);
 					}
 				},
+                {
+                    targets: 13,
+                    data: "photoDate",
+                    title: "返图时间",
+                    render: function (data, type, row, meta) {
+                        return formatTime(data);
+                    }
+                },
 				{
 					targets: 14,
 					data: "returnDate",
