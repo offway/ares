@@ -44,7 +44,7 @@ import com.alibaba.fastjson.JSONObject;
 @Service
 public class PhAuthServiceImpl implements PhAuthService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static Logger logger = LoggerFactory.getLogger(PhAuthServiceImpl.class);
 
 	@Autowired
 	private PhAuthRepository phAuthRepository;
@@ -134,7 +134,7 @@ public class PhAuthServiceImpl implements PhAuthService {
 		}
 		String openid = phUserInfo.getMiniopenid();
 		String formid = phAuth.getFormId();
-		
+
 		// 模块消息配置
 		Template tem = new Template();
 		tem.setTemplateId("3XfYDBQWMwRfEsvmRhemNtZVy-j5dFoNPXoCz7t4QwI");
@@ -144,46 +144,40 @@ public class PhAuthServiceImpl implements PhAuthService {
 		tem.setPage("pages/index/index");
 		String result = "您的身份审核已通过";
 		String content = "恭喜！可以借衣啦！";
-		if("2".equals(status)){
+		if ("2".equals(status)) {
 			result = "您的身份审核未通过";
 			content = approvalContent;
-			
+
 			PhCode phCode = phCodeService.findOne(phAuth.getCodeId());
 			phCode.setStatus("0");
 			phCodeService.save(phCode);
 
 		}
-
 		List<TemplateParam> paras = new ArrayList<TemplateParam>();
 		paras.add(new TemplateParam("keyword1", result, "#0044BB"));
 		paras.add(new TemplateParam("keyword2", content, "#0044BB"));
-		
 		//tem.setEmphasis_keyword("keyword1.DATA");
-		
 		tem.setTemplateParamList(paras);
-		
 		// 推送模版消息
 		sendTemplateMsg(tem, getToken());
-		
 		return true;
 	}
-	
+
 	/**
 	 * 获取 access_token
 	 */
-	public String getToken() {
+	public static String getToken() {
 		String requestUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx8dac79ed90eb9311&secret=8e2d761b60cd91b7ca8d3883c378fa0d";
 		String result = HttpClientUtil.post(requestUrl, "");
 		JSONObject jsonObject = JSON.parseObject(result);
 		if (jsonObject != null) {
-			String access_token = jsonObject.getString("access_token");
-			return access_token;
+			return jsonObject.getString("access_token");
 		} else {
 			return "";
 		}
 	}
 
-	public void sendTemplateMsg(Template template, String token) {
+	public static void sendTemplateMsg(Template template, String token) {
 		String requestUrl = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN";
 		requestUrl = requestUrl.replace("ACCESS_TOKEN", token);
 		String jsonString = template.toJSON();
