@@ -100,9 +100,7 @@ public class PhAuthServiceImpl implements PhAuthService {
         phAuth.setApproval(new Date());
         phAuth.setApprover(authentication.getName());
         save(phAuth);
-
         PhUserInfo phUserInfo = phUserInfoService.findByUnionid(phAuth.getUnionid());
-
         if ("1".equals(status)) {
             phUserInfo.setIsAuth("1");
             phUserInfo.setPhone(phAuth.getPhone());
@@ -128,22 +126,6 @@ public class PhAuthServiceImpl implements PhAuthService {
 
         }
         String openid = phUserInfo.getMiniopenid();
-//        String formid = phAuth.getFormId();
-
-        // 模块消息配置
-//        Template tem = new Template();
-//        tem.setTemplateId("3XfYDBQWMwRfEsvmRhemNtZVy-j5dFoNPXoCz7t4QwI");
-//        tem.setFormId(formid);
-//        tem.setTopColor("#00DD00");
-//        tem.setToUser(openid);
-//        tem.setPage("pages/index/index");
-//        List<TemplateParam> paras = new ArrayList<TemplateParam>();
-//        paras.add(new TemplateParam("keyword1", result, "#0044BB"));
-//        paras.add(new TemplateParam("keyword2", content, "#0044BB"));
-//        tem.setTemplateParamList(paras);
-//        // 推送模版消息
-//        sendTemplateMsg(tem, getToken());
-
         //发送订阅消息
         String result = "您的身份审核已通过";
         String content = "恭喜！可以借衣啦！";
@@ -156,14 +138,14 @@ public class PhAuthServiceImpl implements PhAuthService {
         }
         Map<String, Object> args = new HashMap<>();
         args.put("touser", openid);
-        args.put("template_id", "XXXXXXXXXXXXXXXXXX");
+        args.put("template_id", "Kp9iDQ5mUycHBTroqgGttJB5fQyxBZcmBpI-zTHAUwc");
         Map<String, Object> data = new HashMap<>();
         Map<String, String> k1 = new HashMap<>();
         k1.put("value", result);
-        data.put("key1", k1);
+        data.put("thing4", k1);
         Map<String, String> k2 = new HashMap<>();
-        k1.put("value", content);
-        data.put("key2", k2);
+        k2.put("value", content);
+        data.put("thing5", k2);
         args.put("data", data);
         sendSubscribeMsg(args, getToken());
         return true;

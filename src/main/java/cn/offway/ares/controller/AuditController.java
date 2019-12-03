@@ -4,8 +4,6 @@ import cn.offway.ares.domain.PhAdmin;
 import cn.offway.ares.domain.PhUserInfo;
 import cn.offway.ares.domain.PhWardrobe;
 import cn.offway.ares.domain.PhWardrobeAudit;
-import cn.offway.ares.dto.Template;
-import cn.offway.ares.dto.TemplateParam;
 import cn.offway.ares.service.PhBrandService;
 import cn.offway.ares.service.PhUserInfoService;
 import cn.offway.ares.service.PhWardrobeAuditService;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,32 +91,31 @@ public class AuditController {
             wardrobeService.save(wardrobe);
             PhUserInfo userInfo = userInfoService.findByUnionid(obj.getUnionid());
             if (userInfo != null) {
-                sendMsg(userInfo.getMiniopenid(), obj.getFormId(), null);
+                sendMsg(userInfo.getMiniopenid(), null);
             }
         }
         return true;
     }
 
-    private void sendMsg(String openid, String formid, String approvalContent) {
-        // 模块消息配置
-        Template tem = new Template();
-        tem.setTemplateId("3XfYDBQWMwRfEsvmRhemNtZVy-j5dFoNPXoCz7t4QwI");
-        tem.setFormId(formid);
-        tem.setTopColor("#00DD00");
-        tem.setToUser(openid);
-        tem.setPage("pages/index/index");
+    private void sendMsg(String openid, String approvalContent) {
         String result = "审核通知";
         String content = "你在OFFWAY MODE SHOWROOM申请的服装已通过审核，请及时提交订单借衣。";
         if (StringUtils.isNotBlank(approvalContent)) {
-            result = " 审核失败";
+            result = "审核失败";
             content = "您在OFFWAY MODE SHOWROOM申请的借衣未通过审核，理由：" + approvalContent;
         }
-        List<TemplateParam> paras = new ArrayList<TemplateParam>();
-        paras.add(new TemplateParam("keyword1", result, "#0044BB"));
-        paras.add(new TemplateParam("keyword2", content, "#0044BB"));
-        tem.setTemplateParamList(paras);
-        // 推送模版消息
-        PhAuthServiceImpl.sendTemplateMsg(tem, PhAuthServiceImpl.getToken());
+        Map<String, Object> args = new HashMap<>();
+        args.put("touser", openid);
+        args.put("template_id", "Kp9iDQ5mUycHBTroqgGttJB5fQyxBZcmBpI-zTHAUwc");
+        Map<String, Object> data = new HashMap<>();
+        Map<String, String> k1 = new HashMap<>();
+        k1.put("value", result);
+        data.put("thing4", k1);
+        Map<String, String> k2 = new HashMap<>();
+        k2.put("value", content);
+        data.put("thing5", k2);
+        args.put("data", data);
+        PhAuthServiceImpl.sendSubscribeMsg(args, PhAuthServiceImpl.getToken());
     }
 
     @ResponseBody
@@ -135,7 +131,7 @@ public class AuditController {
             wardrobeService.save(wardrobe);
             PhUserInfo userInfo = userInfoService.findByUnionid(obj.getUnionid());
             if (userInfo != null) {
-                sendMsg(userInfo.getMiniopenid(), obj.getFormId(), str);
+                sendMsg(userInfo.getMiniopenid(), str);
             }
         }
         return true;
