@@ -54,7 +54,7 @@ public class AuditController {
     @ResponseBody
     @RequestMapping("/audit_list")
     public Map<String, Object> getStockList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, String goodsName, String goodsId, String state, Authentication authentication) {
-        Sort sort = new Sort("id");
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
         PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
         List<Long> brandIds;
         if (phAdmin.getRoleIds().contains(BigInteger.ONE)) {

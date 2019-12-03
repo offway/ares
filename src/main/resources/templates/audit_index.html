@@ -390,6 +390,16 @@
 				},
 				{
 					targets: 7,
+					data: "size",
+					title: "尺码"
+				},
+				{
+					targets: 8,
+					data: "color",
+					title: "颜色"
+				},
+				{
+					targets: 9,
 					data: "image",
 					title: "封面图片",
 					render: function (data, type, row, meta) {
@@ -397,12 +407,12 @@
 					}
 				},
 				{
-					targets: 8,
+					targets: 10,
 					data: "brandName",
 					title: "品牌名称"
 				},
 				{
-					targets: 9,
+					targets: 11,
 					data: "brandLogo",
 					title: "品牌LOGO",
 					render: function (data, type, row, meta) {
@@ -410,7 +420,7 @@
 					}
 				},
 				{
-					targets: 10,
+					targets: 12,
 					data: "photoDate",
 					title: "返图时间",
 					render: function (data, type, row, meta) {
@@ -418,7 +428,7 @@
 					}
 				},
 				{
-					targets: 11,
+					targets: 13,
 					data: "useDate",
 					title: "使用时间",
 					render: function (data, type, row, meta) {
@@ -426,7 +436,7 @@
 					}
 				},
 				{
-					targets: 12,
+					targets: 14,
 					data: "returnDate",
 					title: "归还时间",
 					render: function (data, type, row, meta) {
@@ -434,7 +444,7 @@
 					}
 				},
 				{
-					targets: 13,
+					targets: 15,
 					data: "state",
 					title: "审核状态",
 					render: function (data, type, row, meta) {
@@ -443,7 +453,7 @@
 					}
 				},
 				{
-					targets: 14,
+					targets: 16,
 					data: "isDel",
 					title: "衣柜状态",
 					render: function (data, type, row, meta) {
@@ -466,7 +476,7 @@
 					}
 				},
 				{
-					targets: 15,
+					targets: 17,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -474,33 +484,24 @@
 					}
 				},
 				{
-					targets: 16,
+					targets: 18,
 					data: "reason",
 					title: "拒绝理由"
 				},
 				{
-					targets: 17,
+					targets: 19,
 					data: "id",
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+						var str = "";
+						if (full["state"] == "0" && full["isDel"] != "1") {
+							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="通过"/>';
+							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="拒绝"/>';
+						}
+						return str + '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>'
 					}
-				},
-                {
-                    targets: 18,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        var str = "";
-                        if (full["state"] == "0" && full["isDel"] != "1") {
-                            str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="通过"/>';
-                            str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="拒绝"/>';
-                        }
-                        return str;
-                    }
-                }
+				}
 			]
 		});
 		table_global = oTable;
