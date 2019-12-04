@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.qiniu.util.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,17 +235,23 @@ public class GoodsController {
             goods.setBrandName(brand.getName());
             goods.setBrandLogo(brand.getLogo());
         }
-        PhGoodsType goodsType = goodsTypeService.findOne(Long.valueOf(goods.getType()));
-        if (goodsType != null) {
-            goods.setType(goodsType.getName());
+        if (StringUtils.isNotBlank(goods.getType())) {
+            PhGoodsType goodsType = goodsTypeService.findOne(Long.valueOf(goods.getType()));
+            if (goodsType != null) {
+                goods.setType(goodsType.getName());
+            }
         }
-        PhGoodsCategory goodsCategory = goodsCategoryService.findOne(Long.valueOf(goods.getCategory()));
-        if (goodsCategory != null) {
-            goods.setCategory(goodsCategory.getName());
+        if (StringUtils.isNotBlank(goods.getCategory())) {
+            PhGoodsCategory goodsCategory = goodsCategoryService.findOne(Long.valueOf(goods.getCategory()));
+            if (goodsCategory != null) {
+                goods.setCategory(goodsCategory.getName());
+            }
         }
-        PhGoodsKind goodsKind = goodsKindService.findOne(Long.valueOf(goods.getKind()));
-        if (goodsKind != null) {
-            goods.setKind(goodsKind.getName());
+        if (StringUtils.isNotBlank(goods.getKind())) {
+            PhGoodsKind goodsKind = goodsKindService.findOne(Long.valueOf(goods.getKind()));
+            if (goodsKind != null) {
+                goods.setKind(goodsKind.getName());
+            }
         }
         if (goods.getId() == null) {//add
             goods.setCreateTime(new Date());
