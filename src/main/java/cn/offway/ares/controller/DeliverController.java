@@ -236,6 +236,9 @@ public class DeliverController {
 
     private JsonResult callSF(PhOrderExpressInfo phOrderExpressInfo) {
         ReqAddOrder addOrder = new ReqAddOrder();
+        addOrder.setD_province(phOrderExpressInfo.getToProvince());
+        addOrder.setD_city(phOrderExpressInfo.getToCity());
+        addOrder.setD_county(phOrderExpressInfo.getToCounty());
         addOrder.setD_address(phOrderExpressInfo.getToContent());
         addOrder.setD_contact(phOrderExpressInfo.getToRealName());
         addOrder.setD_tel(phOrderExpressInfo.getToPhone());
