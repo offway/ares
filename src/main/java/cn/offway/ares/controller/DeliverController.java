@@ -44,6 +44,8 @@ public class DeliverController {
     private PhAddressService addressService;
     @Autowired
     private SfExpressService sfExpressService;
+    @Autowired
+    private PhAddressBrandService addressBrandService;
 
     @RequestMapping("/deliver.html")
     public String deliver(ModelMap map) {
@@ -211,7 +213,7 @@ public class DeliverController {
         //保存订单物流
         PhAddress toAddress = addressService.findOne(orderInfo.getAddressId());
         PhBrand phBrand = brandService.findOne(orderInfo.getBrandId());
-        PhAddress brandAddress = addressService.findOne(phBrand.getAddrId());
+        PhAddressBrand brandAddress = addressBrandService.findOne(phBrand.getAddrId());
         PhOrderExpressInfo phOrderExpressInfo = new PhOrderExpressInfo();
         phOrderExpressInfo.setCreateTime(new Date());
         phOrderExpressInfo.setExpressOrderNo("无");
