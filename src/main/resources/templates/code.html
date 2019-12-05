@@ -1,230 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>邀请码</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
-	<script src="js/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>邀请码</title>
+    <script src="js/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">邀请码</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">邀请码</h1>
-					<p class="activityDescription"></p>
-				</div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form class="form-inline" role="form">
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" name="status" placeholder="状态" style="height:35px">
+                                            <option value="">状态</option>
+                                            <option value="0">未使用</option>
+                                            <option value="1">已使用</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input class="form-control" name="code" placeholder="邀请码" style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input class="form-control" name="phone" placeholder="手机" style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary searchBtn" style="height:35px">查询
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <table cellspacing="0" class="table table-striped table-bordered" id="example-1"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-info check">生成邀请码</button>
+                            <button class="btn btn-info edit">修改邀请码</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
 
-				<div class="breadcrumb-env">
+<div th:replace="body-under"></div>
 
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>业务管理</a></li>
-						<li class="active"><strong>邀请码</strong></li>
-					</ol>
+<div class="modal fade in" data-backdrop="static" id="modal-rule">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
 
-				</div>
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+                <h4 class="modal-title">生成邀请码</h4>
+            </div>
 
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="status" class="form-control" style="height:35px" placeholder="状态">
-									<option value="">状态</option>
-									<option value="0">未使用</option>
-									<option value="1">已使用</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="code" class="form-control" style="height:35px" placeholder="邀请码"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="phone" class="form-control" style="height:35px" placeholder="手机"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-					
-				</div>
-				<button class="btn btn-info check">生成邀请码</button>
-				<button class="btn btn-info edit">修改邀请码</button>
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" data-backdrop="static" id="modal-rule">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">生成邀请码</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="authForm">
-						<input type="hidden" id="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" id="phone" class="form-control" style="height:35px" placeholder="手机"/>
-								
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" id="realName" class="form-control" style="height:35px" placeholder="姓名"/>
-								
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" id="position" class="form-control" style="height:35px" placeholder="职位"/>
-								
-							</div>	
-							
-						</div>
-					</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info saveRule">保存</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-	
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+            <div class="modal-body">
+                <form id="authForm" role="form">
+                    <input id="id" type="hidden"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input class="form-control" id="phone" placeholder="手机" style="height:35px"
+                                       type="text"/>
 
-	function deletecode(id){
-		var confirm = window.confirm("你确定要这么做？");
-		if (confirm == false) {
-			return;
-		}else {
-			$.post("/code-del",{id:id},function (data) {
-				if (data){
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings());
-				}else {
-					toastr.error("操作失败！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings());
-				}
-			});
-		}
-	};
-	var oTable;
-	jQuery(document).ready(function($)
-	{
-		 oTable = $("#example-1").dataTable({
-			language: {
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input class="form-control" id="realName" placeholder="姓名"
+                                       style="height:35px"
+                                       type="text"/>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input class="form-control" id="position" placeholder="职位"
+                                       style="height:35px"
+                                       type="text"/>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
+                <button class="btn btn-success" type="button">保存</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    function deletecode(id) {
+        var confirm = window.confirm("你确定要这么做？");
+        if (confirm == false) {
+            return;
+        } else {
+            $.post("/code-del", {id: id}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw(oTable.fnSettings());
+                } else {
+                    toastr.error("操作失败！", "温馨提示");
+                    oTable.fnDraw(oTable.fnSettings());
+                }
+            });
+        }
+    };
+    var oTable;
+    jQuery(document).ready(function ($) {
+        oTable = $("#example-1").dataTable({
+            language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/code-data",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
+            aLengthactivity: [
+                [10, 25, 50, 100], [10, 25, 50, 100]
+            ],
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/code-data",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
-            order: [[ 0, "desc" ]],columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="authId" value="'+data+'" />';  
-				    }
-				},
+            order: [[0, "desc"]], columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+                        var uuid = UUID.randomUUID();
+                        return '<div class="checkbox"><input type="checkbox" name="authId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                    }
+                },
                 {
                     targets: 1,
                     data: "id",
                     title: "序号"
                 },
                 {
-               		targets: 2,
-	                data: "code",
-	                title: "邀请码"
-            	},
-            	
-            	{
-               		targets: 3,
-	                data: "phone",
-	                title: "手机"
-            	}, 
-            	{
-               		targets: 4,
-	                data: "position",
-	                title: "职位"
-            	},
-            	{
-               		targets: 5,
-	                data: "realName",
-	                title: "姓名"
-            	},
-            	{
-               		targets: 6,
-	                data: "status",
-	                title: "状态",
+                    targets: 2,
+                    data: "code",
+                    title: "邀请码"
+                },
+
+                {
+                    targets: 3,
+                    data: "phone",
+                    title: "手机"
+                },
+                {
+                    targets: 4,
+                    data: "position",
+                    title: "职位"
+                },
+                {
+                    targets: 5,
+                    data: "realName",
+                    title: "姓名"
+                },
+                {
+                    targets: 6,
+                    data: "status",
+                    title: "状态",
                     render: function (data, type, row, meta) {
-                        return "0"==data?"未使用":"已使用";
+                        return "0" == data ? "未使用" : "已使用";
                     }
-            	},
-            	
+                },
+
                 {
                     targets: 7,
                     data: "createTime",
@@ -233,82 +225,87 @@
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
                 },
-				{
-					targets: 8,
-					data: "id",
-					title: "操作",
-					render: function (data, type, row, meta) {
-						if (row["status"] == "0"){
-							return '<input type="button" name="checkIt" onclick="deletecode(' + data + ')" value="删除"/>';
-						}else {
-							return "已使用，无法进行删除操作!";
-						}
-					}
-				}
-               ]
-		});
-		
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw();  //or fnReloadAjax()  
-			return false;
-		});
-		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
-			var obj = $(this);
-			$("input[name='authId']").each(function(i,e){
-				 this.checked = obj[0].checked;
-			});
-		})
-			 
-			
-		//快递单号
-		$(".btn.btn-info.check").click(function(){
-			$("#realName").val("");
-			$("#position").val("");
-			$("#phone").val("");
-			jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
-			
-		});
-		
-		$(".btn.btn-info.saveRule").click(function(){
-			var id = $("#id").val();
-			var realName = $("#realName").val();
-			var position = $("#position").val();
-			var phone = $("#phone").val();
+                {
+                    targets: 8,
+                    data: "id",
+                    title: "操作",
+                    render: function (data, type, row, meta) {
+                        if (row["status"] == "0") {
+                            return '<input type="button" name="checkIt" onclick="deletecode(' + data + ')" value="删除"/>';
+                        } else {
+                            return "已使用，无法进行删除操作!";
+                        }
+                    }
+                }
+            ]
+        });
 
-			if(''==realName ||''==position||''==phone){
-				toastr.error("请填写完整信息", "温馨提示");
-				return false;
-			}
-			$.post("/code-save",{id:id,phone:phone,position:position,realName:realName},function(data){
-				if(data){
-					jQuery('#modal-rule').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings()); 
-				}
-			})
-			
-		});
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw();  //or fnReloadAjax()
+            return false;
+        });
 
-		$(".btn.btn-info.edit").click(function(){
-			var authId = $("input[name='authId']:checked");
-			if (authId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-			$.post("/code-one",{id:authId.val()},function (data) {
-				$("#id").val(data.id);
-				$("#realName").val(data.realName);
-				$("#position").val(data.position);
-				$("#phone").val(data.phone);
-				jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
-			});
-		});
-		
-	});
-	/*]]>*/
-	</script>
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='authId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        })
+
+
+        //快递单号
+        $(".btn.btn-info.check").click(function () {
+            $("#realName").val("");
+            $("#position").val("");
+            $("#phone").val("");
+            jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
+
+        });
+
+        $(".btn.btn-info.saveRule").click(function () {
+            var id = $("#id").val();
+            var realName = $("#realName").val();
+            var position = $("#position").val();
+            var phone = $("#phone").val();
+
+            if ('' == realName || '' == position || '' == phone) {
+                toastr.error("请填写完整信息", "温馨提示");
+                return false;
+            }
+            $.post("/code-save", {
+                id: id,
+                phone: phone,
+                position: position,
+                realName: realName
+            }, function (data) {
+                if (data) {
+                    jQuery('#modal-rule').modal('hide');
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw(oTable.fnSettings());
+                }
+            })
+
+        });
+
+        $(".btn.btn-info.edit").click(function () {
+            var authId = $("input[name='authId']:checked");
+            if (authId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+            $.post("/code-one", {id: authId.val()}, function (data) {
+                $("#id").val(data.id);
+                $("#realName").val(data.realName);
+                $("#position").val(data.position);
+                $("#phone").val(data.phone);
+                jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
+            });
+        });
+
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
