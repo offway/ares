@@ -1,252 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>认证</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
-	<script src="js/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>认证</title>
+    <script src="js/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">认证</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form class="form-inline" role="form">
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" name="status" placeholder="状态" style="height:35px">
+                                            <option value="">状态</option>
+                                            <option value="0">申请</option>
+                                            <option value="1">通过</option>
+                                            <option value="2">失败</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input class="form-control" name="nickName" placeholder="用户昵称"
+                                               style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input class="form-control" name="unionid" placeholder="用户ID"
+                                               style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <div class="table-responsive">
+                                <table cellspacing="0" class="table table-striped table-bordered" id="example-1"
+                                       width="100%">
+                                </table>
+                            </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">认证</h1>
-					<p class="activityDescription"></p>
-				</div>
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            <button class="btn btn-info check">审核</button>
+                        </div>
+                        <!-- /.box-footer-->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
+<div th:replace="body-under"></div>
 
-				<div class="breadcrumb-env">
+<div class="modal fade in" data-backdrop="static" id="modal-rule">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
 
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>业务管理</a></li>
-						<li class="active"><strong>认证</strong></li>
-					</ol>
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×
+                </button>
+                <h4 class="modal-title">审核</h4>
+            </div>
 
-				</div>
+            <div class="modal-body">
+                <form id="authForm" role="form">
+                    <input name="id" type="hidden"/>
+                    <div class="row">
+                        <div class="col-md-12">
 
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="status" class="form-control" style="height:35px" placeholder="状态">
-									<option value="">状态</option>
-									<option value="0">申请</option>
-									<option value="1">通过</option>
-									<option value="2">失败</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="nickName" class="form-control" style="height:35px" placeholder="用户昵称"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="unionid" class="form-control" style="height:35px" placeholder="用户ID"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-					
-				</div>
-				<button class="btn btn-info check">审核</button>
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" data-backdrop="static" id="modal-rule">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">审核</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="authForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								
-								<select id="checkStatus" class="form-control" style="height:35px">
-									<option value="1">通过</option>
-									<option value="2">失败</option>
-								</select>
-								
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								
-								<textarea id="content" class="form-control autogrow" placeholder="拒绝原因"></textarea>
-								
-							</div>	
-							
-						</div>
-					</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info saveRule">保存</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-	
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/	
-	jQuery(document).ready(function($)
-	{
-		var oTable = $("#example-1").dataTable({
-			language: {
+                            <div class="form-group">
+
+                                <select class="form-control" id="checkStatus" style="height:35px">
+                                    <option value="1">通过</option>
+                                    <option value="2">失败</option>
+                                </select>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="form-group">
+
+                                                    <textarea class="form-control autogrow" id="content"
+                                                              placeholder="拒绝原因"></textarea>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-white" data-dismiss="modal" type="button">关闭</button>
+                <button class="btn btn-info saveRule" type="button">保存</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    jQuery(document).ready(function ($) {
+        var oTable = $("#example-1").dataTable({
+            language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/auth-data",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
+            aLengthactivity: [
+                [10, 25, 50, 100], [10, 25, 50, 100]
+            ],
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/auth-data",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
-            order: [[ 0, "desc" ]],columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="authId" value="'+data+'" />';  
-				    }
-				},
+            order: [[0, "desc"]], columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+                        var uuid = UUID.randomUUID();
+                        return '<div class="checkbox"><input type="checkbox" name="authId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                    }
+                },
                 {
                     targets: 1,
                     data: "id",
                     title: "序号"
                 },
                 {
-               		targets: 2,
-	                data: "unionid",
-	                title: "用户ID"
-            	},
+                    targets: 2,
+                    data: "unionid",
+                    title: "用户ID"
+                },
                 {
-               		targets: 3,
-	                data: "nickname",
-	                title: "用户昵称"
-            	}, 
-            	{
-               		targets: 4,
-	                data: "headimgurl",
-	                title: "用户头像",
+                    targets: 3,
+                    data: "nickname",
+                    title: "用户昵称"
+                },
+                {
+                    targets: 4,
+                    data: "headimgurl",
+                    title: "用户头像",
                     render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
+                        return "<img src=" + data + "></img>";
                     }
-            	}, 
-            	
-            	{
-               		targets: 5,
-	                data: "phone",
-	                title: "手机"
-            	}, 
-            	
-            	{
-               		targets: 6,
-	                data: "status",
-	                title: "状态",
+                },
+
+                {
+                    targets: 5,
+                    data: "phone",
+                    title: "手机"
+                },
+
+                {
+                    targets: 6,
+                    data: "status",
+                    title: "状态",
                     render: function (data, type, row, meta) {
-                        return "0"==data?"申请":"1"==data?"通过":"失败";
+                        return "0" == data ? "申请" : "1" == data ? "通过" : "失败";
                     }
-            	},
-            	{
-               		targets: 7,
-	                data: "companyName",
-	                title: "企业名称"
-            	},
-            	{
-               		targets: 8,
-	                data: "position",
-	                title: "职位"
-            	},
-            	{
-               		targets: 9,
-	                data: "realName",
-	                title: "姓名"
-            	},
-            	{
-               		targets: 10,
-	                data: "idcardPositive",
-	                title: "身份证正面",
+                },
+                {
+                    targets: 7,
+                    data: "companyName",
+                    title: "企业名称"
+                },
+                {
+                    targets: 8,
+                    data: "position",
+                    title: "职位"
+                },
+                {
+                    targets: 9,
+                    data: "realName",
+                    title: "姓名"
+                },
+                {
+                    targets: 10,
+                    data: "idcardPositive",
+                    title: "身份证正面",
                     render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
+                        return "<img src=" + data + "></img>";
                     }
-            	},
-            	{
-               		targets: 11,
-	                data: "idcardObverse",
-	                title: "身份证反面",
+                },
+                {
+                    targets: 11,
+                    data: "idcardObverse",
+                    title: "身份证反面",
                     render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
+                        return "<img src=" + data + "></img>";
                     }
-            	},
-            	{
-               		targets: 12,
-	                data: "inCert",
-	                title: "在职证明",
+                },
+                {
+                    targets: 12,
+                    data: "inCert",
+                    title: "在职证明",
                     render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
+                        return "<img src=" + data + "></img>";
                     }
-            	},
+                },
                 {
                     targets: 13,
                     data: "createTime",
@@ -255,95 +250,99 @@
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
                 },
-            	{
-               		targets: 14,
-	                data: "approver",
-	                title: "审批人"
-            	},
-            	{
-               		targets: 15,
-	                data: "approval",
-	                title: "审批时间",
+                {
+                    targets: 14,
+                    data: "approver",
+                    title: "审批人"
+                },
+                {
+                    targets: 15,
+                    data: "approval",
+                    title: "审批时间",
                     render: function (data, type, row, meta) {
-                    	if(data==null){
-                    		return "";
-                    	}else{
-	                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    	}
+                        if (data == null) {
+                            return "";
+                        } else {
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
                     }
-            	},
-            	{
-               		targets: 16,
-	                data: "approvalContent",
-	                title: "失败原因"
-            	}
-               ]
-		});
-		
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw();  //or fnReloadAjax()  
-			return false;
-		});
-		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
-			var obj = $(this);
-			$("input[name='authId']").each(function(i,e){
-				 this.checked = obj[0].checked;
-			});
-		})
-			 
-			
-		//快递单号
-		$(".btn.btn-info.check").click(function(){
-			var activityPrizeId = $("input[name='authId']:checked");
-			if(activityPrizeId.length!=1){
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return ;
-			}
-			
-			activityPrizeId = activityPrizeId[0].value;
-			
-			var form = $("#authForm");
-			form.find("input[name='id']").val(activityPrizeId);
-			
-			$.post("/auth-one",{id:activityPrizeId},function(data){
-				$("#content").val(data.approvalContent);
-				if(data.status !='0'){
-					toastr.error("不能重复审核", "温馨提示");
-				}else{
-					jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
-				}
-			}); 
-			
-		});
-		
-		$(".btn.btn-info.saveRule").click(function(){
-			
-			var form = $("#authForm");
-			var activityId = form.find("input[name='id']").val();
-			
-			var content = $("#content").val();
-			var checkStatus = $("#checkStatus").val();
-			
-			if(checkStatus=='2' && content==''){
-				toastr.error("请输入拒绝原因", "温馨提示");
-				return ;
-			}
-			
-			$.post("/auth-update",{id:activityId,status:checkStatus,approvalContent:content},function(data){
-				if(data){
-					jQuery('#modal-rule').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings()); 
-				}
-			})
-			
-		});
-		
-	});
-	/*]]>*/
-	</script>
+                },
+                {
+                    targets: 16,
+                    data: "approvalContent",
+                    title: "失败原因"
+                }
+            ]
+        });
+
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw();  //or fnReloadAjax()
+            return false;
+        });
+
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='authId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
+
+        //快递单号
+        $(".btn.btn-info.check").click(function () {
+            var activityPrizeId = $("input[name='authId']:checked");
+            if (activityPrizeId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+
+            activityPrizeId = activityPrizeId[0].value;
+
+            var form = $("#authForm");
+            form.find("input[name='id']").val(activityPrizeId);
+
+            $.post("/auth-one", {id: activityPrizeId}, function (data) {
+                $("#content").val(data.approvalContent);
+                if (data.status != '0') {
+                    toastr.error("不能重复审核", "温馨提示");
+                } else {
+                    jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
+                }
+            });
+
+        });
+
+        $(".btn.btn-info.saveRule").click(function () {
+
+            var form = $("#authForm");
+            var activityId = form.find("input[name='id']").val();
+
+            var content = $("#content").val();
+            var checkStatus = $("#checkStatus").val();
+
+            if (checkStatus == '2' && content == '') {
+                toastr.error("请输入拒绝原因", "温馨提示");
+                return;
+            }
+
+            $.post("/auth-update", {
+                id: activityId,
+                status: checkStatus,
+                approvalContent: content
+            }, function (data) {
+                if (data) {
+                    jQuery('#modal-rule').modal('hide');
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw(oTable.fnSettings());
+                }
+            })
+
+        });
+
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
