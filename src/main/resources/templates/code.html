@@ -213,7 +213,7 @@
                     data: "status",
                     title: "状态",
                     render: function (data, type, row, meta) {
-                        return "0" == data ? "未使用" : "已使用";
+                        return "0" == data ? '<span class="label label-warning">未使用</span>' :'<span class="label label-success">已使用</span>';
                     }
                 },
 
