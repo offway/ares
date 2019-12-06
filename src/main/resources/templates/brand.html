@@ -1,680 +1,675 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>品牌管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
-	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/selectize.bootstrap3.css"/>
-	<script src="js/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>品牌管理</title>
+    <script src="js/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">品牌管理</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and brand Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">品牌管理</h1>
-					<p class="brandDescription"></p>
-				</div>
 
-				<div class="breadcrumb-env">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form class="form-inline" role="form">
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input class="form-control" name="name" placeholder="品牌名称" style="height:35px"
+                                               type="text"
+                                               value=""/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary searchBtn" style="height:35px">查询</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <table cellspacing="0" class="table table-striped table-bordered" id="example-1"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-info add">添加</button>
+                            <button class="btn btn-info edit">修改</button>
+                            <button class="btn btn-info updateStatus">上架</button>
+                            <button class="btn btn-info updateStatus">下架</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
 
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>业务管理</a></li>
-						<li class="active"><strong>品牌管理</strong></li>
-					</ol>
+<div th:replace="body-under"></div>
 
-				</div>
+<div class="modal fade in" data-backdrop="static" id="modal-6">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+                <h4 class="modal-title">添加品牌</h4>
+            </div>
+            <div class="modal-body">
+                <form id="saveForm" role="form">
+                    <input name="id" type="hidden"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">品牌名称</label>
+                                <input class="form-control" name="name" placeholder="品牌名称" style="height:35px"
+                                       type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">品牌LOGO</label>
+                                <input class="form-control" name="logoFile" placeholder="品牌LOGO" type="file"/>
+                                <input class="form-control" name="logo" type="hidden"/>
+                                <img alt="" name="logoImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify logo" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
 
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="品牌名称" value=""/>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-					
-				</div>
-				<button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info updateStatus">上架</button>
-				<button class="btn btn-info updateStatus">下架</button>
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" data-backdrop="static" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加品牌</h4>
-				</div>
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">品牌名称</label>
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="品牌名称"/>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">品牌LOGO</label>
-								<input type="file" class="form-control" name="logoFile" placeholder="品牌LOGO"/>
-								<input type="hidden" class="form-control" name="logo" />
-								<img alt="" src="" name="logoImage" style="display:none;"/>
-								<button class="btn btn-info modify logo" style="display:none;">更换</button>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label class="control-label">品牌简介</label>
-								<textarea id="info" name="info" class="form-control "  placeholder="简介" maxlength="150" style="height:120px!important"></textarea>
-								<label class="control-label" style="color:red">注：150字以内</label>
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label class="control-label">背景图</label>
-								<input type="file" class="form-control" name="backgroundFile" placeholder="背景图"/>
-								<input type="hidden" class="form-control" name="background" />
-								<img alt="" src="" name="backgroundImage" style="display:none;"/>
-								<button class="btn btn-info modify background" style="display:none;">更换</button>
+                            <div class="form-group">
+                                <label class="control-label">品牌简介</label>
+                                <textarea class="form-control " id="info" maxlength="150" name="info"
+                                          placeholder="简介"
+                                          style="height:120px!important"></textarea>
+                                <label class="control-label" style="color:red">注：150字以内</label>
+                            </div>
 
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">姓名</label>
-								<input type="text" name="realName" class="form-control" style="height:35px" placeholder="姓名"/>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">手机</label>
-								<input type="number" name="phone" class="form-control" style="height:35px" placeholder="手机"/>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">省份</label>
-								<select id="province" name="province" class="form-control" style="height:35px">
-								</select>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">城市</label>
-								<select id="city" name="city" class="form-control" style="height:35px">
-								</select>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">区/县</label>
-								<select id="county" name="county" class="form-control" style="height:35px">
-								</select>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">详细地址</label>
-								<textarea id="content" name="content" class="form-control" placeholder="详细地址" style="height:120px!important"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group" onclick="checkIt(false)">
-								<label class="control-label">发货地址</label>
-								<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
-								<input type="hidden" class="form-control" name="address_send_jsonStr"/>
-								<input type="hidden" class="form-control" name="addrId"/>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group" onclick="checkIt(true)">
-								<label class="control-label">退货地址</label>
-								<input type="text" class="form-control" readonly="readonly" name="address_back" placeholder="退货地址"/>
-								<input type="hidden" class="form-control" name="address_back_jsonStr"/>
-								<input type="hidden" class="form-control" name="returnAddrId"/>
-							</div>
-						</div>
-					</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-			</div>
-		</div>
-	</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
 
-	<div id="preview" style="display: none;
+                            <div class="form-group">
+                                <label class="control-label">背景图</label>
+                                <input class="form-control" name="backgroundFile" placeholder="背景图"
+                                       type="file"/>
+                                <input class="form-control" name="background" type="hidden"/>
+                                <img alt="" name="backgroundImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify background" style="display:none;">更换</button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">姓名</label>
+                                <input class="form-control" name="realName" placeholder="姓名" style="height:35px"
+                                       type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">手机</label>
+                                <input class="form-control" name="phone" placeholder="手机" style="height:35px"
+                                       type="number"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">省份</label>
+                                <select class="form-control" id="province" name="province" style="height:35px">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">城市</label>
+                                <select class="form-control" id="city" name="city" style="height:35px">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">区/县</label>
+                                <select class="form-control" id="county" name="county" style="height:35px">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">详细地址</label>
+                                <textarea class="form-control" id="content" name="content" placeholder="详细地址"
+                                          style="height:120px!important"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group" onclick="checkIt(false)">
+                                <label class="control-label">发货地址</label>
+                                <input class="form-control" name="address_send" placeholder="发货地址"
+                                       readonly="readonly"
+                                       type="text"/>
+                                <input class="form-control" name="address_send_jsonStr" type="hidden"/>
+                                <input class="form-control" name="addrId" type="hidden"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" onclick="checkIt(true)">
+                                <label class="control-label">退货地址</label>
+                                <input class="form-control" name="address_back" placeholder="退货地址"
+                                       readonly="readonly"
+                                       type="text"/>
+                                <input class="form-control" name="address_back_jsonStr" type="hidden"/>
+                                <input class="form-control" name="returnAddrId" type="hidden"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white" data-dismiss="modal" type="button">关闭</button>
+                <button class="btn btn-info save" type="button">保存</button>
+                <button class="btn btn-white bg-lg" style="display:none" type="button">数据提交中，请稍等....</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="preview" style="display: none;
     position: fixed;top: 190px;left: 650px;background: white;overflow: hidden;border: solid;width: 700px;height: 200px;z-index: 1050;">
-	</div>
-	
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/address.js"></script>
-	<script src="https://admin.offway.cn/assets/js/distpicker.js"></script>
-	<script src="https://admin.offway.cn/assets/js/selectize.min.js"></script>
-	<script src="https://admin.offway.cn/assets/js/jquery.base64.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+</div>
 
-	function upload(param, token, file, next, error, complete) {
-		if (file == '') {
-			complete('');
-		} else {
-			var filename = file.name;
-			var postf = filename.substring(filename.lastIndexOf("."));
-			var config = {
-				useCdnDomain: true,
-				region: qiniu.region.z0
-			};
-			var putExtra = {
-				fname: "",
-				params: {"x:param": param},
-				mimeType: ["image/png", "image/jpeg", "image/gif"] || null
-			};
-			var observable = qiniu.upload(file, "image/wx/" + UUID.randomUUID() + postf, token,
-					putExtra, config);
-			var subscription = observable.subscribe(next, error, complete);
-		}
-	}
+<script src="assets/js/address.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
-	function checkIt(isBack) {
-		var preview = $("#preview");
-		var contentStr = "\t<div id=\"distpicker\">\n" +
-				"\t\t<select name='p' ></select>\n" +
-				"\t\t<select name='c' ></select>\n" +
-				"\t\t<select name='d' ></select>\n" +
-				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
-				// "\t\t<input type=\"text\" name='telephone' placeholder='手机号'/>\n" +
-				"\t\t<select style='height: 35px;width: 300px' name=\"telephone\" id=\"telephone\"\n" +
-				"\t\tmultiple=\"multiple\"></select>" +
-				"\t\t<input type=\"text\" name='real_name' placeholder='XXX'/>\n".replace("XXX", isBack ? "收件人" : "发件人") +
-				"\t</div>";
-		if (isBack) {
-			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(true)" />';
-		} else {
-			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(false)" />';
-		}
-		contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
-		preview.html(contentStr);
-		//render
-		var jsonStr = "";
-		if (isBack) {
-			jsonStr = $("input[name='address_back_jsonStr']").val();
-		} else {
-			jsonStr = $("input[name='address_send_jsonStr']").val();
-		}
-		var phoneEle = preview.find("select[name='telephone']");
-		var phoneStr = "";
-		var phoneArr = [];
-		if (jsonStr != '') {
-			var jsonObj = JSON.parse(jsonStr);
-			preview.find("input[name='location']").val(jsonObj["content"]);
-			preview.find("input[name='real_name']").val(jsonObj["realName"]);
-			phoneArr = jsonObj["phone"].split(",");
-			for (var i in phoneArr) {
-				i = phoneArr[i];
-				phoneStr += '<option value="VV">KK</option>'.replace("VV", i).replace("KK", i);
-			}
-			phoneEle.html(phoneStr);
-			$("#distpicker").distpicker({
-				province: jsonObj["province"],
-				city: jsonObj["city"],
-				district: jsonObj["county"]
-			});
-		} else {
-			$("#distpicker").distpicker({
-				province: '---- 所在省 ----',
-				city: '---- 所在市 ----',
-				district: '---- 所在区 ----'
-			});
-		}
-		phoneEle.selectize({
-			// "plugins": ['drag_drop', 'remove_button'],
-			"items": phoneArr,
-			"addPrecedence": true,
-			"persist": false,
-			"create": true,
-			"maxItems": null,
-			"delimiter": ",",
-			"hideSelected": true,
-			"sortField": "text",
-			"searchField": ['text'],
-			"placeholder": "手机号"
-		});
-		preview.show();
-	}
+    function upload(param, token, file, next, error, complete) {
+        if (file == '') {
+            complete('');
+        } else {
+            var filename = file.name;
+            var postf = filename.substring(filename.lastIndexOf("."));
+            var config = {
+                useCdnDomain: true,
+                region: qiniu.region.z0
+            };
+            var putExtra = {
+                fname: "",
+                params: {"x:param": param},
+                mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+            };
+            var observable = qiniu.upload(file, "image/wx/" + UUID.randomUUID() + postf, token,
+                putExtra, config);
+            var subscription = observable.subscribe(next, error, complete);
+        }
+    }
 
-	function closeAndSaveIt(isBack) {
-		var that = $("#preview");
-		var p = that.find("select[name='p']").val();
-		var c = that.find("select[name='c']").val();
-		var d = that.find("select[name='d']").val();
-		var location = that.find("input[name='location']").val();
-		var telephone = that.find("select[name='telephone']").val().join(",");
-		var real_name = that.find("input[name='real_name']").val();
-		var json = {
-			"realName": real_name,
-			"phone": telephone,
-			"province": p,
-			"city": c,
-			"county": d,
-			"content": location
-		};
-		if (isBack) {
-			$("input[name='address_back_jsonStr']").val(JSON.stringify(json));
-			$("input[name='address_back']").val(p + "" + c + "" + d + "" + location);
-		} else {
-			$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
-			$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
-		}
-		that.hide();
-	}
+    function checkIt(isBack) {
+        var preview = $("#preview");
+        var contentStr = "\t<div id=\"distpicker\">\n" +
+            "\t\t<select name='p' ></select>\n" +
+            "\t\t<select name='c' ></select>\n" +
+            "\t\t<select name='d' ></select>\n" +
+            "\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
+            // "\t\t<input type=\"text\" name='telephone' placeholder='手机号'/>\n" +
+            "\t\t<select style='height: 35px;width: 300px' name=\"telephone\" id=\"telephone\"\n" +
+            "\t\tmultiple=\"multiple\"></select>" +
+            "\t\t<input type=\"text\" name='real_name' placeholder='XXX'/>\n".replace("XXX", isBack ? "收件人" : "发件人") +
+            "\t</div>";
+        if (isBack) {
+            contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(true)" />';
+        } else {
+            contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(false)" />';
+        }
+        contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
+        preview.html(contentStr);
+        //render
+        var jsonStr = "";
+        if (isBack) {
+            jsonStr = $("input[name='address_back_jsonStr']").val();
+        } else {
+            jsonStr = $("input[name='address_send_jsonStr']").val();
+        }
+        var phoneEle = preview.find("select[name='telephone']");
+        var phoneStr = "";
+        var phoneArr = [];
+        if (jsonStr != '') {
+            var jsonObj = JSON.parse(jsonStr);
+            preview.find("input[name='location']").val(jsonObj["content"]);
+            preview.find("input[name='real_name']").val(jsonObj["realName"]);
+            phoneArr = jsonObj["phone"].split(",");
+            for (var i in phoneArr) {
+                i = phoneArr[i];
+                phoneStr += '<option value="VV">KK</option>'.replace("VV", i).replace("KK", i);
+            }
+            phoneEle.html(phoneStr);
+            $("#distpicker").distpicker({
+                province: jsonObj["province"],
+                city: jsonObj["city"],
+                district: jsonObj["county"]
+            });
+        } else {
+            $("#distpicker").distpicker({
+                province: '---- 所在省 ----',
+                city: '---- 所在市 ----',
+                district: '---- 所在区 ----'
+            });
+        }
+        phoneEle.selectize({
+            // "plugins": ['drag_drop', 'remove_button'],
+            "items": phoneArr,
+            "addPrecedence": true,
+            "persist": false,
+            "create": true,
+            "maxItems": null,
+            "delimiter": ",",
+            "hideSelected": true,
+            "sortField": "text",
+            "searchField": ['text'],
+            "placeholder": "手机号"
+        });
+        preview.show();
+    }
 
-	function closeIt() {
-		var that = $("#preview");
-		that.hide();
-	}
+    function closeAndSaveIt(isBack) {
+        var that = $("#preview");
+        var p = that.find("select[name='p']").val();
+        var c = that.find("select[name='c']").val();
+        var d = that.find("select[name='d']").val();
+        var location = that.find("input[name='location']").val();
+        var telephone = that.find("select[name='telephone']").val().join(",");
+        var real_name = that.find("input[name='real_name']").val();
+        var json = {
+            "realName": real_name,
+            "phone": telephone,
+            "province": p,
+            "city": c,
+            "county": d,
+            "content": location
+        };
+        if (isBack) {
+            $("input[name='address_back_jsonStr']").val(JSON.stringify(json));
+            $("input[name='address_back']").val(p + "" + c + "" + d + "" + location);
+        } else {
+            $("input[name='address_send_jsonStr']").val(JSON.stringify(json));
+            $("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
+        }
+        that.hide();
+    }
 
-	var qiniuUrl = [[${qiniuUrl}]];
-	jQuery(document).ready(function ($) {
-		addressInit('province', 'city', 'county');
+    function closeIt() {
+        var that = $("#preview");
+        that.hide();
+    }
 
-		var oTable = $("#example-1").dataTable({
-			language: {
-				url: "../assets/Chinese.txt"
-			},
-			bFilter: false,
-			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-			sAjaxSource: "/brand-data",//通过ajax实现分页的url路径。
-			fnServerParams: function (aData) {
-				var searchArray = $(".form-inline").serializeArray();
-				$.merge(aData, searchArray);
-			},
-			order: [[0, "desc"]],
-			columnDefs: [
-				{
-					targets: 0,
-					data: "id",
-					width: "5%",
-					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
-					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="brandId" value="' + data + '" />';
-					}
-				},
-				{
-					targets: 1,
-					data: "id",
-					title: "序号"
-				},
-				{
-					targets: 2,
-					data: "logo",
-					title: "品牌LOGO",
-					render: function (data, type, row, meta) {
-						return "<img src=" + data + "></img>";
-					}
-				},
-				{
-					targets: 3,
-					data: "name",
-					title: "品牌名称"
-				},
-				{
-					targets: 4,
-					data: "background",
-					title: "背景图",
-					render: function (data, type, row, meta) {
-						return "<img src=" + data + "></img>";
-					}
-				},
-				{
-					targets: 5,
-					data: "realName",
-					title: "姓名"
-				},
-				{
-					targets: 6,
-					data: "phone",
-					title: "手机号"
-				},
-				{
-					targets: 7,
-					data: "province",
-					title: "省份"
-				},
-				{
-					targets: 8,
-					data: "city",
-					title: "城市"
-				},
-				{
-					targets: 9,
-					data: "county",
-					title: "区/县"
-				},
-				{
-					targets: 10,
-					data: "content",
-					title: "详细地址"
-				},
-				{
-					targets: 11,
-					data: "status",
-					title: "是否上架",
-					render: function (data, type, row, meta) {
-						return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
-					}
-				},
-				{
-					targets: 12,
-					data: "createTime",
-					title: "创建时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				}
-			]
-		});
+    var qiniuUrl = [[${qiniuUrl}]];
+    jQuery(document).ready(function ($) {
+        addressInit('province', 'city', 'county');
 
-		$(".searchBtn").click(function () {
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw();  //or fnReloadAjax()  
-			return false;
-		});
+        var oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/brand-data",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            order: [[0, "desc"]],
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="brandId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "logo",
+                    title: "品牌LOGO",
+                    render: function (data, type, row, meta) {
+                        return "<img width='48px' height='48px' src=" + data + "></img>";
+                    }
+                },
+                {
+                    targets: 3,
+                    data: "name",
+                    title: "品牌名称"
+                },
+                {
+                    targets: 4,
+                    data: "background",
+                    title: "背景图",
+                    render: function (data, type, row, meta) {
+                        return "<img width='48px' height='48px' src=" + data + "></img>";
+                    }
+                },
+                {
+                    targets: 5,
+                    data: "realName",
+                    title: "姓名"
+                },
+                {
+                    targets: 6,
+                    data: "phone",
+                    title: "手机号"
+                },
+                {
+                    targets: 7,
+                    data: "province",
+                    title: "省份"
+                },
+                {
+                    targets: 8,
+                    data: "city",
+                    title: "城市"
+                },
+                {
+                    targets: 9,
+                    data: "county",
+                    title: "区/县"
+                },
+                {
+                    targets: 10,
+                    data: "content",
+                    title: "详细地址"
+                },
+                {
+                    targets: 11,
+                    data: "status",
+                    title: "是否上架",
+                    render: function (data, type, row, meta) {
+                        return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
+                    }
+                },
+                {
+                    targets: 12,
+                    data: "createTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                }
+            ]
+        });
 
-		$('#example-1').on('click', "#checkbox-all", function () {
-			var obj = $(this);
-			$("input[name='brandId']").each(function (i, e) {
-				this.checked = obj[0].checked;
-			});
-		});
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw();  //or fnReloadAjax()
+            return false;
+        });
 
-		$(".btn.btn-info.add").click(function () {
-			var form = $("#saveForm");
-			form.find("input").val("");
-			form.find("img").attr("src", "");
-			form.find("img").hide();
-			form.find("[name='info']").val("");
-			form.find("[name='content']").val("");
-			form.find("input[type='file']").show();
-			form.find(".btn.btn-info.modify").text("更换");
-			form.find(".btn.btn-info.modify").hide();
-			$(".imageShow").remove();
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='brandId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
 
-			jQuery('#modal-6').modal('show');
+        $(".btn.btn-info.add").click(function () {
+            var form = $("#saveForm");
+            form.find("input").val("");
+            form.find("img").attr("src", "");
+            form.find("img").hide();
+            form.find("[name='info']").val("");
+            form.find("[name='content']").val("");
+            form.find("input[type='file']").show();
+            form.find(".btn.btn-info.modify").text("更换");
+            form.find(".btn.btn-info.modify").hide();
+            $(".imageShow").remove();
 
-		});
+            jQuery('#modal-6').modal('show');
 
-		//保存
-		$(".btn.btn-info.save").click(function () {
-			var footer = $(this).parent(".modal-footer")
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var name = form.find("input[name='name']").val();
-			var info = form.find("[name='info']").val();
-			var realName = form.find("input[name='realName']").val();
-			var phone = form.find("input[name='phone']").val();
-			var content = form.find("[name='content']").val();
+        });
 
-			//文件
-			var logoVal = form.find("input[name='logoFile']")[0].value;
-			//已上传的图片地址
-			var logoVals = form.find("input[name='logo']").val();
-			//文件
-			var backgroundVal = form.find("input[name='backgroundFile']")[0].value;
-			//已上传的图片地址
-			var backgroundVals = form.find("input[name='background']").val();
+        //保存
+        $(".btn.btn-info.save").click(function () {
+            var footer = $(this).parent(".modal-footer")
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var name = form.find("input[name='name']").val();
+            var info = form.find("[name='info']").val();
+            var realName = form.find("input[name='realName']").val();
+            var phone = form.find("input[name='phone']").val();
+            var content = form.find("[name='content']").val();
 
-			if (name == '' || info == '' || realName == '' || phone == '' || content == '' ||
-					(logoVal == '' && logoVals == '') ||
-					(backgroundVal == '' && backgroundVals == '')) {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
+            //文件
+            var logoVal = form.find("input[name='logoFile']")[0].value;
+            //已上传的图片地址
+            var logoVals = form.find("input[name='logo']").val();
+            //文件
+            var backgroundVal = form.find("input[name='backgroundFile']")[0].value;
+            //已上传的图片地址
+            var backgroundVals = form.find("input[name='background']").val();
 
-			var logoFile = '';
-			//上传文件获得文件地址
-			if (logoVal != '') {
-				logoFile = form.find("input[name='logoFile']")[0].files[0];
-				if (logoFile != '' && logoFile.size / 1024 > 500) {
-					toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					return;
-				}
-			}
+            if (name == '' || info == '' || realName == '' || phone == '' || content == '' ||
+                (logoVal == '' && logoVals == '') ||
+                (backgroundVal == '' && backgroundVals == '')) {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
 
-			var backgroundFile = '';
-			//上传文件获得文件地址
-			if (backgroundVal != '') {
-				backgroundFile = form.find("input[name='backgroundFile']")[0].files[0];
-				if (backgroundFile != '' && backgroundFile.size / 1024 > 500) {
-					toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					return;
-				}
-			}
+            var logoFile = '';
+            //上传文件获得文件地址
+            if (logoVal != '') {
+                logoFile = form.find("input[name='logoFile']")[0].files[0];
+                if (logoFile != '' && logoFile.size / 1024 > 500) {
+                    toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    return;
+                }
+            }
 
-			//获取token
-			$.get("/qiniu/token", {}, function (token) {
-				if (token != '') {
-					upload("background", token, backgroundFile, function (res) {
-					}, function (err) {
-						console.log("上传backgroundFile异常:" + err);
-					}, function (res) {
-						//上传成功
-						console.log(res);
-						if (res != '') {
-							form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
-						}
-						upload("logo", token, logoFile, function (res) {
-						}, function (err) {
-							console.log("上传logoFile异常:" + err);
-						}, function (res) {
-							//上传成功
-							console.log(res);
-							if (res != '') {
-								form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
-							}
-							$.post("/brand-save", $("#saveForm").serialize(), function (data) {
-								if (data) {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw(oTable.fnSettings());
-								} else {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败，请检查该尺码颜色是否已存在", "温馨提示");
-								}
-							});
-						});
-					});
+            var backgroundFile = '';
+            //上传文件获得文件地址
+            if (backgroundVal != '') {
+                backgroundFile = form.find("input[name='backgroundFile']")[0].files[0];
+                if (backgroundFile != '' && backgroundFile.size / 1024 > 500) {
+                    toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    return;
+                }
+            }
 
-				} else {
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("上传文件错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    upload("background", token, backgroundFile, function (res) {
+                    }, function (err) {
+                        console.log("上传backgroundFile异常:" + err);
+                    }, function (res) {
+                        //上传成功
+                        console.log(res);
+                        if (res != '') {
+                            form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                        }
+                        upload("logo", token, logoFile, function (res) {
+                        }, function (err) {
+                            console.log("上传logoFile异常:" + err);
+                        }, function (res) {
+                            //上传成功
+                            console.log(res);
+                            if (res != '') {
+                                form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                            }
+                            $.post("/brand-save", $("#saveForm").serialize(), function (data) {
+                                if (data) {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    jQuery('#modal-6').modal('hide');
+                                    toastr.success("操作已成功！", "温馨提示");
+                                    oTable.fnDraw(oTable.fnSettings());
+                                } else {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    toastr.error("操作失败，请检查该尺码颜色是否已存在", "温馨提示");
+                                }
+                            });
+                        });
+                    });
 
-		$(".btn.btn-info.edit").click(function () {
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("上传文件错误，请联系管理员", "温馨提示");
+                }
+            });
+        });
 
-			$("#saveForm").find("input").val("");
+        $(".btn.btn-info.edit").click(function () {
 
-			var brandId = $("input[name='brandId']:checked");
-			if (brandId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
+            $("#saveForm").find("input").val("");
 
-			$.post("/brand-one", {id: brandId.val()}, function (data) {
-				var form = $("#saveForm");
+            var brandId = $("input[name='brandId']:checked");
+            if (brandId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
 
-				form.find("input[name='id']").val(data.id);
-				form.find("input[name='name']").val(data.name);
-				form.find("[name='info']").val(data.info);
-				form.find("input[name='realName']").val(data.realName);
-				form.find("input[name='phone']").val(data.phone);
-				form.find("[name='content']").val(data.content);
+            $.post("/brand-one", {id: brandId.val()}, function (data) {
+                var form = $("#saveForm");
 
-				addressInit('province', 'city', 'county', data.province, data.city, data.county);
+                form.find("input[name='id']").val(data.id);
+                form.find("input[name='name']").val(data.name);
+                form.find("[name='info']").val(data.info);
+                form.find("input[name='realName']").val(data.realName);
+                form.find("input[name='phone']").val(data.phone);
+                form.find("[name='content']").val(data.content);
 
-				/* form.find("[name='province']").val(data.province);
+                addressInit('province', 'city', 'county', data.province, data.city, data.county);
+
+                /* form.find("[name='province']").val(data.province);
                 form.find("[name='city']").val(data.city);
                 form.find("[name='county']").val(data.county); */
 
-				form.find("input[name='logo']").val(data.logo);
-				form.find("input[name='background']").val(data.background);
+                form.find("input[name='logo']").val(data.logo);
+                form.find("input[name='background']").val(data.background);
 
-				if ('' != data.logo) {
-					form.find("input[name='logoFile']").hide();
-					form.find("img[name='logoImage']").attr("src", data.logo);
-					form.find("img[name='logoImage']").show();
-					form.find(".btn.logo").show();
-				}
+                if ('' != data.logo) {
+                    form.find("input[name='logoFile']").hide();
+                    form.find("img[name='logoImage']").attr("src", data.logo);
+                    form.find("img[name='logoImage']").show();
+                    form.find(".btn.logo").show();
+                }
 
-				if ('' != data.background) {
-					form.find("input[name='backgroundFile']").hide();
-					form.find("img[name='backgroundImage']").attr("src", data.background);
-					form.find("img[name='backgroundImage']").show();
-					form.find(".btn.background").show();
-				}
-				var address = data["address"];
-				form.find("input[name='addrId']").val(data["addrId"]);
-				if (address && typeof address == 'object') {
-					//发货地址
-					form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
-					form.find("input[name='address_send_jsonStr']").val(address["remark"]);
-				}
-				var addressBack = data["addressBack"];
-				form.find("input[name='returnAddrId']").val(data["returnAddrId"]);
-				if (addressBack && typeof addressBack == 'object') {
-					//退货地址
-					form.find("input[name='address_back']").val(addressBack["province"] + "" + addressBack["city"] + "" + addressBack["county"] + "" + addressBack["content"]);
-					form.find("input[name='address_back_jsonStr']").val(addressBack["remark"]);
-				}
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			});
-		});
+                if ('' != data.background) {
+                    form.find("input[name='backgroundFile']").hide();
+                    form.find("img[name='backgroundImage']").attr("src", data.background);
+                    form.find("img[name='backgroundImage']").show();
+                    form.find(".btn.background").show();
+                }
+                var address = data["address"];
+                form.find("input[name='addrId']").val(data["addrId"]);
+                if (address && typeof address == 'object') {
+                    //发货地址
+                    form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
+                    form.find("input[name='address_send_jsonStr']").val(address["remark"]);
+                }
+                var addressBack = data["addressBack"];
+                form.find("input[name='returnAddrId']").val(data["returnAddrId"]);
+                if (addressBack && typeof addressBack == 'object') {
+                    //退货地址
+                    form.find("input[name='address_back']").val(addressBack["province"] + "" + addressBack["city"] + "" + addressBack["county"] + "" + addressBack["content"]);
+                    form.find("input[name='address_back_jsonStr']").val(addressBack["remark"]);
+                }
+                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            });
+        });
 
-		$("body").on("click", ".imageShow button", function () {
-			var imageShow = $(this).parent(".imageShow");
-			var goodsImageId = $(this).attr("goodsImageId");
-			$.post("/goods-images-delete", {goodsImageId: goodsImageId}, function (data) {
-				if (data) {
-					imageShow.remove();
-				}
-			});
-			return false;
-		});
+        $("body").on("click", ".imageShow button", function () {
+            var imageShow = $(this).parent(".imageShow");
+            var goodsImageId = $(this).attr("goodsImageId");
+            $.post("/goods-images-delete", {goodsImageId: goodsImageId}, function (data) {
+                if (data) {
+                    imageShow.remove();
+                }
+            });
+            return false;
+        });
 
-		$(".btn.btn-info.modify").click(function () {
-			var that = $(this);
-			var text = that.text();
-			var formGroup = that.parent(".form-group");
-			formGroup.find("img").hide();
-			formGroup.find("input[type='file']").show();
-			that.hide();
-			return false;
-		});
+        $(".btn.btn-info.modify").click(function () {
+            var that = $(this);
+            var text = that.text();
+            var formGroup = that.parent(".form-group");
+            formGroup.find("img").hide();
+            formGroup.find("input[type='file']").show();
+            that.hide();
+            return false;
+        });
 
-		$(".btn.btn-info.updateStatus").click(function () {
-			var goodsId = $("input[name='brandId']:checked");
-			if (goodsId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-			var ids = [];
-			goodsId.each(function (i, e) {
-				ids.push(e.value);
-			});
-			var value = $(this).text() == '上架' ? '1' : '0';
-			$.post("/brand-update", {ids: ids, status: value}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings());
-				}
-			})
-		});
-	});
-	/*]]>*/
-	</script>
+        $(".btn.btn-info.updateStatus").click(function () {
+            var goodsId = $("input[name='brandId']:checked");
+            if (goodsId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            goodsId.each(function (i, e) {
+                ids.push(e.value);
+            });
+            var value = $(this).text() == '上架' ? '1' : '0';
+            $.post("/brand-update", {ids: ids, status: value}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw(oTable.fnSettings());
+                }
+            })
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 </html>
