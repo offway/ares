@@ -3,78 +3,76 @@
 <head>
 	<head th:replace="head"></head>
 	<title>分类管理</title>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<script src="js/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
+		.form-group img {
+			max-width: 400px;
+			max-height: 300px;
+		}
 	</style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<div class="content-wrapper">
+		<div class="content-header d-none d-md-block">
 			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">分类管理</h1>
-					<p class="activityDescription"></p>
+			<div class="d-flex align-items-center">
+
+				<div class="mr-auto">
+					<h3 class="title">分类管理</h3>
 				</div>
 
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>分类管理</strong></li>
-					</ol>
-
+				<div class="right-title">
 				</div>
-
 			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="分类名称"/>
+		</div>
+		<section class="content">
+			<div class="row">
+				<div class="col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<form class="form-inline" role="form">
+								<div class="form-group ">
+									<div class="input-group">
+										<input type="text" name="name" class="form-control" style="height:35px" placeholder="分类名称"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-primary searchBtn" style="height:35px">查询</button>
+								</div>
+							</form>
+						</div>
+						<div class="box-body">
+							<div class="table-responsive">
+								<table class="table table-bordered table-striped" id="example-1">
+								</table>
 							</div>
 						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						<!-- /.box-body -->
+						<div class="box-footer">
+							<button class="btn btn-info add" >添加</button>
+							<button class="btn btn-info edit">修改</button>
+							<button class="btn btn-info del">删除</button>
 						</div>
-						
-					</form>
+						<!-- /.box-footer-->
+					</div>
 				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-					
-				</div>
-				<button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info del">删除</button>
 			</div>
-
-			<footer th:replace="footer"></footer>
-		</div>
+		</section>
 	</div>
-	
-	<div class="modal fade in" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加分类</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm">
+	<footer th:replace="footer"></footer>
+</div>
+<div class="modal fade in" id="modal-6">
+	<div class="modal-dialog">
+		<div class="modal-content" style="width: 800px;">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">添加分类</h4>
+			</div>
+			<div class="modal-body">
+				<form role="form" id="saveForm">
 					<input type="hidden" name="id"/>
 					<div class="row">
 						<div class="col-md-12">
@@ -102,91 +100,88 @@
 							</div>
 						</div>
 					</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-info save">保存</button>
+				<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 			</div>
 		</div>
 	</div>
-
-    <div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title">查看详情</h4>
-                </div>
-
-                <div class="modal-body" id="preview_body"></div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-	<script src="https://admin.offway.cn/js/common1.js"></script>
-	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
-	<script th:inline="javascript">
+</div>
+<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">查看详情</h4>
+			</div>
+			<div class="modal-body" id="preview_body"></div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://admin.offway.cn/js/common1.js"></script>
+<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
+<script th:inline="javascript">
 	/*<![CDATA[*/
 
-    function formatTime(time) {
-        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
-    }
+	function formatTime(time) {
+		return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+	}
 
-    function buildImg(url) {
-        return "<img width='100px' height='100px' src='#' />".replace("#", url);
-    }
+	function formatDate(time) {
+		return new Date(time).Format("yyyy-MM-dd");
+	}
 
-    function appendToPreview(key, value) {
-        return '<div class="row">' +
-            '<div class="col-md-2">' +
-            key +
-            '</div>' +
-            '<div class="col-md-10">' +
-            value +
-            '</div>' +
-            '</div>';
-    }
+	function buildImg(url) {
+		return "<img width='48px' height='48px' src='#' />".replace("#", url);
+	}
 
-    function checkIt(id) {
-        $.post("/goodsType_find", {"id": id}, function (data) {
-            if (data) {
-                var preview = $("#preview_body");
-                var contentStr = "";
-                var mainObj = data["main"];
-                contentStr += appendToPreview("编号:", mainObj["id"]);
-                contentStr += appendToPreview("名称:", mainObj["name"]);
-                contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
-                contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-                contentStr += appendToPreview("备注:", mainObj["remark"]);
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
 
-                for (var category in data["categoryList"]) {
-                    category = data["categoryList"][category];
-                    contentStr += appendToPreview("商品类别ID:", category["goodsType"]);
-                    contentStr += appendToPreview("商品类别名称:", category["goodsTypeName"]);
-                    contentStr += appendToPreview("创建时间:", formatTime(category["createTime"]));
-                    contentStr += appendToPreview("图片:", buildImg(category["image"]));
-                    contentStr += appendToPreview("名称:", category["name"]);
-                    contentStr += appendToPreview("编号:", category["id"]);
-                    contentStr += appendToPreview("备注:", category["remark"]);
-                    contentStr += appendToPreview("排序:", category["sort"]);
-                }
-                preview.html(contentStr);
-                jQuery('#preview').modal('show', {backdrop: 'fade'});
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function checkIt(id) {
+		$.post("/goodsType_find", {"id": id}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				var mainObj = data["main"];
+				contentStr += appendToPreview("编号:", mainObj["id"]);
+				contentStr += appendToPreview("名称:", mainObj["name"]);
+				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
+				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+				contentStr += appendToPreview("备注:", mainObj["remark"]);
+
+				for (var category in data["categoryList"]) {
+					category = data["categoryList"][category];
+					contentStr += appendToPreview("商品类别ID:", category["goodsType"]);
+					contentStr += appendToPreview("商品类别名称:", category["goodsTypeName"]);
+					contentStr += appendToPreview("创建时间:", formatTime(category["createTime"]));
+					contentStr += appendToPreview("图片:", buildImg(category["image"]));
+					contentStr += appendToPreview("名称:", category["name"]);
+					contentStr += appendToPreview("编号:", category["id"]);
+					contentStr += appendToPreview("备注:", category["remark"]);
+					contentStr += appendToPreview("排序:", category["sort"]);
+				}
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
 
 	function checkItsList(id) {
 		window.location.href = '/goodsCategory.html?id=' + id;
@@ -214,40 +209,41 @@
 	var qiniuUrl = [[${qiniuUrl}]];
 	jQuery(document).ready(function($)
 	{
-		var oTable = $("#example-1").dataTable({
+		var table = $("#example-1");
+		var oTable = table.dataTable({
 			language: {
-                url: "../assets/Chinese.txt"
-            },
+				url: "../assets/Chinese.txt"
+			},
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/goodsType_list",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
-                $.merge(aData, searchArray);
-            },
-            columnDefs: [
-				{	
+			sAjaxDataProp : "aData",//是服务器分页的标志，必须有
+			sAjaxSource : "/goodsType_list",//通过ajax实现分页的url路径。
+			fnServerParams : function(aData){
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
+			columnDefs: [
+				{
 					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
-				    }
+					data: "id",
+					width: "5%",
+					orderable: false,
+					title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+					render: function (data, type, full, meta) {
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+					}
 				},
-                {
-                    targets: 1,
-                    data: "id",
-                    title: "序号"
-                },
-                {
-               		targets: 2,
-	                data: "name",
-	                title: "名称"
-            	},
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "name",
+					title: "名称"
+				},
 				// {
 				// 	targets: 4,
 				// 	data: "image",
@@ -269,15 +265,15 @@
 					data: "remark",
 					title: "备注"
 				},
-                {
-                    targets: 5,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-                    }
-                },
+				{
+					targets: 5,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+					}
+				},
 				{
 					targets: 6,
 					data: "id",
@@ -287,15 +283,21 @@
 						return '<input type="button" name="checkIt" onclick="checkItsList(' + data + ')" value="查看子分类"/>';
 					}
 				}
-               ]
+			]
+		});
+		table_global = oTable;
+
+		$(".searchBtn").click(function () {
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()
+			return false;
 		});
 
-		table_global = oTable;
-		
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
+		table.on('click', "#checkbox-all", function () {
+			var obj = $(this);
+			$("input[name='activityId']").each(function (i, e) {
+				this.checked = obj[0].checked;
+			});
 		});
 
 		$(".btn.btn-info.add").click(function () {
@@ -448,6 +450,6 @@
 		});
 	});
 	/*]]>*/
-	</script>
+</script>
 </body>
 </html>
