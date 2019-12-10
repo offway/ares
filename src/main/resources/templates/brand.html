@@ -203,7 +203,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
-                <button class="btn btn-info save" type="button">保存</button>
+                <button class="btn btn-success save" type="button">保存</button>
                 <button class="btn btn-white bg-lg" style="display:none" type="button">数据提交中，请稍等....</button>
             </div>
         </div>
@@ -427,7 +427,7 @@
                     data: "status",
                     title: "是否上架",
                     render: function (data, type, row, meta) {
-                        return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
+                        return "1" == data ? '<span class="label label-success">已上架</span>': '<span class="label label-danger">未上架</span>';
                     }
                 },
                 {

@@ -1,694 +1,697 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>商品管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
-	<link rel="stylesheet" href="assets/js/jquery-editable-select-master/jquery-editable-select.css"/>
-	<script src="js/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>商品管理</title>
+    <script src="js/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">商品管理</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form class="form-inline" role="form">
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" id="brandId" name="brandId" placeholder="品牌"
+                                                style="height:35px">
+                                            <option value="">品牌</option>
+                                            <option th:each="brand : ${brands}" th:text="${brand.name}"
+                                                    th:value="${brand.id}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" name="isOffway" style="height:35px">
+                                            <option value="">是否自营</option>
+                                            <option value="0">否</option>
+                                            <option value="1">是</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" name="status" style="height:35px">
+                                            <option value="">是否上架</option>
+                                            <option value="0">未上架</option>
+                                            <option value="1">已上架</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input class="form-control" name="name" placeholder="商品名称" style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" id="type" name="type"
+                                                onchange="renderCategory(this,0)"
+                                                style="height:35px">
+                                            <option value="">全部类别</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" id="category" name="category" style="height:35px">
+                                            <option value="">全部类目</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="panel-body">
+                            <table cellspacing="0" class="table table-striped table-bordered" id="example-1"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-info add">添加</button>
+                            <button class="btn btn-info edit">修改</button>
+                            <button class="btn btn-info delete">删除</button>
+                            <button class="btn btn-info updateStatus">上架</button>
+                            <button class="btn btn-info updateStatus">下架</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and goods Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">商品管理</h1>
-					<p class="goodsDescription"></p>
-				</div>
+<div class="modal fade in" data-backdrop="static" id="modal-6">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
 
-				<div class="breadcrumb-env">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×
+                </button>
+                <h4 class="modal-title">添加商品</h4>
+            </div>
 
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>业务管理</a></li>
-						<li class="active"><strong>商品管理</strong></li>
-					</ol>
+            <div class="modal-body">
+                <form id="saveForm" role="form">
+                    <input name="id" type="hidden"/>
+                    <div class="row">
+                        <div class="col-md-12">
 
-				</div>
+                            <div class="form-group">
+                                <label class="control-label" for="field-3">商品名称</label>
 
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<select id="brandId" name="brandId" class="form-control" style="height:35px" placeholder="品牌">
-									<option value="">品牌</option>
-									<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="isOffway" class="form-control" style="height:35px">
-									<option value="">是否自营</option>
-									<option value="0">否</option>
-									<option value="1">是</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="status" class="form-control" style="height:35px">
-									<option value="">是否上架</option>
-									<option value="0">未上架</option>
-									<option value="1">已上架</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="商品名称"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="type" id="type" class="form-control" style="height:35px" onchange="renderCategory(this,0)">
-									<option value="">全部类别</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="category" id="category" class="form-control" style="height:35px">
-									<option value="">全部类目</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-					
-				</div>
-				<button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info delete">删除</button>
-				<button class="btn btn-info updateStatus">上架</button>
-				<button class="btn btn-info updateStatus">下架</button>
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div class="modal fade in" data-backdrop="static" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加商品</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="field-3" class="control-label">商品名称</label>
-								
-								<input type="text" class="form-control" name="name" placeholder="商品名称"/>
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="field-4" class="control-label">品牌</label>
-								
-								<select name="brandId" class="form-control" style="height:35px" placeholder="品牌">
-									<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
-								</select>
-							</div>	
-						</div>
-					</div>
-					<!-- <div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="field-4" class="control-label">是否自营</label>
-								
-								<select name="isOffway" class="form-control" style="height:35px" >
-									<option value="0">否</option>
-									<option value="1">是</option>
-								</select>
-							</div>	
-						</div>
-					</div> -->
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="field-4" class="control-label">是否发售</label>
-								
-								<select name="isRelease" class="form-control" style="height:35px" >
-									<option value="1">是</option>
-									<option value="0">否</option>
-								</select>
-							</div>	
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">类别</label>
-								<select name="type" id="typeAlt" class="form-control" style="height:35px" onchange="renderCategory(this,1)">
-								</select>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">类目</label>
-								<select name="category" id="categoryAlt" class="form-control" style="height:35px">
-								</select>
-							</div>	
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="field-4" class="control-label">封面图片</label>
-								<button class="btn btn-info appendimage">添加</button>
-								<input style="display: none" type="file" name="imageFile" param="image" />
-								<input type="hidden" class="form-control" name="image" />
-							</div>
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">轮播图片</label>
-								<button class="btn btn-info appendbanner">添加</button>
-								<input style="display: none" type="file" name="bannerFile" param="banner" />
-								<input type="hidden" class="form-control" name="banner" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">详情图片</label>
-								<button class="btn btn-info appenddetail">添加</button>
-								<input style="display: none" type="file" name="detailFile" param="detail" />
-								<input type="hidden" class="form-control" name="detail" />
-							</div>
-						</div>
-					</div>
-					
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-	
-	<div class="modal fade" id="modal-delete">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<input type="hidden" id="orderid"/>
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">温馨提示</h4>
-				</div>
-				
-				<div class="modal-body">
-					请确认要删除该商品吗？
-				</div>
-				
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-info submitDel">确定</button>
-					
-				</div>
-			</div>
-		</div>
-	</div>
-	<input type="hidden" id="type_and_category_list"/>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
-	function bindTypeSelector(data, isEdit) {
-		var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
-		if (isEdit == 1) {
-			typeStr = "";
-		}
-		for (var type in data) {
-			type = data[type];
-			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
-		}
-		if (isEdit == 1) {
-			$("#typeAlt").html(typeStr);
-		} else {
-			$("#type").html(typeStr);
-		}
-		bindCategorySelector(data[0]["sub"], isEdit);
-	}
+                                <input class="form-control" name="name" placeholder="商品名称"
+                                       type="text"/>
+                            </div>
 
-	function bindCategorySelector(data, isEdit) {
-		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
-		if (isEdit == 1) {
-			categoryStr = "";
-		}
-		for (var category in data) {
-			category = data[category];
-			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
-		}
-		if (isEdit == 1) {
-			$("#categoryAlt").html(categoryStr);
-		} else {
-			$("#category").html(categoryStr);
-		}
-	}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
 
-	function renderCategory(self, isEdit) {
-		var jsonStr = $("#type_and_category_list").val();
-		var list = JSON.parse(jsonStr);
-		var selectedId = $(self).val();
-		for (var type in list) {
-			if (selectedId == list[type]["name"]) {
-				bindCategorySelector(list[type]["sub"], isEdit);
-				break;
-			}
-		}
-	}
-	function upload(param, token, file, next, error, complete) {
-		if (file == '') {
-			complete('');
-		} else {
-			var filename = file.name;
-			var postf = filename.substring(filename.lastIndexOf("."));
+                            <div class="form-group">
+                                <label class="control-label" for="field-4">品牌</label>
 
-			var config = {
-				useCdnDomain: true,
-				region: qiniu.region.z0
-			};
-			var putExtra = {
-				fname: "",
-				params: {"x:param": param},
-				mimeType: ["image/png", "image/jpeg", "image/gif"] || null
-			};
-			/* var observable = qiniu.upload(file, "image/wx/"+UUID.randomUUID()+postf, token,
+                                <select class="form-control" name="brandId" placeholder="品牌"
+                                        style="height:35px">
+                                    <option th:each="brand : ${brands}" th:text="${brand.name}"
+                                            th:value="${brand.id}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="form-group">
+                                <label for="field-4" class="control-label">是否自营</label>
+
+                                <select name="isOffway" class="form-control" style="height:35px" >
+                                    <option value="0">否</option>
+                                    <option value="1">是</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="form-group">
+                                <label class="control-label" for="field-4">是否发售</label>
+
+                                <select class="form-control" name="isRelease" style="height:35px">
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">类别</label>
+                                <select class="form-control" id="typeAlt" name="type"
+                                        onchange="renderCategory(this,1)"
+                                        style="height:35px">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">类目</label>
+                                <select class="form-control" id="categoryAlt" name="category"
+                                        style="height:35px">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="form-group">
+                                <label class="control-label" for="field-4">封面图片</label>
+                                <button class="btn btn-info appendimage">添加</button>
+                                <input name="imageFile" param="image" style="display: none"
+                                       type="file"/>
+                                <input class="form-control" name="image" type="hidden"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label" for="field-4">轮播图片</label>
+                                <button class="btn btn-info appendbanner">添加</button>
+                                <input name="bannerFile" param="banner" style="display: none"
+                                       type="file"/>
+                                <input class="form-control" name="banner" type="hidden"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label" for="field-4">详情图片</label>
+                                <button class="btn btn-info appenddetail">添加</button>
+                                <input name="detailFile" param="detail" style="display: none"
+                                       type="file"/>
+                                <input class="form-control" name="detail" type="hidden"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-white" data-dismiss="modal" type="button">关闭</button>
+                <button class="btn btn-info save" type="button">保存</button>
+                <button class="btn btn-white bg-lg" style="display:none" type="button">
+                    数据提交中，请稍等....
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-delete">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <input id="orderid" type="hidden"/>
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">
+                    &times;
+                </button>
+                <h4 class="modal-title">温馨提示</h4>
+            </div>
+
+            <div class="modal-body">
+                请确认要删除该商品吗？
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-white" data-dismiss="modal" type="button">取消</button>
+                <button class="btn btn-info submitDel" type="button">确定</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<input id="type_and_category_list" type="hidden"/>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function bindTypeSelector(data, isEdit) {
+        var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
+        if (isEdit == 1) {
+            typeStr = "";
+        }
+        for (var type in data) {
+            type = data[type];
+            typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+        }
+        if (isEdit == 1) {
+            $("#typeAlt").html(typeStr);
+        } else {
+            $("#type").html(typeStr);
+        }
+        bindCategorySelector(data[0]["sub"], isEdit);
+    }
+
+    function bindCategorySelector(data, isEdit) {
+        var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+        if (isEdit == 1) {
+            categoryStr = "";
+        }
+        for (var category in data) {
+            category = data[category];
+            categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+        }
+        if (isEdit == 1) {
+            $("#categoryAlt").html(categoryStr);
+        } else {
+            $("#category").html(categoryStr);
+        }
+    }
+
+    function renderCategory(self, isEdit) {
+        var jsonStr = $("#type_and_category_list").val();
+        var list = JSON.parse(jsonStr);
+        var selectedId = $(self).val();
+        for (var type in list) {
+            if (selectedId == list[type]["name"]) {
+                bindCategorySelector(list[type]["sub"], isEdit);
+                break;
+            }
+        }
+    }
+
+    function upload(param, token, file, next, error, complete) {
+        if (file == '') {
+            complete('');
+        } else {
+            var filename = file.name;
+            var postf = filename.substring(filename.lastIndexOf("."));
+
+            var config = {
+                useCdnDomain: true,
+                region: qiniu.region.z0
+            };
+            var putExtra = {
+                fname: "",
+                params: {"x:param": param},
+                mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+            };
+            /* var observable = qiniu.upload(file, "image/wx/"+UUID.randomUUID()+postf, token,
                     putExtra, config); */
-			var fname = filename.replace(postf, "");
-			var observable = qiniu.upload(file, "image/wx/" + param + "/" + (new Date().getTime()) + postf, token,
-					putExtra, config);
-			var subscription = observable.subscribe(next, error, complete);
-		}
-	}
-	var qiniuUrl = [[${qiniuUrl}]];
-	var token = [[${token}]];
-	jQuery(document).ready(function($)
-	{
-		$.getJSON("/type_and_category_list", {}, function (data) {
-			$("#type_and_category_list").val(JSON.stringify(data));
-			bindTypeSelector(data, 0);
-			bindTypeSelector(data, 1);
-		});
-		$("#brandId").editableSelect();
-		var oTable = $("#example-1").dataTable({
-			language: {
-				url: "../assets/Chinese.txt"
-			},
-			bFilter: false,
-			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-			sAjaxSource: "/goods-data",//通过ajax实现分页的url路径。
-			fnServerParams: function (aData) {
-				var searchArray = $(".form-inline").serializeArray();
-				var brandId = $("#brandId").parent().find("li.es-visible").val();
-				if (brandId != "0") {
-					searchArray.push({"name": "brandId", "value": brandId});
-				} else {
-					searchArray.push({"name": "brandId", "value": ""});
-				}
-				$.merge(aData, searchArray);
-			},
-			columnDefs: [
-				{
-					targets: 0,
-					data: "id",
-					width: "5%",
-					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
-					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="goodsId" value="' + data + '" />';
-					}
-				},
-				{
-					targets: 1,
-					data: "id",
-					title: "序号"
-				},
-				{
-					targets: 2,
-					data: "image",
-					title: "封面图片",
-					render: function (data, type, row, meta) {
-						return "<img src=" + data + "></img>";
-					}
-				},
-				{
-					targets: 3,
-					data: "name",
-					title: "商品名称"
-				},
-				{
-					targets: 4,
-					data: "brandLogo",
-					title: "品牌LOGO",
-					render: function (data, type, row, meta) {
-						return "<img src=" + data + "></img>";
-					}
+            var fname = filename.replace(postf, "");
+            var observable = qiniu.upload(file, "image/wx/" + param + "/" + (new Date().getTime()) + postf, token,
+                putExtra, config);
+            var subscription = observable.subscribe(next, error, complete);
+        }
+    }
 
-				},
+    var qiniuUrl = [[${qiniuUrl}]];
+    var token = [[${token}]];
+    jQuery(document).ready(function ($) {
+        $.getJSON("/type_and_category_list", {}, function (data) {
+            $("#type_and_category_list").val(JSON.stringify(data));
+            bindTypeSelector(data, 0);
+            bindTypeSelector(data, 1);
+        });
+        $("#brandId").editableSelect();
+        var oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/goods-data",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                var brandId = $("#brandId").parent().find("li.es-visible").val();
+                if (brandId != "0") {
+                    searchArray.push({"name": "brandId", "value": brandId});
+                } else {
+                    searchArray.push({"name": "brandId", "value": ""});
+                }
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="goodsId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "image",
+                    title: "封面图片",
+                    render: function (data, type, row, meta) {
+                        return "<img src=" + data + "></img>";
+                    }
+                },
+                {
+                    targets: 3,
+                    data: "name",
+                    title: "商品名称"
+                },
+                {
+                    targets: 4,
+                    data: "brandLogo",
+                    title: "品牌LOGO",
+                    render: function (data, type, row, meta) {
+                        return "<img src=" + data + "></img>";
+                    }
 
-				{
-					targets: 5,
-					data: "brandName",
-					title: "品牌名称"
-				},
+                },
 
-				{
-					targets: 6,
-					data: "isOffway",
-					title: "是否自营",
-					render: function (data, type, row, meta) {
-						return "1" == data ? "是" : "否";
-					}
-				},
-				{
-					targets: 7,
-					data: "type",
-					title: "类别"
-				},
-				{
-					targets: 8,
-					data: "category",
-					title: "类目"
-				},
+                {
+                    targets: 5,
+                    data: "brandName",
+                    title: "品牌名称"
+                },
 
-				{
-					targets: 9,
-					data: "isRelease",
-					title: "是否发售",
-					render: function (data, type, row, meta) {
-						return "1" == data ? "是" : "否";
-					}
-				},
-				{
-					targets: 10,
-					data: "status",
-					title: "是否上架",
-					render: function (data, type, row, meta) {
-						return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
-					}
-				},
-				{
-					targets: 11,
-					data: "createTime",
-					title: "创建时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				}
-			]
-		});
+                {
+                    targets: 6,
+                    data: "isOffway",
+                    title: "是否自营",
+                    render: function (data, type, row, meta) {
+                        return "1" == data ? "是" : "否";
+                    }
+                },
+                {
+                    targets: 7,
+                    data: "type",
+                    title: "类别"
+                },
+                {
+                    targets: 8,
+                    data: "category",
+                    title: "类目"
+                },
 
-		$(".searchBtn").click(function () {
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw();  //or fnReloadAjax()
-			return false;
-		});
+                {
+                    targets: 9,
+                    data: "isRelease",
+                    title: "是否发售",
+                    render: function (data, type, row, meta) {
+                        return "1" == data ? "是" : "否";
+                    }
+                },
+                {
+                    targets: 10,
+                    data: "status",
+                    title: "是否上架",
+                    render: function (data, type, row, meta) {
+                        return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
+                    }
+                },
+                {
+                    targets: 11,
+                    data: "createTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                }
+            ]
+        });
 
-		$('#example-1').on('click', "#checkbox-all", function () {
-			var obj = $(this);
-			$("input[name='goodsId']").each(function (i, e) {
-				this.checked = obj[0].checked;
-			});
-		});
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw();  //or fnReloadAjax()
+            return false;
+        });
 
-		$(".btn.btn-info.add").click(function () {
-			var form = $("#saveForm");
-			form.find("input").val("");
-			/* form.find("img").attr("src","");
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='goodsId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
+        $(".btn.btn-info.add").click(function () {
+            var form = $("#saveForm");
+            form.find("input").val("");
+            /* form.find("img").attr("src","");
             form.find("img").hide(); */
-			/* form.find("input[type='file']").show(); */
-			/* form.find(".btn.btn-info.modify").text("更换");
+            /* form.find("input[type='file']").show(); */
+            /* form.find(".btn.btn-info.modify").text("更换");
             form.find(".btn.btn-info.modify").hide(); */
-			$(".imageShow").remove();
+            $(".imageShow").remove();
 
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 
-		});
-		//文件修改时上传
-		$("input[type='file']").change(function () {
-			var that = $(this);
-			var param = that.attr("param");
-			var file = that[0].files[0];
-			if (file == '') {
-				return;
-			}
+        });
+        //文件修改时上传
+        $("input[type='file']").change(function () {
+            var that = $(this);
+            var param = that.attr("param");
+            var file = that[0].files[0];
+            if (file == '') {
+                return;
+            }
 
-			if (param != "detail" && file.size / 1024 > 500) {
-				toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
-				return;
-			}
+            if (param != "detail" && file.size / 1024 > 500) {
+                toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
+                return;
+            }
 
-			var form = $("#saveForm");
-			upload(param, token, file, function (res) {
-			}, function (err) {
-				console.log("上传type异常:" + err);
-			}, function (res) {
-				//上传成功
-				console.log(res);
-				if (res != '') {
-					var url = qiniuUrl + "/" + res.key;
-					var fileVal = form.find("input[name='" + res.param + "']");
-					if (res.param == 'image') {
-						fileVal.val(url);
-						var formgroup = form.find(".btn.btn-info.append" + param).parent(".form-group");
-						formgroup.find(".imageShow").remove();
-						formgroup.append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
-					} else {
-						fileVal.val(fileVal.val() + "#" + url);
-						form.find(".btn.btn-info.append" + param).parent(".form-group").append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
-					}
-				}
-			});
-		});
-		//保存
-		$(".btn.btn-info.save").click(function () {
-			var footer = $(this).parent(".modal-footer")
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var name = form.find("input[name='name']").val();
-			var brandId = form.find("[name='brandId']").val();
-			var isRelease = form.find("[name='isRelease']").val();
-			var type = form.find("[name='type']").val();
-			var category = form.find("[name='category']").val();
-			var imageVal = form.find("input[name='image']").val();
-			var bannerVal = form.find("input[name='banner']").val();
-			var detailVal = form.find("input[name='detail']").val();
-			bannerVal = bannerVal.replace(/#/g, "");
-			detailVal = detailVal.replace(/#/g, "");
-			if (brandId == '' || isRelease == '' || type == '' || name == '' || category == '' ||
-					imageVal == '' || bannerVal == '' || detailVal == '') {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
-			//提交保存
-			$.post("/goods-save", $("#saveForm").serialize(), function (data) {
-				if (data) {
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					jQuery('#modal-6').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings());
-				} else {
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("操作失败", "温馨提示");
-				}
-			});
-		});
+            var form = $("#saveForm");
+            upload(param, token, file, function (res) {
+            }, function (err) {
+                console.log("上传type异常:" + err);
+            }, function (res) {
+                //上传成功
+                console.log(res);
+                if (res != '') {
+                    var url = qiniuUrl + "/" + res.key;
+                    var fileVal = form.find("input[name='" + res.param + "']");
+                    if (res.param == 'image') {
+                        fileVal.val(url);
+                        var formgroup = form.find(".btn.btn-info.append" + param).parent(".form-group");
+                        formgroup.find(".imageShow").remove();
+                        formgroup.append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
+                    } else {
+                        fileVal.val(fileVal.val() + "#" + url);
+                        form.find(".btn.btn-info.append" + param).parent(".form-group").append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
+                    }
+                }
+            });
+        });
+        //保存
+        $(".btn.btn-info.save").click(function () {
+            var footer = $(this).parent(".modal-footer")
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var name = form.find("input[name='name']").val();
+            var brandId = form.find("[name='brandId']").val();
+            var isRelease = form.find("[name='isRelease']").val();
+            var type = form.find("[name='type']").val();
+            var category = form.find("[name='category']").val();
+            var imageVal = form.find("input[name='image']").val();
+            var bannerVal = form.find("input[name='banner']").val();
+            var detailVal = form.find("input[name='detail']").val();
+            bannerVal = bannerVal.replace(/#/g, "");
+            detailVal = detailVal.replace(/#/g, "");
+            if (brandId == '' || isRelease == '' || type == '' || name == '' || category == '' ||
+                imageVal == '' || bannerVal == '' || detailVal == '') {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
+            //提交保存
+            $.post("/goods-save", $("#saveForm").serialize(), function (data) {
+                if (data) {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    jQuery('#modal-6').modal('hide');
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw(oTable.fnSettings());
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+        });
 
-		$(".btn.btn-info.edit").click(function () {
-			$(".imageShow").remove();
-			$("#saveForm").find("input").val("");
-			var goodsId = $("input[name='goodsId']:checked");
-			if (goodsId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-			$.post("/goods-one", {id: goodsId.val()}, function (data) {
-				var form = $("#saveForm");
-				form.find("input[name='id']").val(data.id);
-				form.find("input[name='name']").val(data.name);
-				form.find("[name='category']").val(data.category);
-				form.find("[name='brandId']").val(data.brandId);
-				form.find("[name='isOffway']").val(data.isOffway);
-				form.find("[name='isRelease']").val(data.isRelease);
-				form.find("[name='type']").val(data.type);
-				form.find("input[name='image']").val(data.image);
-				if ('' != data.image) {
-					var fileVal = form.find("input[name='image']");
-					fileVal.val(data.image);
-					form.find(".btn.btn-info.appendimage").parent(".form-group").append("<div class='imageShow'><img src='" + data.image + "'></img><button class='btn btn-info' key=" + data.image + ">删除</button></div>")
-				}
-				$.get("/goods-images", {id: data.id}, function (data) {
-					$.each(data, function (i, e) {
-						var type = e.type;
-						var url = e.imageUrl;
-						if (type == '0') {
-							//展示banner图
-							var fileVal = form.find("input[name='banner']");
-							fileVal.val(fileVal.val() + "#" + url);
-							form.find(".btn.btn-info.appendbanner").parent(".form-group").append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
-						} else if (type == '1') {
-							//展示详情图
-							var fileVal = form.find("input[name='detail']");
-							fileVal.val(fileVal.val() + "#" + url);
-							form.find(".btn.btn-info.appenddetail").parent(".form-group").append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
-						}
-					});
-				});
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			});
-		});
+        $(".btn.btn-info.edit").click(function () {
+            $(".imageShow").remove();
+            $("#saveForm").find("input").val("");
+            var goodsId = $("input[name='goodsId']:checked");
+            if (goodsId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+            $.post("/goods-one", {id: goodsId.val()}, function (data) {
+                var form = $("#saveForm");
+                form.find("input[name='id']").val(data.id);
+                form.find("input[name='name']").val(data.name);
+                form.find("[name='category']").val(data.category);
+                form.find("[name='brandId']").val(data.brandId);
+                form.find("[name='isOffway']").val(data.isOffway);
+                form.find("[name='isRelease']").val(data.isRelease);
+                form.find("[name='type']").val(data.type);
+                form.find("input[name='image']").val(data.image);
+                if ('' != data.image) {
+                    var fileVal = form.find("input[name='image']");
+                    fileVal.val(data.image);
+                    form.find(".btn.btn-info.appendimage").parent(".form-group").append("<div class='imageShow'><img src='" + data.image + "'></img><button class='btn btn-info' key=" + data.image + ">删除</button></div>")
+                }
+                $.get("/goods-images", {id: data.id}, function (data) {
+                    $.each(data, function (i, e) {
+                        var type = e.type;
+                        var url = e.imageUrl;
+                        if (type == '0') {
+                            //展示banner图
+                            var fileVal = form.find("input[name='banner']");
+                            fileVal.val(fileVal.val() + "#" + url);
+                            form.find(".btn.btn-info.appendbanner").parent(".form-group").append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
+                        } else if (type == '1') {
+                            //展示详情图
+                            var fileVal = form.find("input[name='detail']");
+                            fileVal.val(fileVal.val() + "#" + url);
+                            form.find(".btn.btn-info.appenddetail").parent(".form-group").append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
+                        }
+                    });
+                });
+                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            });
+        });
 
-		$("body").on("click", ".imageShow button", function () {
-			var imageShow = $(this).parent(".imageShow");
-			var key = $(this).attr("key");
-			$.post("/qiniu/delete", {url: key}, function (data) {
-				var fileVal = imageShow.parents(".form-group").find("input[type='hidden']");
-				fileVal.val(fileVal.val().replace(key, ""));
-				imageShow.remove();
-			});
-			return false;
-		});
+        $("body").on("click", ".imageShow button", function () {
+            var imageShow = $(this).parent(".imageShow");
+            var key = $(this).attr("key");
+            $.post("/qiniu/delete", {url: key}, function (data) {
+                var fileVal = imageShow.parents(".form-group").find("input[type='hidden']");
+                fileVal.val(fileVal.val().replace(key, ""));
+                imageShow.remove();
+            });
+            return false;
+        });
 
-		/* $(".btn.btn-info.modify").click(function(){
-			var that = $(this);
-			var text = that.text();
-			var formGroup = that.parent(".form-group");
-			formGroup.find("img").hide();
-			formGroup.find("input[type='file']").show();
-			that.hide();
-			return false;
-		}); */
+        /* $(".btn.btn-info.modify").click(function(){
+            var that = $(this);
+            var text = that.text();
+            var formGroup = that.parent(".form-group");
+            formGroup.find("img").hide();
+            formGroup.find("input[type='file']").show();
+            that.hide();
+            return false;
+        }); */
 
-		$(".btn.btn-info.updateStatus").click(function () {
-			var goodsId = $("input[name='goodsId']:checked");
-			if (goodsId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-			var ids = [];
-			goodsId.each(function (i, e) {
-				ids.push(e.value);
-			});
-			var value = $(this).text() == '上架' ? '1' : '0';
-			$.post("/goods-update", {ids: ids, status: value}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings());
-				}
-			})
-		});
+        $(".btn.btn-info.updateStatus").click(function () {
+            var goodsId = $("input[name='goodsId']:checked");
+            if (goodsId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            goodsId.each(function (i, e) {
+                ids.push(e.value);
+            });
+            var value = $(this).text() == '上架' ? '1' : '0';
+            $.post("/goods-update", {ids: ids, status: value}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw(oTable.fnSettings());
+                }
+            })
+        });
 
-		$(".btn.btn-info.appendbanner").click(function () {
-			$("input[name='bannerFile']").click();
-			return false;
-		});
+        $(".btn.btn-info.appendbanner").click(function () {
+            $("input[name='bannerFile']").click();
+            return false;
+        });
 
-		$(".btn.btn-info.appenddetail").click(function () {
-			$("input[name='detailFile']").click();
-			return false;
-		});
+        $(".btn.btn-info.appenddetail").click(function () {
+            $("input[name='detailFile']").click();
+            return false;
+        });
 
-		$(".btn.btn-info.appendimage").click(function () {
-			$("input[name='imageFile']").click();
-			return false;
-		});
+        $(".btn.btn-info.appendimage").click(function () {
+            $("input[name='imageFile']").click();
+            return false;
+        });
 
-		$(".btn.btn-info.delete").click(function () {
-			var goodsId = $("input[name='goodsId']:checked");
-			if (goodsId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-			jQuery('#modal-delete').modal('show', {backdrop: 'fade'});
-		});
+        $(".btn.btn-info.delete").click(function () {
+            var goodsId = $("input[name='goodsId']:checked");
+            if (goodsId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            jQuery('#modal-delete').modal('show', {backdrop: 'fade'});
+        });
 
-		$(".btn.btn-info.submitDel").click(function () {
-			var goodsId = $("input[name='goodsId']:checked");
-			var ids = [];
-			goodsId.each(function (i, e) {
-				ids.push(e.value);
-			});
+        $(".btn.btn-info.submitDel").click(function () {
+            var goodsId = $("input[name='goodsId']:checked");
+            var ids = [];
+            goodsId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/goods-delete", {ids: ids}, function (data) {
-				if (data == '0') {
-					jQuery('#modal-delete').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw(oTable.fnSettings());
-				} else if (data == '1') {
-					toastr.error("操作失败，存在上架的商品！", "温馨提示");
-				} else {
-					toastr.error("操作失败，订单中存在商品！", "温馨提示");
-				}
-			})
-		});
-	});
-	/*]]>*/
-	</script>
+            $.post("/goods-delete", {ids: ids}, function (data) {
+                if (data == '0') {
+                    jQuery('#modal-delete').modal('hide');
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw(oTable.fnSettings());
+                } else if (data == '1') {
+                    toastr.error("操作失败，存在上架的商品！", "温馨提示");
+                } else {
+                    toastr.error("操作失败，订单中存在商品！", "温馨提示");
+                }
+            })
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
