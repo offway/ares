@@ -464,7 +464,7 @@
                     data: "status",
                     title: "是否上架",
                     render: function (data, type, row, meta) {
-                        return "1" == data && new Date(row["endTime"]).getTime() > new Date().getTime() ? "已上架" : "<font color='blue'>未上架</font>";
+                        return "1" == data && new Date(row["endTime"]).getTime() > new Date().getTime() ? '<span class="label label-success">已上架</span>' : '<span class="label label-danger">未上架</span>';
                     }
                 },
                 // {
