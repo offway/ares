@@ -40,10 +40,10 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<button class="btn btn-primary searchBtn" style="height:35px">查询</button>
+									<button class="btn btn-primary searchBtn" style="height:38px">查询</button>
 								</div>
 								<div class="form-group" style="margin-left: 0;display: block;">
-									<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="history.go(-1)">返回一级分类</button>
+									<button class="btn btn-primary btn-single searchBtn" style="height:38px" onclick="history.go(-1)">返回一级分类</button>
 								</div>
 							</form>
 						</div>
@@ -315,7 +315,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
+						return '<button type="button" class="btn btn-rounded btn-success" name="checkIt" onclick="topIt(' + data + ')" value="">排序</button>';
 					}
 				},
 				{
@@ -324,7 +324,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+						return '<button type="button" class="btn btn-rounded btn-success" name="checkIt" onclick="checkIt(' + data + ')" value="">查看详情</button>';
 					}
 				},
 				{
@@ -333,7 +333,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkItsList(' + data + ')" value="查看子分类"/>';
+						return '<button type="button" class="btn btn-rounded btn-success" name="checkIt" onclick="checkItsList(' + data + ')" value="">查看子分类</button>';
 					}
 				}
 			]
