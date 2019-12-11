@@ -151,7 +151,7 @@
     }
 
     function buildImg(url) {
-        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+        return "<img width='48px' height='48px' src='#' />".replace("#", url);
     }
 
     function appendToPreviewList(one, two, three, four, five, six) {
@@ -448,6 +448,14 @@
                 },
                 {
                     targets: 10,
+                    data: "isOffway",
+                    title: "是否限定",
+                    render: function (data, type, row, meta) {
+                        return (data == "0" || data == undefined) ? '<span class="badge badge-gray">非限定</span>' : '<span class="badge badge-brown">限定</span>';
+                    }
+                },
+                {
+                    targets: 11,
                     data: "status",
                     title: "状态",
                     render: function (data, type, row, meta) {
@@ -455,7 +463,7 @@
                     }
                 },
                 {
-                    targets: 11,
+                    targets: 12,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -463,7 +471,7 @@
                     }
                 },
                 {
-                    targets: 12,
+                    targets: 13,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -474,7 +482,7 @@
                     }
                 },
                 {
-                    targets: 13,
+                    targets: 14,
                     data: "id",
                     orderable: false,
                     title: "操作",
