@@ -408,19 +408,17 @@
                     }
 
                 },
-
                 {
                     targets: 5,
                     data: "brandName",
                     title: "品牌名称"
                 },
-
                 {
                     targets: 6,
                     data: "isOffway",
-                    title: "是否自营",
+                    title: "是否限定",
                     render: function (data, type, row, meta) {
-                        return "1" == data ? "是" : "否";
+                        return "1" == data ? "非限定" : "限定";
                     }
                 },
                 {
@@ -433,7 +431,6 @@
                     data: "category",
                     title: "类目"
                 },
-
                 {
                     targets: 9,
                     data: "isRelease",
