@@ -3,582 +3,521 @@
 <head>
 	<head th:replace="head"></head>
 	<title>返图审核</title>
+	<script src="js/qiniu.min.js"></script>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<link rel="stylesheet" href="assets/js/jquery-editable-select-master/jquery-editable-select.css"/>
-	<script src="js/qiniu.min.js"></script>
-	<script src="js/dropzone.js"></script>
 	<link rel="stylesheet" href="css/dropzone.css"/>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	a {
-     	color: blue; 
-    	text-decoration: none;
-	}
-	html .select2-drop .select2-results li.select2-highlighted {
-	    background-color: rgb(200, 200, 200);
-	}
+		.form-group img {
+			max-width: 400px;
+			max-height: 300px;
+		}
 
+		a {
+			color: blue;
+			text-decoration: none;
+		}
+
+		html .select2-drop .select2-results li.select2-highlighted {
+			background-color: rgb(200, 200, 200);
+		}
 	</style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<div class="content-wrapper">
+		<div class="content-header d-none d-md-block">
 			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">返图审核</h1>
-					<p class="activityDescription"></p>
+			<div class="d-flex align-items-center">
+
+				<div class="mr-auto">
+					<h3 class="title">返图审核</h3>
 				</div>
 
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>业务管理</a></li>
-						<li class="active"><strong>返图审核</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<select id="brandId" name="brandId" class="form-control" style="height:35px" placeholder="品牌">
-									<option value="">品牌</option>
-									<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="isOffway" class="form-control" style="height:35px">
-									<option value="">是否自营</option>
-									<option value="0">否</option>
-									<option value="1">是</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="orderNo" class="form-control" style="height:35px" placeholder="订单号"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="realName" class="form-control" style="height:35px" placeholder="姓名"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="position" class="form-control" style="height:35px" placeholder="职位"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="status" class="form-control" style="height:35px" placeholder="状态">
-									<option value="">状态</option>
-									<option value="0">待审核</option>
-									<option value="1">通过</option>
-									<option value="2">拒绝</option>
-									<option value="3">已分类</option>
-								</select>
-							</div>
-						</div>
-						
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-				</div>
-				<button class="btn btn-info add" >审核</button>
-				<button class="btn btn-info addImg" >图片分类</button>
-				<button class="btn btn-info offImg" >线下返图</button>
-				
-			</div>
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-	
-	
-	
-	<div class="modal fade in" data-backdrop="static" id="modal-goods">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">商品明细</h4>
-				</div>
-				
-				<div class="modal-body">
-					<table class="table table-bordered table-striped">
-						<thead>
-							<tr>
-								<th>SKU编码</th>
-								<th style="width:120px">商品图片</th>
-								<th>商品名称</th>
-								<!-- <th>品牌LOGO</th> -->
-								<th>品牌名称</th>
-								<th>尺码</th>
-								<th>颜色</th>
-							</tr>
-						</thead>
-						
-						<tbody>
-						</tbody>
-					</table>
-									
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-	
-	<div class="modal fade in" data-backdrop="static" id="modal-ex">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">物流明细</h4>
-				</div>
-				
-				<div class="modal-body">
-					<table class="table table-bordered table-striped">
-						<tbody>
-						</tbody>
-					</table>
-									
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-	
-	<div class="modal fade" id="modal-add">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<input type="hidden" id="orderid"/>
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">温馨提示</h4>
-				</div>
-				
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								
-								<select id="status" class="form-control" style="height:35px">
-									<option value="1">通过</option>
-									<option value="2">失败</option>
-								</select>
-								
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<textarea id="content" class="form-control autogrow" placeholder="拒绝原因"></textarea>
-							</div>	
-							
-						</div>
-					</div>
-				</div>
-				
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-info save">确定</button>
-					
+				<div class="right-title">
 				</div>
 			</div>
 		</div>
-	</div>
-	
-	<div class="modal fade" id="modal-img">
-		<div class="modal-dialog" style="width:800px;margin: 30px auto;">
-			<div class="modal-content">
-				<input type="hidden" id="showImgId"/>
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">温馨提示</h4>
-				</div>
-				
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								
-								<div class="form-group">
-									<label class="control-label">请选择图片</label>
-									<select class="form-control" id="s2example-3"></select>
-								</div>
-							</div>	
-							
-						</div>
-						
-					</div>
-					
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								<label for="field-4" class="control-label">品牌</label>
-								 <div class="form-block brandsDiv">
-								 
-								</div>
-							</div>
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">使用艺人</label>
-								<input type="text" class="form-control" name="starName" placeholder="使用艺人"/>
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-info saveImg">确定</button>
-					
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="modal fade" id="modal-offImg">
-		<div class="modal-dialog" style="width:800px;margin: 30px auto;">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">线下返图</h4>
-				</div>
-				
-				<div class="modal-body">
-					
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">订单号</label>
-								<input type="text" class="form-control" name="orderNo" placeholder="订单号"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">微博链接</label>
-								<input type="text" class="form-control" name="url" placeholder="微博链接"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">使用艺人</label>
-								<input type="text" class="form-control" name="starName" placeholder="使用艺人"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">描述</label>
-								<input type="text" class="form-control" name="content" placeholder="描述"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">图片</label>
-								
-									<div class="dropzone" id="myDropzone">
-									    <div class="am-text-success dz-message">
-									        将文件拖拽到此处<br/>或点此打开文件管理器选择文件
-									    </div>
+		<section class="content">
+			<div class="row">
+				<div class="col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<form class="form-inline" role="form">
+								<div class="form-group ">
+									<div class="input-group">
+										<select id="brandId" name="brandId" class="form-control" style="height:35px" placeholder="品牌">
+											<option value="">品牌</option>
+											<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+										</select>
 									</div>
- 
+								</div>
+								<div class="form-group ">
+									<div class="input-group">
+										<select name="isOffway" class="form-control" style="height:35px">
+											<option value="">是否限定</option>
+											<option value="0">限定</option>
+											<option value="1">非限定</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group ">
+									<div class="input-group">
+										<input type="text" name="orderNo" class="form-control" style="height:35px" placeholder="订单号"/>
+									</div>
+								</div>
+								<div class="form-group ">
+									<div class="input-group">
+										<input type="text" name="realName" class="form-control" style="height:35px" placeholder="姓名"/>
+									</div>
+								</div>
+								<div class="form-group ">
+									<div class="input-group">
+										<input type="text" name="position" class="form-control" style="height:35px" placeholder="职位"/>
+									</div>
+								</div>
+								<div class="form-group ">
+									<div class="input-group">
+										<select name="status" class="form-control" style="height:35px" placeholder="状态">
+											<option value="">状态</option>
+											<option value="0">待审核</option>
+											<option value="1">通过</option>
+											<option value="2">拒绝</option>
+											<option value="3">已分类</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-primary searchBtn" style="height:38px">查询</button>
+								</div>
+							</form>
+						</div>
+						<div class="box-body">
+							<div class="table-responsive">
+								<table class="table table-bordered table-striped" id="example-1">
+								</table>
+							</div>
+						</div>
+						<!-- /.box-body -->
+						<div class="box-footer">
+							<button class="btn btn-info add">审核</button>
+							<button class="btn btn-info addImg">图片分类</button>
+							<button class="btn btn-info offImg">线下返图</button>
+						</div>
+						<!-- /.box-footer-->
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<footer th:replace="footer"></footer>
+</div>
+
+<div class="modal fade in" data-backdrop="static" id="modal-goods">
+	<div class="modal-dialog">
+		<div class="modal-content" style="width: 800px;">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">商品明细</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table table-bordered table-striped">
+					<thead>
+					<tr>
+						<th>SKU编码</th>
+						<th style="width:120px">商品图片</th>
+						<th>商品名称</th>
+						<!-- <th>品牌LOGO</th> -->
+						<th>品牌名称</th>
+						<th>尺码</th>
+						<th>颜色</th>
+					</tr>
+					</thead>
+
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modal-add">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<input type="hidden" id="orderid"/>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">温馨提示</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<select id="status" class="form-control" style="height:35px">
+								<option value="1">通过</option>
+								<option value="2">失败</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<textarea id="content" class="form-control autogrow" placeholder="拒绝原因"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-info save">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modal-img">
+	<div class="modal-dialog" style="width:800px;margin: 30px auto;">
+		<div class="modal-content">
+			<input type="hidden" id="showImgId"/>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">温馨提示</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<div class="form-group">
+								<label class="control-label">请选择图片</label>
+								<select class="form-control" id="s2example-3"></select>
 							</div>
 						</div>
 					</div>
 				</div>
-				
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-info saveOffImgBtn">确定</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-					
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">品牌</label>
+							<div class="form-block brandsDiv">
+							</div>
+						</div>
+					</div>
 				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">使用艺人</label>
+							<input type="text" class="form-control" name="starName" placeholder="使用艺人"/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-info saveImg">确定</button>
 			</div>
 		</div>
 	</div>
-	
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/jquery.mousewheel.min.js"></script>
-	<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
-	<script src="assets/js/pictureViewer.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/	
-	           
-	           			 Dropzone.autoDiscover = false;
+</div>
+<div class="modal fade" id="modal-offImg">
+	<div class="modal-dialog" style="width:800px;margin: 30px auto;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">线下返图</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">订单号</label>
+							<input type="text" class="form-control" name="orderNo" placeholder="订单号"/>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">微博链接</label>
+							<input type="text" class="form-control" name="url" placeholder="微博链接"/>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">使用艺人</label>
+							<input type="text" class="form-control" name="starName" placeholder="使用艺人"/>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">描述</label>
+							<input type="text" class="form-control" name="content" placeholder="描述"/>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label class="control-label">图片</label>
+							<div class="dropzone" id="myDropzone">
+								<div class="am-text-success dz-message">
+									将文件拖拽到此处<br/>或点此打开文件管理器选择文件
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-info saveOffImgBtn">确定</button>
+				<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
+<script src="assets/js/pictureViewer.js"></script>
+<script src="assets/js/jquery.mousewheel.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script src="js/dropzone.js"></script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
 
+	function formatTime(time) {
+		return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+	}
+
+	function formatDate(time) {
+		return new Date(time).Format("yyyy-MM-dd");
+	}
+
+	function buildImg(url) {
+		return "<img width='48px' height='48px' src='#' />".replace("#", url);
+	}
+
+	Dropzone.autoDiscover = false;
+	var qiniuUrl = [[${qiniuUrl}]];
+	var token = [[${token}]];
 	jQuery(document).ready(function($)
 	{
 		$("#brandId").editableSelect();
 		var oTable = $("#example-1").dataTable({
 			language: {
-                url: "../assets/Chinese.txt"
-            },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/showImage-data",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/showImage-data",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
 				var brandId = $("#brandId").parent().find("li.es-visible").val();
-				if (brandId != "0"){
+				if (brandId != "0") {
 					searchArray.push({"name": "brandId", "value": brandId});
-				}else {
+				} else {
 					searchArray.push({"name": "brandId", "value": ""});
 				}
-                $.merge(aData, searchArray);
-            },
-            order: [[ 0, "desc" ]],columnDefs: [
-				{	
+				$.merge(aData, searchArray);
+			},
+			order: [[0, "desc"]],
+			columnDefs: [
+				{
 					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="authId" value="'+data+'" />';  
-				    }
+					data: "id",
+					width: "5%",
+					orderable: false,
+					title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+					render: function (data, type, full, meta) {
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="authId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+					}
 				},
-                {
-                    targets: 1,
-                    data: "id",
-                    title: "序号"
-                },
-                {
-               		targets: 2,
-	                data: "orderNo",
-	                title: "订单号"
-            	},
-            	{
-               		targets: 3,
-	                data: "realName",
-	                title: "姓名"
-            	},
-            	{
-               		targets: 4,
-	                data: "position",
-	                title: "职位"
-            	},
-            	{
-               		targets: 5,
-	                data: "brandLogo",
-	                title: "品牌LOGO",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
-            	},
-            	{
-               		targets: 6,
-	                data: "brandName",
-	                title: "品牌名称"
-            	},
-            	{
-               		targets: 7,
-	                data: "isOffway",
-	                title: "是否自营",
-                    render: function (data, type, row, meta) {
-                        return "1"==data?"是":"否";
-                    }
-            	},
-            	{
-               		targets: 8,
-	                data: "showImage",
-	                title: "图片",
-                    render: function (data, type, row, meta) {
-                    	var a = data.split(",");
-                    	var html = "<div class=\"image-list\">";
-                    	$.each(a,function(i,e){
-                    		html +="<div class=\"cover\" index="+i+"><img src="+e+"></img></div><p></p>";
-                    	});
-                    	html += "</div>";
-                    	return html;
-                    }
-            	},
-            	{
-               		targets: 9,
-	                data: "starName",
-	                title: "使用艺人"
-            	},
-            	{
-               		targets: 10,
-	                data: "content",
-	                title: "内容"
-            	},
-            	{
-               		targets: 11,
-	                data: "url",
-	                title: "链接",
-                    render: function (data, type, row, meta) {
-                    	if(null != data){
-	                    	return "<a href="+data+" target='_blank'>"+data+"</a>";
-                    	}else{
-                    		return data;
-                    	}
-                    }
-            	},
-            	{
-               		targets: 12,
-	                data: "status",
-	                title: "状态",
-                    render: function (data, type, row, meta) {
-                        if("0"==data){
-                        	return "<font color='red'>待审核</font>";
-                        }else if("1"==data){
-                        	return "通过";
-                        }else if("2"==data){
-                        	return "拒绝";
-                        }
-                    }
-            	},
-            	
-            	{
-               		targets: 13,
-	                data: "orderNo",
-	                title: "商品明细",
-	                render: function (data, type, row, meta) {
-                        return "<a href='javascript:void(0)' class='showGoods' orderNo='"+data+"' color='blue'>查看</a>";
-                    }
-            	},
-                {
-                    targets: 14,
-                    data: "createTime",
-                    title: "上传时间",
-                    render: function (data, type, row, meta) {
-                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    }
-                },
-            	{
-               		targets: 15,
-	                data: "checkName",
-	                title: "审核人"
-            	},
-                
-                {
-                    targets: 16,
-                    data: "checkTime",
-                    title: "审核时间",
-                    render: function (data, type, row, meta) {
-                    	if(data==null){
-                    		return "";
-                    	}else{
-	                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    	}
-                    }
-                },
-                {
-               		targets: 17,
-	                data: "checkContent",
-	                title: "拒绝原因"
-            	}
-               ]
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "orderNo",
+					title: "订单号"
+				},
+				{
+					targets: 3,
+					data: "realName",
+					title: "姓名"
+				},
+				{
+					targets: 4,
+					data: "position",
+					title: "职位"
+				},
+				{
+					targets: 5,
+					data: "brandLogo",
+					title: "品牌LOGO",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 6,
+					data: "brandName",
+					title: "品牌名称"
+				},
+				{
+					targets: 7,
+					data: "isOffway",
+					title: "是否限定",
+					render: function (data, type, row, meta) {
+						return "1" == data ? "非限定" : "限定";
+					}
+				},
+				{
+					targets: 8,
+					data: "showImage",
+					title: "图片",
+					render: function (data, type, row, meta) {
+						var a = data.split(",");
+						var html = "<div class=\"image-list\">";
+						$.each(a, function (i, e) {
+							html += "<div class=\"cover\" index=" + i + "><img src=" + e + "></img></div><p></p>";
+						});
+						html += "</div>";
+						return html;
+					}
+				},
+				{
+					targets: 9,
+					data: "starName",
+					title: "使用艺人"
+				},
+				{
+					targets: 10,
+					data: "content",
+					title: "内容"
+				},
+				{
+					targets: 11,
+					data: "url",
+					title: "链接",
+					render: function (data, type, row, meta) {
+						if (null != data) {
+							return "<a href=" + data + " target='_blank'>" + data + "</a>";
+						} else {
+							return data;
+						}
+					}
+				},
+				{
+					targets: 12,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						if ("0" == data) {
+							return "<font color='red'>待审核</font>";
+						} else if ("1" == data) {
+							return "通过";
+						} else if ("2" == data) {
+							return "拒绝";
+						}
+					}
+				},
+
+				{
+					targets: 13,
+					data: "orderNo",
+					title: "商品明细",
+					render: function (data, type, row, meta) {
+						return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
+					}
+				},
+				{
+					targets: 14,
+					data: "createTime",
+					title: "上传时间",
+					render: function (data, type, row, meta) {
+						return formatTime(data);
+					}
+				},
+				{
+					targets: 15,
+					data: "checkName",
+					title: "审核人"
+				},
+
+				{
+					targets: 16,
+					data: "checkTime",
+					title: "审核时间",
+					render: function (data, type, row, meta) {
+						if (data == null) {
+							return "";
+						} else {
+							return formatTime(data);
+						}
+					}
+				},
+				{
+					targets: 17,
+					data: "checkContent",
+					title: "拒绝原因"
+				}
+			]
 		});
-		
-		$(".searchBtn").click(function(){
+
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw();  //or fnReloadAjax()  
+			oTable.fnDraw();  //or fnReloadAjax()
 			return false;
 		});
-		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
+
+		$('#example-1').on('click', "#checkbox-all", function () {
 			var obj = $(this);
-			$("input[name='authId']").each(function(i,e){
-				 this.checked = obj[0].checked;
+			$("input[name='authId']").each(function (i, e) {
+				this.checked = obj[0].checked;
 			});
-		})
-			 
-			
-		 
-		 $("body").on("click","a.showGoods",function(){
-			 var orderNo = $(this).attr("orderNo");
-			 $.get("/deliver-goods",{orderNo:orderNo},function(data){
+		});
+
+		$("body").on("click", "a.showGoods", function () {
+			var orderNo = $(this).attr("orderNo");
+			$.get("/deliver-goods", {orderNo: orderNo}, function (data) {
 				var html = "";
 				$('#modal-goods tbody').html("");
-				 $.each(data,function(i,e){
-					 html+="<tr><td>"+e.sku+"</td><td><img src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.brandName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
-				 });
-				 $('#modal-goods tbody').html(html);
-			 
-			 });
-			 
-			 jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
-		 });
-		 
-		 $("body").on("click",".image-list .cover",function(){
-			 var this_ = $(this);
-				var images = this_.parents('.image-list').find('.cover');
-				var imagesArr = new Array();
-				$.each(images, function (i, image) {
-					imagesArr.push($(image).children('img').attr('src'));
+				$.each(data, function (i, e) {
+					html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
 				});
-				$.pictureViewer({
-					images: imagesArr, //需要查看的图片，数据类型为数组
-					initImageIndex: parseInt(this_.attr("index")) + 1, //初始查看第几张图片，默认1
-					scrollSwitch: true //是否使用鼠标滚轮切换图片，默认false
-				});
-		 });
+				$('#modal-goods tbody').html(html);
 
+			});
+			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+		});
+
+		$("body").on("click", ".image-list .cover", function () {
+			var this_ = $(this);
+			var images = this_.parents('.image-list').find('.cover');
+			var imagesArr = [];
+			$.each(images, function (i, image) {
+				imagesArr.push($(image).children('img').attr('src'));
+			});
+			$.pictureViewer({
+				images: imagesArr, //需要查看的图片，数据类型为数组
+				initImageIndex: parseInt(this_.attr("index")) + 1, //初始查看第几张图片，默认1
+				scrollSwitch: true //是否使用鼠标滚轮切换图片，默认false
+			});
+		});
 
 		$(".btn.btn-info.add").click(function () {
 			var stockId = $("input[name='authId']:checked");
@@ -589,163 +528,130 @@
 			$("#orderid").val(ids.join(","));
 			jQuery('#modal-add').modal('show', {backdrop: 'fade'});
 		});
-		 
-		 $(".btn.btn-info.addImg").click(function(){
-				
-				var stockId = $("input[name='authId']:checked");
-				if(stockId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
-					return ;
-				}
-				
-				stockId = stockId[0].value;
-				$("#orderid").val(stockId);
-				
-				
-				$.post("/showImageFilter-exists",{showImgId:stockId},function(data){
-					 
-					/* if(data.status !='1'){
-						toastr.error("只有审核通过的图片才能分类", "温馨提示");
-					}else{ */
-						var urls = data.split(",");
-						 $('#s2example-3').empty();
-						 
-						  $.each(urls,function(i,e){
-							  if(e!=""){
-								$('#s2example-3').append("<option value='"+e+"'>"+e+"</option>");
-							  }
-						}); 
-						 
-						  $("#s2example-3").select2({
-							placeholder: 'Select country...',
-							allowClear: true,
-							minimumResultsForSearch: -1, // Hide the search bar
-							formatResult: function(state)
-							{
-								return '<div style="background:url(' + state.id + ') no-repeat center center;background-size:100%;display:inline-block;position:relative;width:200px;height:200px;margin-right: 10px;top:2px;"></div>' 
-										+ state.text;
-							}
-						}).on('select2-open', function()
-						{
-							// Adding Custom Scrollbar
-							$(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
-						}); 
-						 
-						  $("#showImgId").val(stockId);
-						//查询品牌
-						 $.get("/brand-showImgId",{showImgId:stockId},function(data){
-							
-							  var html = "";
-							 $('.brandsDiv').html("");
-							 $.each(data,function(i,e){
-								 html+= "<label><input type=\"checkbox\" name =\"brandCheckBox\" value=\""+e.id+"\"/>"+e.name+"</label><br />"
-							 });
-							 $('.brandsDiv').html(html);
-							 
-							 jQuery('#modal-img').modal('show', {backdrop: 'fade'});
-							
-						}); 
-					//}
-					
-					 
+
+		$(".btn.btn-info.addImg").click(function () {
+			var stockId = $("input[name='authId']:checked");
+			if (stockId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+			stockId = stockId[0].value;
+			$("#orderid").val(stockId);
+			$.post("/showImageFilter-exists", {showImgId: stockId}, function (data) {
+				var urls = data.split(",");
+				$('#s2example-3').empty();
+				$.each(urls, function (i, e) {
+					if (e != "") {
+						$('#s2example-3').append("<option value='" + e + "'>" + e + "</option>");
+					}
 				});
+				$("#s2example-3").select2({
+					placeholder: 'Select country...',
+					allowClear: true,
+					minimumResultsForSearch: -1, // Hide the search bar
+					formatResult: function (state) {
+						return '<div style="background:url(' + state.id + ') no-repeat center center;background-size:100%;display:inline-block;position:relative;width:200px;height:200px;margin-right: 10px;top:2px;"></div>'
+								+ state.text;
+					}
+				}).on('select2-open', function () {
+					// Adding Custom Scrollbar
+					$(this).data('select2').results.addClass('overflow-hidden');//.perfectScrollbar();
+				});
+
+				$("#showImgId").val(stockId);
+				//查询品牌
+				$.get("/brand-showImgId", {showImgId: stockId}, function (data) {
+					var html = "";
+					$('.brandsDiv').html("");
+					$.each(data, function (i, e) {
+						html += "<label><input type=\"checkbox\" name =\"brandCheckBox\" value=\"" + e.id + "\"/>" + e.name + "</label><br />"
+					});
+					$('.brandsDiv').html(html);
+					jQuery('#modal-img').modal('show', {backdrop: 'fade'});
+				});
+			});
 		});
-		 
-		 var qiniuUrl = [[${qiniuUrl}]];
-		 
-		 var token = [[${token}]];
-		 
-		 
-		 var myDropzone = new Dropzone("#myDropzone", {
-		        url: "http://upload.qiniup.com/",
-		        addRemoveLinks: true,
-		        method: 'post',
-		        sending: function(file, xhr, formData) {
-		            formData.append("token", token);
-		            var filename = file.name;
-				    var postf = filename.substring(filename.lastIndexOf("."));
-				    
-		            formData.append("key", "image/wx/"+UUID.randomUUID()+postf);
-		            formData.append("fname", file.name);
-		        },
-		        success: function (file, response, e) {
-		        	$(file.previewTemplate).children('.dz-remove').attr('key', qiniuUrl+"/"+response.key);
-		        },
-		        error: function (file, response, e) {
-	                $(file.previewTemplate).children('.dz-error-mark').css('opacity', '1')
-		        },
-		        
-		        removedfile: function (file, response, e) {
-	                var key = $(file.previewTemplate).children('.dz-remove').attr('key');
-	                if(key != '' && key != undefined){
-		                $.post("/qiniu/delete",{url:key},function(data){
-		                	 console.log("删除"+key+":"+data);
-		                });
-	                }
-	                $(file.previewTemplate).remove();
-		        }
-		        
-		    });
-		 
-		 
-		 $(".btn.btn-info.offImg").click(function(){
-			 
-			 var modal = $("#modal-offImg");
-			 orderNo = modal.find("input[name='orderNo']").val('');
-			 starName = modal.find("input[name='starName']").val('');
-			 url = modal.find("input[name='url']").val('');
-			 content = modal.find("input[name='content']").val('');
-			 myDropzone.removeAllFiles(true);
-			 
-			 jQuery('#modal-offImg').modal('show', {backdrop: 'fade'});
-		 });
-		 
-		 $(".btn.btn-info.saveOffImgBtn").click(function(){
-			 var footer = $(this).parent(".modal-footer")
+
+		var myDropzone = new Dropzone("#myDropzone", {
+			url: "http://upload.qiniup.com/",
+			addRemoveLinks: true,
+			method: 'post',
+			sending: function (file, xhr, formData) {
+				formData.append("token", token);
+				var filename = file.name;
+				var postf = filename.substring(filename.lastIndexOf("."));
+
+				formData.append("key", "image/wx/" + UUID.randomUUID() + postf);
+				formData.append("fname", file.name);
+			},
+			success: function (file, response, e) {
+				$(file.previewTemplate).children('.dz-remove').attr('key', qiniuUrl + "/" + response.key);
+			},
+			error: function (file, response, e) {
+				$(file.previewTemplate).children('.dz-error-mark').css('opacity', '1')
+			},
+			removedfile: function (file, response, e) {
+				var key = $(file.previewTemplate).children('.dz-remove').attr('key');
+				if (key != '' && key != undefined) {
+					$.post("/qiniu/delete", {url: key}, function (data) {
+						console.log("删除" + key + ":" + data);
+					});
+				}
+				$(file.previewTemplate).remove();
+			}
+		});
+
+		$(".btn.btn-info.offImg").click(function () {
+			var modal = $("#modal-offImg");
+			orderNo = modal.find("input[name='orderNo']").val('');
+			starName = modal.find("input[name='starName']").val('');
+			url = modal.find("input[name='url']").val('');
+			content = modal.find("input[name='content']").val('');
+			myDropzone.removeAllFiles(true);
+			jQuery('#modal-offImg').modal('show', {backdrop: 'fade'});
+		});
+
+		$(".btn.btn-info.saveOffImgBtn").click(function () {
+			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
-				
 			var modal = $("#modal-offImg");
 			var orderNo = modal.find("input[name='orderNo']").val();
 			var starName = modal.find("input[name='starName']").val();
 			var url = modal.find("input[name='url']").val();
 			var content = modal.find("input[name='content']").val();
-			
-			var images ="";
-			$(".dz-remove").each(function(i,e){
-				images += e.getAttribute('key')+",";
+			var images = "";
+			$(".dz-remove").each(function (i, e) {
+				images += e.getAttribute('key') + ",";
 			});
-			
-			images = images.substring(0,images.lastIndexOf(","));
-			if(images == "" || orderNo ==""){
+			images = images.substring(0, images.lastIndexOf(","));
+			if (images == "" || orderNo == "") {
 				toastr.error("请填写完整信息后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
-				 return false;
-			}else{
-				$.post("/showImage-save",{
-					  orderNo:orderNo,
-					  url:url,
-					  content:content,
-					  starName:starName,
-					  images:images
-				  },function(data){
-					 if(data){
-						 	jQuery('#modal-offImg').modal('hide');
-							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw(oTable.fnSettings()); 
-							footer.find("button").show();
-							footer.find(".bg-lg").hide();
-					 }else{
-						 toastr.error("操作失败", "温馨提示");
-						 footer.find("button").show();
-						 footer.find(".bg-lg").hide();
-					 }
-				 });
+				return false;
+			} else {
+				$.post("/showImage-save", {
+					orderNo: orderNo,
+					url: url,
+					content: content,
+					starName: starName,
+					images: images
+				}, function (data) {
+					if (data) {
+						jQuery('#modal-offImg').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw(oTable.fnSettings());
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+					} else {
+						toastr.error("操作失败", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+					}
+				});
 			}
-			
-			 
-		 });
+		});
 
 		$(".btn.btn-info.save").click(function () {
 			var id = $("#orderid").val();
@@ -766,42 +672,40 @@
 				});
 			}
 		});
-		 
-		 $(".btn.btn-info.saveImg").click(function(){
-			 var image = $('#s2example-3').val();
-			 var starName = $("input[name='starName']").val();
-			 var showImgId = $('#showImgId').val();
-		     var brandIds= ""; //品牌
-		     $.each($('input[name="brandCheckBox"]'),function(){
-	                if(this.checked){
-	                	brandIds +=$(this).val()+",";
-	                }
-	            });
-		     
-			 if(brandIds=='' || starName==''){
-				 toastr.error("请填写完整信息后提交", "温馨提示");
-				 return false;
-			 }else{
-				  $.post("/showImageFilter-save",{
-					  showImgId:showImgId,
-					  image:image,
-					  brandIds:brandIds,
-					  starName:starName
-				  },function(data){
-					 if(data){
-						 	jQuery('#modal-img').modal('hide');
-							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw(oTable.fnSettings()); 
-					 }else{
-						 toastr.error("操作失败", "温馨提示");
-					 }
-				 });
-			 }
-		 });
-		
+
+		$(".btn.btn-info.saveImg").click(function () {
+			var image = $('#s2example-3').val();
+			var starName = $("input[name='starName']").val();
+			var showImgId = $('#showImgId').val();
+			var brandIds = ""; //品牌
+			$.each($('input[name="brandCheckBox"]'), function () {
+				if (this.checked) {
+					brandIds += $(this).val() + ",";
+				}
+			});
+
+			if (brandIds == '' || starName == '') {
+				toastr.error("请填写完整信息后提交", "温馨提示");
+				return false;
+			} else {
+				$.post("/showImageFilter-save", {
+					showImgId: showImgId,
+					image: image,
+					brandIds: brandIds,
+					starName: starName
+				}, function (data) {
+					if (data) {
+						jQuery('#modal-img').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw(oTable.fnSettings());
+					} else {
+						toastr.error("操作失败", "温馨提示");
+					}
+				});
+			}
+		});
 	});
 	/*]]>*/
-	</script>
+</script>
 </body>
-
 </html>
