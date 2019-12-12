@@ -1,122 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>返图明细管理</title>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
-	<link rel="stylesheet" href="assets/js/viewer.css"/>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>返图明细管理</title>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <link href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css" rel="stylesheet"/>
+    <link href="assets/js/viewer.css" rel="stylesheet"/>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title" th:inline="text">返图明细管理-[[${theName}]]</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form class="form-inline" role="form">
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <div class="input-group">
+                                        <input class="form-control" id="starName" name="starName" placeholder="艺人名称"
+                                               style="height:35px" type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <div class="input-group">
+                                        <input class="form-control" id="sTime" name="sTime" placeholder="开始时间"
+                                               style="height:35px" type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <div class="input-group">
+                                        <input class="form-control" id="eTime" name="eTime" placeholder="结束时间"
+                                               style="height:35px" type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <button class="btn btn-primary searchBtn">查询</button>
+                                </div>
+                                <div class="form-group" style="margin-left: 0;display: block;">
+                                    <button class="btn btn-primary searchBtn" onclick="history.go(-1)">返回
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <table cellspacing="0" class="table table-striped table-bordered" id="example-1"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-info add">添加</button>
+                            <button class="btn btn-info edit">修改</button>
+                            <button class="btn btn-info del">删除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
 
-				<div class="title-env">
-					<h1 class="title" th:inline="text">返图明细管理-[[${theName}]]</h1>
-					<p class="activityDescription"></p>
-				</div>
+<div aria-hidden="false" class="modal fade in" id="preview" style="display: none;">
+    <div class="modal-dialog" style=" width: 800px;">
+        <div class="modal-content">
 
-				<div class="breadcrumb-env">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
 
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>返图明细管理</strong></li>
-					</ol>
+            <div class="modal-body" id="preview_body">
+                <div id="goodsPlace"></div>
+                <!-- a block container is required -->
+                <div>
+                    <img alt="" id="image" src=""/>
+                </div>
 
-				</div>
+                <div>
+                    <ul id="images">
+                    </ul>
+                </div>
+            </div>
 
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group" style="margin-bottom: 15px;">
-							<div class="input-group">
-								<input type="text" name="starName" id="starName" class="form-control" style="height:35px" placeholder="艺人名称"/>
-							</div>
-						</div>
-						<div class="form-group" style="margin-bottom: 15px;">
-							<div class="input-group">
-								<input type="text" name="sTime" id="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
-							</div>
-						</div>
-						<div class="form-group" style="margin-bottom: 15px;">
-							<div class="input-group">
-								<input type="text" name="eTime" id="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
-							</div>
-						</div>
-						<div class="form-group" style="margin-bottom: 15px;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						<div class="form-group" style="margin-left: 0;display: block;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="history.go(-1)">返回</button>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-					
-				</div>
-				<button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info del">删除</button>
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
+            <div class="modal-footer">
+                <button class="btn btn-white" data-dismiss="modal" type="button">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
-		<div class="modal-dialog" style=" width: 800px;">
-			<div class="modal-content">
-
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">查看详情</h4>
-				</div>
-
-				<div class="modal-body" id="preview_body">
-					<div id="goodsPlace"></div>
-					<!-- a block container is required -->
-					<div>
-						<img id="image" src="" alt=""/>
-					</div>
-
-					<div>
-						<ul id="images">
-						</ul>
-					</div>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<script src="https://admin.offway.cn/js/common.js"></script>
-	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
-	<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/viewer.js"></script>
-	<script src="assets/js/jquery-viewer.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+<script src="https://admin.offway.cn/js/common.js"></script>
+<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
+<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/viewer.js"></script>
+<script src="assets/js/jquery-viewer.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
 
     function appendToPreview(key, value) {
@@ -145,235 +143,234 @@
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
     }
 
-	function checkIt(imgUrl) {
-		var preview = $("#preview_body");
-		var contentStr = "";
-		var imgs = imgUrl.split(",");
-		for (let url of imgs) {
-			contentStr += "图片:" + buildImg(url) + "<br/>";
-		}
-		preview.html(contentStr);
-		jQuery('#preview').modal('show', {backdrop: 'fade'});
-	}
+    function checkIt(imgUrl) {
+        var preview = $("#preview_body");
+        var contentStr = "";
+        var imgs = imgUrl.split(",");
+        for (let url of imgs) {
+            contentStr += "图片:" + buildImg(url) + "<br/>";
+        }
+        preview.html(contentStr);
+        jQuery('#preview').modal('show', {backdrop: 'fade'});
+    }
 
-	var viewPort = null;
+    var viewPort = null;
 
-	function imgViewer(imgUrl, goodsId) {
-		var $image = $('#image');
-		var preview = $("#images");
-		var goodsPlace = $("#goodsPlace");
-		var contentStr = "";
-		var imgs = imgUrl.split(",");
-		if (null != goodsId && goodsId != ""){
-			$.post("/feedback_goods", {"ids": goodsId}, function (data) {
-				if (data) {
-					var str = "";
-					for (var obj of data) {
-						str += appendToPreview(obj["name"], buildImg(obj["image"]));
-					}
-					goodsPlace.html(str);
-				}
-				for (let url of imgs) {
-					contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
-				}
-				preview.html(contentStr);
-				if (viewPort) {
-					// viewPort.destroy();
-					// viewPort.update();
-				}
-				$image.viewer("destroy");
-				$image.viewer({
-					inline: false,
-					viewed: function () {
-						$image.viewer('zoomTo', 1);
-					}
-				});
-				// Get the Viewer.js instance after initialized
-				viewPort = $image.data('viewer');
-				// View a list of images
-				preview.viewer("destroy");
-				preview.viewer();
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-			});
-		}else {
-			for (let url of imgs) {
-				contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
-			}
-			preview.html(contentStr);
-			if (viewPort) {
-				// viewPort.destroy();
-				// viewPort.update();
-			}
-			$image.viewer("destroy");
-			$image.viewer({
-				inline: false,
-				viewed: function () {
-					$image.viewer('zoomTo', 1);
-				}
-			});
-			// Get the Viewer.js instance after initialized
-			viewPort = $image.data('viewer');
-			// View a list of images
-			preview.viewer("destroy");
-			preview.viewer();
-			jQuery('#preview').modal('show', {backdrop: 'fade'});
-		}
+    function imgViewer(imgUrl, goodsId) {
+        var $image = $('#image');
+        var preview = $("#images");
+        var goodsPlace = $("#goodsPlace");
+        var contentStr = "";
+        var imgs = imgUrl.split(",");
+        if (null != goodsId && goodsId != "") {
+            $.post("/feedback_goods", {"ids": goodsId}, function (data) {
+                if (data) {
+                    var str = "";
+                    for (var obj of data) {
+                        str += appendToPreview(obj["name"], buildImg(obj["image"]));
+                    }
+                    goodsPlace.html(str);
+                }
+                for (let url of imgs) {
+                    contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
+                }
+                preview.html(contentStr);
+                if (viewPort) {
+                    // viewPort.destroy();
+                    // viewPort.update();
+                }
+                $image.viewer("destroy");
+                $image.viewer({
+                    inline: false,
+                    viewed: function () {
+                        $image.viewer('zoomTo', 1);
+                    }
+                });
+                // Get the Viewer.js instance after initialized
+                viewPort = $image.data('viewer');
+                // View a list of images
+                preview.viewer("destroy");
+                preview.viewer();
+                jQuery('#preview').modal('show', {backdrop: 'fade'});
+            });
+        } else {
+            for (let url of imgs) {
+                contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
+            }
+            preview.html(contentStr);
+            if (viewPort) {
+                // viewPort.destroy();
+                // viewPort.update();
+            }
+            $image.viewer("destroy");
+            $image.viewer({
+                inline: false,
+                viewed: function () {
+                    $image.viewer('zoomTo', 1);
+                }
+            });
+            // Get the Viewer.js instance after initialized
+            viewPort = $image.data('viewer');
+            // View a list of images
+            preview.viewer("destroy");
+            preview.viewer();
+            jQuery('#preview').modal('show', {backdrop: 'fade'});
+        }
 
-	}
+    }
 
-	var table_global;
-	var qiniuUrl = [[${qiniuUrl}]];
-	var theId = [[${theId}]];
-	var starName = [[${starName}]];
-	jQuery(document).ready(function($)
-	{
-		$("#starName").val(starName);
+    var table_global;
+    var qiniuUrl = [[${qiniuUrl}]];
+    var theId = [[${theId}]];
+    var starName = [[${starName}]];
+    jQuery(document).ready(function ($) {
+        $("#starName").val(starName);
 
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#sTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#eTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#sTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#eTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
 
-		var oTable = $("#example-1").dataTable({
-			language: {
+        var oTable = $("#example-1").dataTable({
+            language: {
                 url: "../assets/Chinese.txt"
             },
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/feedback_detail_list",//通过ajax实现分页的url路径。
-			fnServerParams: function (aData) {
-				var searchArray = $(".form-inline").serializeArray();
-				$.merge(aData, searchArray);
-				aData.push({"name": "id", "value": theId});//append pid
-			},
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/feedback_detail_list",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+                aData.push({"name": "id", "value": theId});//append pid
+            },
             order: [[7, "desc"]],
             columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
-				    }
-				},
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+					title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                    }
+                },
                 {
                     targets: 1,
                     data: "id",
                     title: "序号"
                 },
                 {
-               		targets: 2,
-	                data: "brandName",
-	                title: "品牌名称"
-            	},
-				{
-					targets: 3,
-					data: "starName",
-					title: "艺人名称"
-				},
-				{
-					targets: 4,
-					data: "imgNum",
-					title: "返图数量"
-				},
-				{
-					targets: 5,
-					data: "weibo",
-					title: "微博链接"
-				},
-				{
-					targets: 6,
-					data: "remark",
-					title: "备注"
-				},
-				{
-					targets: 7,
-					data: "backTime",
-					title: "创建时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 8,
-					data: "imgUrl",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var goodsId = full["goodsId"];
-						return '<input type="button" name="checkIt" onclick="imgViewer(\'' + data + '\',\'' + goodsId + '\')" value="查看图片"/>';
-					}
-				}
-               ]
-		});
+                    targets: 2,
+                    data: "brandName",
+                    title: "品牌名称"
+                },
+                {
+                    targets: 3,
+                    data: "starName",
+                    title: "艺人名称"
+                },
+                {
+                    targets: 4,
+                    data: "imgNum",
+                    title: "返图数量"
+                },
+                {
+                    targets: 5,
+                    data: "weibo",
+                    title: "微博链接"
+                },
+                {
+                    targets: 6,
+                    data: "remark",
+                    title: "备注"
+                },
+                {
+                    targets: 7,
+                    data: "backTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 8,
+                    data: "imgUrl",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var goodsId = full["goodsId"];
+                        return '<input type="button" name="checkIt" onclick="imgViewer(\'' + data + '\',\'' + goodsId + '\')" value="查看图片"/>';
+                    }
+                }
+            ]
+        });
 
-		table_global = oTable;
+        table_global = oTable;
 
-		$(".searchBtn").click(function () {
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
-		});
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw(); //or fnReloadAjax()
+            return false;
+        });
 
-		$(".btn.btn-info.add").click(function () {
-			window.open('/feedback_insert.html', "_blank");
-		});
-		//保存
-		$(".btn.btn-info.save").click(function () {
-			//
-		});
+        $(".btn.btn-info.add").click(function () {
+            window.open('/feedback_insert.html', "_blank");
+        });
+        //保存
+        $(".btn.btn-info.save").click(function () {
+            //
+        });
 
-		$(".btn.btn-info.edit").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-			window.open('/feedback_modify.html?id=' + activityId.val(), "_blank");
-		});
+        $(".btn.btn-info.edit").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+            window.open('/feedback_modify.html?id=' + activityId.val(), "_blank");
+        });
 
-		$(".btn.btn-info.del").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.del").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/feedback_detail_del", {"ids": ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			});
-		});
-	});
-	/*]]>*/
-	</script>
+            $.post("/feedback_detail_del", {"ids": ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            });
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 </html>
