@@ -143,7 +143,7 @@
 				</table>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
 	</div>
@@ -176,7 +176,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
 				<button type="button" class="btn btn-info save">确定</button>
 			</div>
 		</div>
@@ -220,7 +220,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
 				<button type="button" class="btn btn-info saveImg">确定</button>
 			</div>
 		</div>
@@ -280,7 +280,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
 				<button type="button" class="btn btn-info saveOffImgBtn">确定</button>
 				<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 			</div>
@@ -305,6 +305,19 @@
 
 	function buildImg(url) {
 		return "<img width='48px' height='48px' src='#' />".replace("#", url);
+	}
+
+	function showGoods(orderNo){
+		$.get("/deliver-goods", {orderNo: orderNo}, function (data) {
+			var html = "";
+			$('#modal-goods tbody').html("");
+			$.each(data, function (i, e) {
+				html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
+			});
+			$('#modal-goods tbody').html(html);
+
+		});
+		jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
 	}
 
 	Dropzone.autoDiscover = false;
@@ -427,11 +440,11 @@
 					title: "状态",
 					render: function (data, type, row, meta) {
 						if ("0" == data) {
-							return "<font color='red'>待审核</font>";
+							return '<span class="label label-warning">待审核</span>';
 						} else if ("1" == data) {
-							return "通过";
+							return '<span class="label label-success">通过</span>';
 						} else if ("2" == data) {
-							return "拒绝";
+							return '<span class="label label-danger">拒绝</span>';
 						}
 					}
 				},
@@ -441,7 +454,8 @@
 					data: "orderNo",
 					title: "商品明细",
 					render: function (data, type, row, meta) {
-						return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
+						return '<input type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="showGoods(\'' + data + '\')" value="查看"/>';
+						// return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
 					}
 				},
 				{
@@ -564,7 +578,8 @@
 					var html = "";
 					$('.brandsDiv').html("");
 					$.each(data, function (i, e) {
-						html += "<label><input type=\"checkbox\" name =\"brandCheckBox\" value=\"" + e.id + "\"/>" + e.name + "</label><br />"
+						var uuid = UUID.randomUUID();
+						html += "<input type=\"checkbox\" id=\""+uuid+"\" name =\"brandCheckBox\" value=\"" + e.id + "\"/><label for=\""+uuid+"\">" + e.name + "</label><br />"
 					});
 					$('.brandsDiv').html(html);
 					jQuery('#modal-img').modal('show', {backdrop: 'fade'});
