@@ -114,7 +114,7 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
 				<button type="button" class="btn btn-info save">保存</button>
 				<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 			</div>
@@ -130,7 +130,7 @@
 			</div>
 			<div class="modal-body" id="preview_body"></div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
 	</div>
@@ -309,7 +309,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<button type="button" class="btn btn-rounded btn-success" name="checkIt" onclick="topIt(' + data + ')" value="">排序</button>';
+						return '<button type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="topIt(' + data + ')" value="">排序</button>';
 					}
 				},
 				{
@@ -318,7 +318,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<button type="button" class="btn btn-rounded btn-success" name="checkIt" onclick="checkIt(' + data + ')" value="">查看详情</button>';
+						return '<button type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="checkIt(' + data + ')" value="">查看详情</button>';
 					}
 				}
 			]

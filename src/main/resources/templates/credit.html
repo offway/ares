@@ -118,7 +118,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
 				<button type="button" class="btn btn-info save">确定</button>
 			</div>
 		</div>
@@ -188,7 +188,7 @@
 					data: "type",
 					title: "操作类型",
 					render: function (data, type, row, meta) {
-						return "0"==data?"加分":"减分";
+						return "0"==data?'<span class="label label-success">加分</span>':'<span class="label label-danger">减分</span>';
 					}
 				},
 				{

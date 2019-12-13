@@ -117,7 +117,7 @@
 				</table>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
 	</div>
@@ -134,7 +134,7 @@
 				请确认已经收到货后再操作！
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
 				<button type="button" class="btn btn-info save">确定</button>
 			</div>
 		</div>
@@ -154,6 +154,26 @@
 
 	function buildImg(url) {
 		return "<img width='48px' height='48px' src='#' />".replace("#", url);
+	}
+
+	function showGoods(batch,orderNo){
+		$.get("/deliver-goods", {"orderNo": orderNo, "batch": batch}, function (data) {
+			var html = "";
+			$('#modal-goods tbody').html("");
+			$.each(data, function (i, e) {
+				var td = e["returnMailNo"] ? "<td><a href='#' class='showEx' color='blue' mailNo='AAA'>AAA</a></td>".replace(/AAA/g, e["returnMailNo"]) : "<td>未寄回</td>";
+				html += "<tr><td>" + e.sku + "</td>" +
+						"<td><img src=\"" + e.image + "\" />" +
+						"</td><td>" + e.goodsName + "</td>" +
+						"<td>" + e.brandName + "</td>" +
+						"<td>" + e.size + "</td>" +
+						"<td>" + e.color + "</td>" +
+						td +
+						"</tr>";
+			});
+			$('#modal-goods tbody').html(html);
+		});
+		jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
 	}
 
 	jQuery(document).ready(function($)
@@ -245,7 +265,7 @@
 						data: "isOffway",
 						title: "是否限定",
 						render: function (data, type, row, meta) {
-							return "1" == data ? "非限定" : "限定";
+							return "1" == data ? '<span class="badge badge-gray">非限定</span>' : '<span class="badge badge-brown">限定</span>';
 						}
 					},
 					{
@@ -255,7 +275,14 @@
 						render: function (data, type, row, meta) {
 							/** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出,8-部分寄回] **/
 							var map = ["已下单", "已发货", "已寄回", "已收货", "已取消", "已部分收货", "审核", "部分寄出", "部分寄回"];
-							return map[data];
+							var stat = map[data];
+							if (data == 0 || data == 6){
+								return '<span class="label label-warning">'+stat+'</span>';
+							}else if (data == 4){
+								return '<span class="label label-danger">'+stat+'</span>';
+							}else {
+								return '<span class="label label-success">'+stat+'</span>';
+							}
 						}
 					},
 					{
@@ -263,7 +290,8 @@
 						data: "orderNo",
 						title: "商品明细",
 						render: function (data, type, row, meta) {
-							return "<a href='javascript:void(0)' class='showGoods' batch='" + row["batch"] + "' orderNo='" + data + "' color='blue'>查看</a>";
+							// return "<a href='javascript:void(0)' class='showGoods' batch='" + row["batch"] + "' orderNo='" + data + "' color='blue'>查看</a>";
+							return '<input type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="showGoods(\''+row["batch"]+'\',\''+data+'\')" value="查看">';
 						}
 					},
 					{
