@@ -188,7 +188,7 @@
 </div>
 <div class="modal fade" id="modal-deliver">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 800px;">
             <div class="modal-header">
                 <button aria-hidden="true" class="close" data-dismiss="modal" type="button">
                     &times;
@@ -334,6 +334,19 @@
         }
     }
 
+    function showGoods(orderNo) {
+
+        $.get("/deliver-goods", {orderNo: orderNo}, function (data) {
+            var html = "";
+            $('#modal-goods tbody').html("");
+            $.each(data, function (i, e) {
+                html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
+            });
+            $('#modal-goods tbody').html(html);
+        });
+        jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+    }
+
     var ORDER_NO;
     jQuery(document).ready(function ($) {
         $("#brandId").editableSelect();
@@ -449,7 +462,8 @@
                     data: "orderNo",
                     title: "商品明细",
                     render: function (data, type, row, meta) {
-                        return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
+                        return '<input type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="showGoods(\''+data+'\')" value="查看">';
+                        // return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
                     }
                 },
                 {

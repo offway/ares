@@ -89,7 +89,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="box-body">
+                        <div class="box-body" style="overflow-x: scroll">
                             <table cellspacing="0" class="table table-striped table-bordered" id="example-1"
                                    width="100%">
                             </table>
@@ -958,7 +958,7 @@
                     title: "商品明细",
                     render: function (data, type, row, meta) {
                         var ordersNo = data;
-                        return '<input type="button" name="checkIt" onclick="topIt(\'' + data + '\')" value="查看详情"/>';
+                        return '<input type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="topIt(\'' + data + '\')" value="查看详情"/>';
                     }
                 },
                 {
@@ -990,9 +990,9 @@
                         var status = row["state"];
                         var ordersNo = row["ordersNo"];
                         if ("0" == status) {
-                            return '<input type="button" name="checkIt" onclick="setState(' + data + ',0)" value="确认发货"/>';
+                            return '<input type="button"  class="btn btn-outline btn-success" name="checkIt" onclick="setState(' + data + ',0)" value="确认发货"/>';
                         } else if ("1" == status || "4" != status) {
-                            return '<input type="button" name="checkIt" onclick="pickGoodsForReturn(' + data + ',\'' + ordersNo + '\')" value="确认收货"/>';
+                            return '<input type="button" class="btn btn-outline btn-success" name="checkIt" onclick="pickGoodsForReturn(' + data + ',\'' + ordersNo + '\')" value="确认收货"/>';
                         } else {
                             return '';
                         }
@@ -1005,9 +1005,9 @@
                     render: function (data, type, row, meta) {
                         var isnull = row["message"];
                         if (isnull == 1) {
-                            return '<input type="button" style="background-color: #21b3e6;color: #ebf7fd" name="remark" id="remark" onclick="addremark(' + data + ')" value="修改留言"/>';
+                            return '<input type="button" class="btn btn-outline btn-success" style="background-color: #21b3e6;color: #ebf7fd" name="remark" id="remark" onclick="addremark(' + data + ')" value="修改留言"/>';
                         } else {
-                            return '<input type="button" name="remark" id="remark" onclick="addremark(' + data + ')" value="添加留言"/>';
+                            return '<input type="button" class="btn btn-outline btn-success" name="remark" id="remark" onclick="addremark(' + data + ')" value="添加留言"/>';
                         }
                     }
                 },
@@ -1016,7 +1016,7 @@
                     data: "id",
                     title: "操作",
                     render: function (data, type, row, meta) {
-                        return '<input type="button" name="checkIt" onclick="deleteOrder(' + data + ')" value="删除"/>';
+                        return '<input type="button" class="btn btn-outline btn-danger" name="checkIt" onclick="deleteOrder(' + data + ')" value="删除"/>';
                     }
                 }
             ]
@@ -1117,7 +1117,7 @@
 
         });
 
-        $(".btn.btn-info.save").click(function () {
+        $(".btn.btn-success.save").click(function () {
             var data = $("#saveForm").serializeArray();
             $.post("/offline-save", data, function (data) {
                 if (data) {

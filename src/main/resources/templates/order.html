@@ -466,6 +466,38 @@
         jQuery('#modal-goods-status').modal('show', {backdrop: 'fade'});
     }
 
+    function showGoods(batch,orderNo,trs) {
+        // var orderNo = $(this).attr("orderNo");
+        // var batch = $(this).attr("batch");
+        var tr = $(trs).parents("tr");
+        $('#modal-goods .a .col-xs-4:nth-child(1)').text("序号：" + tr.find("td:nth-child(2)").text());
+        $('#modal-goods .a .col-xs-4:nth-child(2)').text("订单号：" + tr.find("td:nth-child(3)").text());
+        $('#modal-goods .a .col-xs-4:nth-child(3)').text("使用日期：" + tr.find("td:nth-child(4)").text());
+        $('#modal-goods .b .col-xs-4:nth-child(1)').text("姓名：" + tr.find("td:nth-child(5)").text());
+        $('#modal-goods .b .col-xs-4:nth-child(2)').text("职位：" + tr.find("td:nth-child(6)").text());
+        $('#modal-goods .b .col-xs-4:nth-child(3)').text("使用者：" + tr.find("td:nth-child(7)").text());
+
+        $.get("/deliver-goods", {"orderNo": orderNo, "batch": batch}, function (data) {
+            var html = "";
+            $('#modal-goods tbody').html("");
+            $.each(data, function (i, e) {
+                html += "<tr>" +
+                    "<td>" + e.sku + "</td>" +
+                    "<td><img src=\"" + e.image + "\" /></td>" +
+                    "<td>" + e.goodsName + "</td>" +
+                    "<td>" + e.brandName + "</td>" +
+                    "<td>" + e.size + "</td>" +
+                    "<td>" + e.color + "</td>" +
+                    "<td>" + e.remark + "</td>" +
+                    "<td><a href='#' class='showEx' color='blue' mailNo='AAA'>AAA</a></td>".replace(/AAA/g, e["mailNo"]) +
+                    "</tr>";
+            });
+            $('#modal-goods tbody').html(html);
+        });
+        jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+
+    }
+
     var brandId = [[${brandId}]];
     var oTable0;
     jQuery(document).ready(function ($) {
@@ -586,7 +618,14 @@
                     render: function (data, type, row, meta) {
                         /** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出] **/
                         var map = ["已下单", "已发货", "已寄回", "已收货", "已取消", "已部分收货", "审核", "部分寄出", "部分寄回"];
-                        return map[data];
+                        var stat = map[data];
+                        if (data == 0 || data == 6){
+                            return '<span class="badge badge-warning">'+stat+'</span>';
+                        }else if (data == 4){
+                            return '<span class="badge badge-danger">'+stat+'</span>';
+                        }else {
+                            return '<span class="badge badge-success">'+stat+'</span>';
+                        }
                     }
                 },
                 {
@@ -606,7 +645,9 @@
                     data: "orderNo",
                     title: "商品明细",
                     render: function (data, type, row, meta) {
-                        return "<a href='javascript:void(0)' class='showGoods' batch='" + row["batch"] + "' orderNo='" + data + "' color='blue'>查看</a>";
+                        var bathc = row["batch"];
+                        return '<input type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="showGoods(\''+bathc+'\',\''+data+'\',this)" value="查看">';
+                        // return "<a href='javascript:void(0)' class='showGoods' batch='" + row["batch"] + "' orderNo='" + data + "' color='blue'>查看</a>";
                     }
                 },
                 {
@@ -649,12 +690,12 @@
                         var isnull = row["extra"];
                         var str = "";
                         if (isnull == 1) {
-                            str = '<input type="button" style="background-color: #21b3e6;color: #ebf7fd" name="remark" id="remark" onclick="addremark(' + data + ')" value="修改备注"/>';
+                            str = '<input type="button" class="btn btn-outline btn-success" style="background-color: #21b3e6;color: #ebf7fd" name="remark" id="remark" onclick="addremark(' + data + ')" value="修改备注"/>';
                         } else {
-                            str = '<input type="button" name="remark" id="remark" onclick="addremark(' + data + ')" value="添加备注"/>';
+                            str = '<input type="button" class="btn btn-outline btn-success" name="remark" id="remark" onclick="addremark(' + data + ')" value="添加备注"/>';
                         }
                         if (row["status"] == 5) {
-                            str += '<input type="button" onclick="pickGoodsForReturn(\'AAA\')" value="继续归还" />'.replace("AAA", row["orderNo"]);
+                            str += '<input type="button" class="btn btn-outline btn-primary" onclick="pickGoodsForReturn(\'AAA\')" value="继续归还" />'.replace("AAA", row["orderNo"]);
                         }
                         return str;
                     }
