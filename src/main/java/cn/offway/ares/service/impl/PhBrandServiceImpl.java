@@ -59,13 +59,11 @@ public class PhBrandServiceImpl implements PhBrandService {
 
     @Override
     public List<PhBrand> findByIds(List<Long> ids) {
-        if (null != ids && ids.size()>0){
+        if (null != ids && ids.size() > 0) {
             return phBrandRepository.findByIds(ids);
-        }else {
-            List<PhBrand> brands = new ArrayList<>();
-            return brands;
+        } else {
+            return new ArrayList<>();
         }
-
     }
 
     @Override
@@ -76,7 +74,7 @@ public class PhBrandServiceImpl implements PhBrandService {
     }
 
     @Override
-    public Page<PhBrand> findByPage(final Long id, final String name, Pageable page) {
+    public Page<PhBrand> findByPage(final Long id, final String name, List<Long> brandIds, Pageable page) {
         return phBrandRepository.findAll(new Specification<PhBrand>() {
 
             @Override
@@ -89,6 +87,14 @@ public class PhBrandServiceImpl implements PhBrandService {
 
                 if (null != id) {
                     params.add(criteriaBuilder.equal(root.get("id"), id));
+                }
+
+                if (brandIds != null) {
+                    CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("id"));
+                    for (Object id : brandIds) {
+                        in.value(id);
+                    }
+                    params.add(in);
                 }
 
                 Predicate[] predicates = new Predicate[params.size()];
