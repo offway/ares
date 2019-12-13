@@ -1,6 +1,7 @@
 package cn.offway.ares.controller;
 
 import cn.offway.ares.domain.PhAddressBrand;
+import cn.offway.ares.domain.PhAdmin;
 import cn.offway.ares.domain.PhBrand;
 import cn.offway.ares.properties.QiniuProperties;
 import cn.offway.ares.service.PhAddressBrandService;
@@ -15,11 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.*;
 
 
@@ -44,8 +47,14 @@ public class BrandController {
      * 品牌
      */
     @RequestMapping("/brand.html")
-    public String brand(ModelMap map) {
+    public String brand(ModelMap map, Authentication authentication) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
+        if (phAdmin.getRoleIds().contains(BigInteger.ONE)) {
+            map.addAttribute("isAdmin", "1");
+        } else {
+            map.addAttribute("isAdmin", "0");
+        }
         return "brand";
     }
 
@@ -54,14 +63,19 @@ public class BrandController {
      */
     @ResponseBody
     @RequestMapping("/brand-data")
-    public Map<String, Object> stockData(HttpServletRequest request, Long id, String name) {
+    public Map<String, Object> stockData(HttpServletRequest request, Long id, String name, int sEcho, int iDisplayStart, int iDisplayLength, Authentication authentication) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
-        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
-        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Page<PhBrand> pages = phBrandService.findByPage(id, null != name ? name.trim() : name, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName));
+        PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
+        List<Long> brandIds;
+        if (phAdmin.getRoleIds().contains(BigInteger.ONE)) {
+            brandIds = null;
+        } else {
+            brandIds = phAdmin.getBrandIds();
+        }
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
+        Page<PhBrand> pages = phBrandService.findByPage(id, null != name ? name.trim() : name, brandIds, pr);
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
