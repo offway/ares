@@ -54,7 +54,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <button class="btn btn-primary searchBtn" style="height:35px">查询
+                                    <button class="btn btn-primary searchBtn">查询
                                     </button>
                                 </div>
                             </form>
@@ -127,7 +127,7 @@
 
             <div class="modal-footer">
                 <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
-                <button class="btn btn-success" type="button">保存</button>
+                <button class="btn btn-success saveRule" type="button">保存</button>
             </div>
 
         </div>
@@ -231,7 +231,7 @@
                     title: "操作",
                     render: function (data, type, row, meta) {
                         if (row["status"] == "0") {
-                            return '<input type="button" name="checkIt" onclick="deletecode(' + data + ')" value="删除"/>';
+                            return '<input type="button" class="btn btn-outline btn-danger" name="checkIt" onclick="deletecode(' + data + ')" value="删除"/>';
                         } else {
                             return "已使用，无法进行删除操作!";
                         }
@@ -263,7 +263,7 @@
 
         });
 
-        $(".btn.btn-info.saveRule").click(function () {
+        $(".btn.btn-success.saveRule").click(function () {
             var id = $("#id").val();
             var realName = $("#realName").val();
             var position = $("#position").val();

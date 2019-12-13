@@ -119,7 +119,7 @@
 
 <div aria-hidden="false" class="modal fade in" id="preview" style="display: none;">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 600px">
 
             <div class="modal-header">
                 <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×
@@ -131,6 +131,7 @@
 
             <div class="modal-footer">
                 <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
+                <input type="button" class="btn btn-success" value="保存" onclick="updateStockBatch()" />
             </div>
         </div>
     </div>
@@ -476,8 +477,7 @@
                     orderable: false,
                     title: "操作",
                     render: function (data, type, full, meta) {
-                        var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-                        str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+                        var str = '<input type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
                         return str;
                     }
                 },
@@ -487,11 +487,21 @@
                     orderable: false,
                     title: "操作",
                     render: function (data, type, full, meta) {
+                        var str = '<input type="button" class="btn btn-outline btn-primary" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+                        return str;
+                    }
+                },
+                {
+                    targets: 15,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
                         var str = "";
                         if (full["status"] == "0") {
-                            str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+                            str += '<input type="button" class="btn btn-outline btn-danger" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
                         } else {
-                            str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+                            str += '<input type="button" class="btn btn-outline btn-danger" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
                         }
                         return str;
                     }
@@ -548,7 +558,7 @@
                         contentStr += "<hr/>";
                     }
                     var btnEle = '<input type="button" class="btn btn-success" value="保存" onclick="updateStockBatch()" />';
-                    contentStr += appendToPreviewList("", "", "", "", "", btnEle);
+                    contentStr += appendToPreviewList("", "", "", "", "", "");
                     preview.html(contentStr + "</form>");
                     jQuery('#preview').modal({backdrop: 'static', keyboard: false});
                     toastr.success("操作已成功！", "温馨提示");

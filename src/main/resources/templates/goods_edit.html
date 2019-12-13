@@ -78,9 +78,11 @@
                                         <div class="form-group">
                                             <label class="control-label" for="field-3"><font
                                                     color="red">*</font>是否限定</label>
-                                            <label><input checked="checked" class="" name="isOffway" type="radio"
-                                                          value="0"/>限定</label>
-                                            <label><input class="" name="isOffway" type="radio" value="1"/>非限定</label>
+                                            <input checked="checked" id="isOffway_0" class="" name="isOffway" type="radio"
+                                                          value="0"/>
+                                            <label for="isOffway_0">限定</label>
+                                            <input class="" id="isOffway_1" name="isOffway" type="radio" value="1"/>
+                                            <label for="isOffway_1">非限定</label>
                                         </div>
                                     </div>
                                 </div>
@@ -1078,7 +1080,7 @@
         // switchToCommon();
 
         //保存
-        $(".btn.btn-info.save").click(function () {
+        $(".btn.btn-success.save").click(function () {
             var footer = $(this).parent(".modal-footer");
             var form = $("#saveForm");
             var type = form.find("select[name='type']").val();
@@ -1267,11 +1269,11 @@
                                     callback("ERROR");
                                 }
                             });
-                            $(".btn.btn-info.save").attr("disabled", "disabled");
+                            $(".btn.btn-success.save").attr("disabled", "disabled");
                         }
                     }, function (err, results) {
                         if (err) {
-                            $(".btn.btn-info.save").attr("disabled", "");
+                            $(".btn.btn-success.save").attr("disabled", "");
                         } else {
                             setTimeout(function () {
                                 window.close();

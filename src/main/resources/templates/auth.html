@@ -56,7 +56,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <button class="btn btn-primary searchBtn" style="height:35px">查询
+                                    <button class="btn btn-primary searchBtn">查询
                                     </button>
                                 </div>
                             </form>
@@ -127,7 +127,7 @@
 
             <div class="modal-footer">
                 <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
-                <button class="btn btn-success" type="button">保存</button>
+                <button class="btn btn-success saveRule" type="button">保存</button>
             </div>
 
         </div>
@@ -313,7 +313,7 @@
 
         });
 
-        $(".btn.btn-info.saveRule").click(function () {
+        $(".btn.btn-success.saveRule").click(function () {
 
             var form = $("#authForm");
             var activityId = form.find("input[name='id']").val();

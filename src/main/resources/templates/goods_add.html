@@ -80,9 +80,11 @@
                                         <div class="form-group">
                                             <label class="control-label" for="field-3"><font
                                                     color="red">*</font>是否限定</label>
-                                            <label><input checked="checked" class="" name="isOffway" type="radio"
-                                                          value="0"/>限定</label>
-                                            <label><input class="" name="isOffway" type="radio" value="1"/>非限定</label>
+                                            <input checked="checked" id="isOffway_0" class="" name="isOffway" type="radio"
+                                                          value="0"/>
+                                            <label for="isOffway_0" >限定</label>
+                                            <input class="" name="isOffway" id="isOffway_1" type="radio" value="1"/>
+                                            <label for="isOffway_1">非限定</label>
                                         </div>
                                     </div>
                                 </div>
@@ -255,11 +257,13 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label"><font color="red">*</font>商品属性模板</label>
-                                            <label><input checked="checked" class="" name="choice"
+                                            <input checked="checked" id="choice_0" class="" name="choice"
                                                           onclick="switchToCommon()" type="radio"
-                                                          value="0"/>通用模板</label>
-                                            <label><input class="" name="choice" onclick="switchToCustom()" type="radio"
-                                                          value="1"/>自定义模板</label>
+                                                          value="0"/>
+                                            <label for="choice_0">通用模板</label>
+                                           <input class="" name="choice" id="choice_1" onclick="switchToCustom()" type="radio"
+                                                          value="1"/>
+                                            <label for="choice_1">自定义模板</label>
                                         </div>
                                     </div>
                                 </div>
@@ -1080,7 +1084,7 @@
         switchToCommon();
 
         //保存
-        $(".btn.btn-info.save").click(function () {
+        $(".btn.btn-success.save").click(function () {
             var footer = $(this).parent(".modal-footer");
             var form = $("#saveForm");
             var type = form.find("select[name='type']").val();
@@ -1183,7 +1187,7 @@
             //获取token
             $.get("/qiniu/token", {}, function (token) {
                 if (token != '') {
-                    $(".btn.btn-info.save").attr("disabled", "disabled");
+                    $(".btn.btn-success.save").attr("disabled", "disabled");
                     async.series({
                         one: function (callback) {
                             callback();
@@ -1250,7 +1254,7 @@
                         }
                     }, function (err, results) {
                         if (err) {
-                            $(".btn.btn-info.save").removeAttr("disabled");
+                            $(".btn.btn-success.save").removeAttr("disabled");
                         } else {
                             window.location.href = '/goods.html';
                         }

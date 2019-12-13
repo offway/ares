@@ -223,13 +223,15 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-white" data-dismiss="modal" type="button">关闭</button>
+                <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
             </div>
         </div>
     </div>
 </div>
 
 
+<script src="https://admin.offway.cn/js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
 <script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -508,9 +510,9 @@
                     render: function (data, type, full, meta) {
                         var str = "";
                         if (full["status"] == "0") {
-                            str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+                            str += '<input type="button" class="btn btn-outline btn-danger" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
                         } else {
-                            str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+                            str += '<input type="button" class="btn btn-outline btn-danger" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
                         }
                         return str;
                     }
@@ -590,7 +592,7 @@
             jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
         });
 
-        $(".btn.btn-info.save").click(function () {
+        $(".btn.btn-success.save").click(function () {
             var footer = $(this).parent(".modal-footer");
             footer.find("button").hide();
             footer.find(".bg-lg").show();
