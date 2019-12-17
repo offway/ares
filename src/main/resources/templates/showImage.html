@@ -22,6 +22,27 @@
 		html .select2-drop .select2-results li.select2-highlighted {
 			background-color: rgb(200, 200, 200);
 		}
+		#div1{
+			width: 48px;
+			height: 48px;
+			border: #000 solid 0px;
+			margin: 48px auto;
+			/* overflow: hidden; */
+		}
+		#div1 img{
+			cursor: pointer;
+			transition: all 0.6s;
+		}
+		#div1 img:hover{
+			transform: scale(10);
+		}
+		#div2 img{
+			cursor: pointer;
+			transition: all 0.6s;
+		}
+		#div2 img:hover{
+			transform: scale(10);
+		}
 	</style>
 </head>
 <body class="hold-transition skin-black light-sidebar sidebar-mini">
@@ -304,7 +325,7 @@
 	}
 
 	function buildImg(url) {
-		return "<img width='48px' height='48px' src='#' />".replace("#", url);
+		return "<div id='div1'><img src='#' /></div>".replace("#", url);
 	}
 
 	function showGoods(orderNo){
@@ -406,7 +427,7 @@
 						var a = data.split(",");
 						var html = "<div class=\"image-list\">";
 						$.each(a, function (i, e) {
-							html += "<div class=\"cover\" index=" + i + "><img src=" + e + "></img></div><p></p>";
+							html += "<div id='div2' class=\"cover\" index=" + i + "><img src=" + e + "></img></div><p></p>";
 						});
 						html += "</div>";
 						return html;
